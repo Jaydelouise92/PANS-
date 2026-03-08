@@ -874,16 +874,16 @@ export default function App() {
   const [heroImage, setHeroImage] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchHeroImage = async () => {
-      try {
-        const img = await generateHeroImage();
-        setHeroImage(img);
-      } catch (error) {
-        // Fallback to a static image if API fails (e.g., rate limit)
-        setHeroImage("https://picsum.photos/seed/supportive-hands/1920/1080?blur=2");
-      }
-    };
-    fetchHeroImage();
+    // const fetchHeroImage = async () => {
+    //   try {
+    //     const img = await generateHeroImage();
+    //     setHeroImage(img);
+    //   } catch (error) {
+    //     // Fallback to a static image if API fails (e.g., rate limit)
+    //     setHeroImage("https://picsum.photos/seed/supportive-hands/1920/1080?blur=2");
+    //   }
+    // };
+    // fetchHeroImage();
   }, []);
 
   useEffect(() => {
