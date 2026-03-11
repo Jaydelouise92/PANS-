@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useScroll, useTransform } from 'motion/react';
 import { 
   Shield, 
   MapPin, 
@@ -35,6 +35,40 @@ const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
 // Types
 type Section = 'home' | 'about' | 'who-we-support' | 'support' | 'how-it-works' | 'guide' | 'resources' | 'supporting-pans' | 'contact';
+
+// Animation variants for reuse
+const fadeInUp = {
+  hidden: { opacity: 0, y: 60 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
+};
+
+const fadeInLeft = {
+  hidden: { opacity: 0, x: -60 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }
+};
+
+const fadeInRight = {
+  hidden: { opacity: 0, x: 60 },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } }
+};
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: { opacity: 1, scale: 1, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.12, delayChildren: 0.1 }
+  }
+};
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } }
+};
 
 // Images from design guidelines
 const IMAGES = {
@@ -185,45 +219,61 @@ const Navbar = ({ activeSection }: { activeSection: Section }) => {
 
 // --- Hero Section ---
 const Hero = () => (
-  <section id="home" data-testid="hero-section" className="pt-28 pb-20 px-6 lg:px-12 max-w-7xl mx-auto">
+  <section id="home" data-testid="hero-section" className="pt-28 pb-20 px-6 lg:px-12 max-w-7xl mx-auto overflow-hidden">
     <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
       <motion.div
-        initial={{ opacity: 0, x: -30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.7 }}
+        initial="hidden"
+        animate="visible"
+        variants={staggerContainer}
       >
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-bold uppercase tracking-wider mb-8">
+        <motion.div 
+          variants={staggerItem}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-bold uppercase tracking-wider mb-8"
+        >
           <MapPin size={14} strokeWidth={1.5} /> Supporting Regional Victoria
-        </div>
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-[1.1] mb-6 text-text-primary">
+        </motion.div>
+        <motion.h1 
+          variants={staggerItem}
+          className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-[1.1] mb-6 text-text-primary"
+        >
           Parent Advocacy & Navigation Support
           <span className="text-brand-primary"> Victoria</span>
-        </h1>
-        <p className="text-lg text-text-secondary mb-10 max-w-lg leading-relaxed">
+        </motion.h1>
+        <motion.p 
+          variants={staggerItem}
+          className="text-lg text-text-secondary mb-10 max-w-lg leading-relaxed"
+        >
           PANS supports parents navigating the child protection system. We provide guidance, preparation, and navigation support so you can understand the process and advocate for yourself and your family.
-        </p>
-        <div className="flex flex-wrap gap-4">
-          <button 
+        </motion.p>
+        <motion.div 
+          variants={staggerItem}
+          className="flex flex-wrap gap-4"
+        >
+          <motion.button 
             data-testid="hero-cta-btn"
             onClick={() => scrollToSection('contact')}
             className="btn-primary flex items-center gap-2"
+            whileHover={{ scale: 1.05, boxShadow: "0 20px 40px rgba(124, 106, 150, 0.3)" }}
+            whileTap={{ scale: 0.98 }}
           >
             Contact PANS for Support <ChevronRight size={18} strokeWidth={1.5} />
-          </button>
-          <button 
+          </motion.button>
+          <motion.button 
             data-testid="hero-secondary-btn"
             onClick={() => scrollToSection('guide')}
             className="btn-secondary"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
           >
             First 48 Hours Guide
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
+        initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+        animate={{ opacity: 1, scale: 1, rotate: 0 }}
+        transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
         className="relative"
       >
         <div className="relative">
@@ -293,20 +343,33 @@ const StartHere = () => (
 
 // --- Why Parents Contact PANS ---
 const WhyParentsContact = () => (
-  <section data-testid="why-pans-section" className="section-padding bg-white rounded-[3rem]">
+  <section data-testid="why-pans-section" className="section-padding bg-white rounded-[3rem] overflow-hidden">
     <div className="text-center max-w-3xl mx-auto mb-16">
       <motion.h2 
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={fadeInUp}
         className="text-4xl font-heading font-bold mb-6"
       >
         Why Parents Contact PANS
       </motion.h2>
-      <div className="w-20 h-1 bg-brand-primary mx-auto rounded-full" />
+      <motion.div 
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
+        className="w-20 h-1 bg-brand-primary mx-auto rounded-full origin-center" 
+      />
     </div>
     
-    <div className="grid md:grid-cols-3 gap-8 mb-16">
+    <motion.div 
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-50px" }}
+      variants={staggerContainer}
+      className="grid md:grid-cols-3 gap-8 mb-16"
+    >
       {[
         {
           title: "Lived Experience",
@@ -326,31 +389,42 @@ const WhyParentsContact = () => (
       ].map((item, i) => (
         <motion.div 
           key={i}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.1 }}
-          className="card flex flex-col items-center text-center"
+          variants={staggerItem}
+          whileHover={{ y: -10, boxShadow: "0 20px 40px rgba(124, 106, 150, 0.15)" }}
+          transition={{ duration: 0.3 }}
+          className="card flex flex-col items-center text-center cursor-default"
         >
-          <div className="w-14 h-14 bg-brand-primary/10 rounded-2xl flex items-center justify-center mb-6 text-brand-primary">
+          <motion.div 
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            className="w-14 h-14 bg-brand-primary/10 rounded-2xl flex items-center justify-center mb-6 text-brand-primary"
+          >
             {item.icon}
-          </div>
+          </motion.div>
           <h3 className="font-heading text-xl font-bold mb-4">{item.title}</h3>
           <p className="text-text-secondary text-sm leading-relaxed">{item.desc}</p>
         </motion.div>
       ))}
-    </div>
+    </motion.div>
 
     <motion.div 
-      initial={{ opacity: 0 }}
-      whileInView={{ opacity: 1 }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       className="max-w-3xl mx-auto text-center"
     >
       <p className="text-2xl font-serif italic text-text-secondary leading-relaxed">
         "Navigating the child protection system can feel overwhelming. PANS aims to help parents understand what is happening, stay organised, and approach the process with greater confidence."
       </p>
-      <p className="mt-6 text-brand-primary font-heading font-semibold">— You are not alone.</p>
+      <motion.p 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.4 }}
+        className="mt-6 text-brand-primary font-heading font-semibold"
+      >
+        — You are not alone.
+      </motion.p>
     </motion.div>
   </section>
 );
@@ -516,22 +590,35 @@ const Testimonials = () => {
 
 // --- Who We Support ---
 const WhoWeSupport = () => (
-  <section id="who-we-support" data-testid="who-we-support-section" className="section-padding">
+  <section id="who-we-support" data-testid="who-we-support-section" className="section-padding overflow-hidden">
     <div className="text-center max-w-3xl mx-auto mb-16">
       <motion.h2 
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial="hidden"
+        whileInView="visible"
         viewport={{ once: true }}
+        variants={fadeInUp}
         className="text-4xl font-heading font-bold mb-6"
       >
         Who PANS Supports
       </motion.h2>
-      <p className="text-lg text-text-secondary">
+      <motion.p 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.2 }}
+        className="text-lg text-text-secondary"
+      >
         PANS Victoria is dedicated to helping parents who feel overwhelmed by the complexity of the child protection system.
-      </p>
+      </motion.p>
     </div>
     
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <motion.div 
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-50px" }}
+      variants={staggerContainer}
+      className="grid md:grid-cols-2 lg:grid-cols-3 gap-6"
+    >
       {[
         { title: "Child Protection Involvement", desc: "Parents currently involved with Child Protection services." },
         { title: "Children's Court Prep", desc: "Parents preparing for upcoming Children's Court hearings." },
@@ -541,38 +628,50 @@ const WhoWeSupport = () => (
       ].map((item, i) => (
         <motion.div
           key={i}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.1 }}
-          className="card"
+          variants={staggerItem}
+          whileHover={{ y: -8, scale: 1.02 }}
+          transition={{ duration: 0.3 }}
+          className="card cursor-default"
         >
           <h3 className="font-heading text-xl font-bold mb-3 text-brand-primary">{item.title}</h3>
           <p className="text-text-secondary text-sm leading-relaxed">{item.desc}</p>
         </motion.div>
       ))}
-    </div>
+    </motion.div>
   </section>
 );
 
 // --- Support Services ---
 const SupportServices = () => (
-  <section id="support" data-testid="support-section" className="section-padding bg-white rounded-[3rem]">
+  <section id="support" data-testid="support-section" className="section-padding bg-white rounded-[3rem] overflow-hidden">
     <div className="text-center max-w-3xl mx-auto mb-16">
       <motion.h2 
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial="hidden"
+        whileInView="visible"
         viewport={{ once: true }}
+        variants={fadeInUp}
         className="text-4xl font-heading font-bold mb-6"
       >
         What Support PANS Provides
       </motion.h2>
-      <p className="text-lg text-text-secondary">
+      <motion.p 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.2 }}
+        className="text-lg text-text-secondary"
+      >
         Practical guidance and navigation support across key areas of the child protection process.
-      </p>
+      </motion.p>
     </div>
 
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+    <motion.div 
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-50px" }}
+      variants={staggerContainer}
+      className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
+    >
       {[
         { title: "Case Navigation", icon: <MapPin strokeWidth={1.5} />, desc: "Helping parents understand how the child protection system works and what steps are happening in their case." },
         { title: "Court Preparation", icon: <Gavel strokeWidth={1.5} />, desc: "Helping parents organise timelines, documents, and key points when preparing for Children's Court hearings." },
@@ -582,26 +681,30 @@ const SupportServices = () => (
       ].map((item, i) => (
         <motion.div 
           key={i}
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: i * 0.1 }}
-          className="card hover:shadow-lg"
+          variants={staggerItem}
+          whileHover={{ y: -10, boxShadow: "0 25px 50px rgba(124, 106, 150, 0.15)" }}
+          transition={{ duration: 0.3 }}
+          className="card cursor-default"
         >
-          <div className="w-12 h-12 bg-brand-primary/10 rounded-2xl flex items-center justify-center mb-6 text-brand-primary">
+          <motion.div 
+            whileHover={{ scale: 1.15, rotate: 10 }}
+            transition={{ duration: 0.3 }}
+            className="w-12 h-12 bg-brand-primary/10 rounded-2xl flex items-center justify-center mb-6 text-brand-primary"
+          >
             {item.icon}
-          </div>
+          </motion.div>
           <h3 className="text-xl font-heading font-bold mb-4">{item.title}</h3>
           <p className="text-text-secondary leading-relaxed text-sm">{item.desc}</p>
         </motion.div>
       ))}
-    </div>
+    </motion.div>
 
     {/* Regional Support Banner */}
     <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 50, scale: 0.95 }}
+      whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
       className="bg-brand-primary text-white p-10 md:p-14 rounded-[2.5rem] shadow-xl"
     >
       <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -634,24 +737,37 @@ const SupportServices = () => (
 
 // --- How It Works ---
 const HowItWorks = () => (
-  <section id="how-it-works" data-testid="how-it-works-section" className="section-padding">
+  <section id="how-it-works" data-testid="how-it-works-section" className="section-padding overflow-hidden">
     <div className="text-center max-w-3xl mx-auto mb-20">
       <motion.h2 
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial="hidden"
+        whileInView="visible"
         viewport={{ once: true }}
+        variants={fadeInUp}
         className="text-4xl font-heading font-bold mb-6"
       >
         How PANS Works
       </motion.h2>
-      <p className="text-lg text-text-secondary">
+      <motion.p 
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay: 0.2 }}
+        className="text-lg text-text-secondary"
+      >
         Our process is designed to be straightforward and supportive, helping you regain control and stay organised.
-      </p>
+      </motion.p>
     </div>
 
     <div className="relative max-w-4xl mx-auto">
       {/* Timeline line */}
-      <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-brand-primary/20 -translate-x-1/2" />
+      <motion.div 
+        initial={{ scaleY: 0 }}
+        whileInView={{ scaleY: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1] }}
+        className="hidden md:block absolute left-1/2 top-0 bottom-0 w-0.5 bg-brand-primary/20 -translate-x-1/2 origin-top" 
+      />
       
       <div className="space-y-12">
         {[
@@ -664,9 +780,11 @@ const HowItWorks = () => (
           <div key={i} className={`flex flex-col md:flex-row items-center gap-8 md:gap-0 ${i % 2 !== 0 ? 'md:flex-row-reverse' : ''}`}>
             <div className="flex-1 w-full">
               <motion.div 
-                initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
+                initial={{ opacity: 0, x: i % 2 === 0 ? -60 : 60, scale: 0.9 }}
+                whileInView={{ opacity: 1, x: 0, scale: 1 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.6, delay: i * 0.15, ease: [0.22, 1, 0.36, 1] }}
+                whileHover={{ y: -5, boxShadow: "0 20px 40px rgba(124, 106, 150, 0.12)" }}
                 className={`card ${i % 2 === 0 ? 'md:mr-12' : 'md:ml-12'}`}
               >
                 <span className="text-sm font-bold text-brand-primary uppercase tracking-widest block mb-2">Step {item.step}</span>
@@ -674,9 +792,16 @@ const HowItWorks = () => (
                 <p className="text-text-secondary">{item.desc}</p>
               </motion.div>
             </div>
-            <div className="relative z-10 w-14 h-14 bg-brand-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-brand-primary/30">
+            <motion.div 
+              initial={{ scale: 0, rotate: -180 }}
+              whileInView={{ scale: 1, rotate: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.15 + 0.2, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ scale: 1.15 }}
+              className="relative z-10 w-14 h-14 bg-brand-primary rounded-full flex items-center justify-center text-white shadow-lg shadow-brand-primary/30"
+            >
               {item.icon}
-            </div>
+            </motion.div>
             <div className="flex-1 hidden md:block" />
           </div>
         ))}
@@ -687,18 +812,27 @@ const HowItWorks = () => (
 
 // --- First 48 Hours Guide ---
 const First48Hours = () => (
-  <section id="guide" data-testid="guide-section" className="section-padding">
+  <section id="guide" data-testid="guide-section" className="section-padding overflow-hidden">
     <div className="grid lg:grid-cols-2 gap-12 items-center">
       {/* Image Column */}
       <motion.div
-        initial={{ opacity: 0, x: -30 }}
-        whileInView={{ opacity: 1, x: 0 }}
+        initial="hidden"
+        whileInView="visible"
         viewport={{ once: true }}
+        variants={fadeInLeft}
         className="order-2 lg:order-1"
       >
         <div className="relative">
-          <div className="absolute -top-6 -left-6 w-48 h-48 bg-brand-accent/20 rounded-full blur-2xl" />
-          <img 
+          <motion.div 
+            initial={{ scale: 0 }}
+            whileInView={{ scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1, delay: 0.3 }}
+            className="absolute -top-6 -left-6 w-48 h-48 bg-brand-accent/20 rounded-full blur-2xl" 
+          />
+          <motion.img 
+            whileHover={{ scale: 1.03 }}
+            transition={{ duration: 0.4 }}
             src="https://customer-assets.emergentagent.com/job_website-wizard-15/artifacts/gsw64l7k_1000025272.jpg"
             alt="Mother with book of knowledge guiding child through the justice system" 
             className="relative rounded-3xl shadow-2xl w-full object-cover"
