@@ -1,7 +1,7 @@
 # PANS Victoria - Product Requirements Document
 
 ## Project Overview
-**Project Name:** PANS Victoria (Parent Advocacy & Navigation Service)  
+**Project Name:** PANS Victoria (Parent Advocacy & Navigation Support)  
 **Type:** Advocacy/Support Website  
 **Target Audience:** Parents navigating the child protection system in Victoria, Australia
 
@@ -13,6 +13,9 @@
 - Ensure all links work
 - Fix the AI chat assistant
 - Make contact form functional with email
+- Change name from "Service" to "Support"
+- Add downloadable PDF guides
+- Add analytics tracking
 
 ## Tech Stack
 - **Frontend:** React 19 + Vite 6 + TypeScript + Tailwind CSS v4
@@ -20,6 +23,8 @@
 - **Database:** MongoDB
 - **AI Integration:** Gemini 3 Flash via Emergent LLM Key
 - **Email:** Resend (configured, needs API key)
+- **PDF Generation:** ReportLab
+- **Analytics:** Google Analytics + Custom Analytics
 - **Icons:** lucide-react
 - **Animations:** motion library
 
@@ -47,7 +52,7 @@
 - Support Services with 5 service cards
 - "How It Works" 5-step timeline process
 - "First 48 Hours" critical guide (glass card design)
-- Resources with external links (Victoria Legal Aid, Children's Court, DFFH, Parentline)
+- Resources with downloadable PDFs and external links
 - "Supporting PANS" community section
 - Contact form with backend integration
 - Footer with key information
@@ -66,23 +71,36 @@
 - Email notification (requires Resend API key)
 - Success/error feedback
 
+### 6. Downloadable PDF Resources (NEW)
+- **First 48 Hours Guide**: Essential steps after Child Protection involvement
+- **Timeline Template**: Track events, meetings, contacts, and important dates
+
+### 7. Analytics (NEW)
+- Google Analytics integration (needs GA_MEASUREMENT_ID)
+- Custom PANS analytics tracking page views and scroll depth
+
 ## API Endpoints
 - `GET /api/health` - Health check
 - `POST /api/contact` - Submit contact form
 - `POST /api/chat` - AI chat messages
+- `GET /api/downloads/first-48-hours` - Download First 48 Hours PDF
+- `GET /api/downloads/timeline-template` - Download Timeline Template PDF
 
 ## What's Working
 - Full website with all sections
 - All navigation links
 - Contact form submission (stored in MongoDB)
 - AI chat assistant (powered by Gemini 3 Flash)
+- PDF downloads (First 48 Hours Guide, Timeline Template)
 - External resource links
+- Analytics tracking
 - Mobile responsive design
 
 ## Configuration Notes
 - Backend URL: Configured in `/app/frontend/.env`
 - Emergent LLM Key: Configured in `/app/backend/.env`
 - Email: Resend API key placeholder in backend (needs real key for email delivery)
+- Analytics: Replace `GA_MEASUREMENT_ID` in index.html with actual Google Analytics ID
 
 ## Future Enhancements / Backlog
 
@@ -91,12 +109,12 @@
 
 ### P1 (High Priority)
 - Add actual Resend API key for email notifications
-- Add analytics tracking (Google Analytics or similar)
+- Add actual Google Analytics measurement ID
 
 ### P2 (Medium Priority)
 - Admin dashboard for viewing contact submissions
 - Blog/news section for updates
-- Resource download center (PDF guides)
+- Resource download center (more PDFs)
 - Multi-language support
 
 ### P3 (Nice to Have)
@@ -107,4 +125,4 @@
 
 ---
 **Last Updated:** January 2026  
-**Status:** MVP Complete
+**Status:** MVP Complete with Downloads & Analytics
