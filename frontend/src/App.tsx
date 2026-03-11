@@ -688,50 +688,75 @@ const HowItWorks = () => (
 // --- First 48 Hours Guide ---
 const First48Hours = () => (
   <section id="guide" data-testid="guide-section" className="section-padding">
-    <motion.div 
-      initial={{ opacity: 0, y: 30 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      className="glass-card bg-brand-dark text-white p-10 md:p-16 rounded-[3rem] shadow-2xl relative overflow-hidden"
-    >
-      {/* Background decorations */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-brand-primary/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
-      <div className="absolute bottom-0 left-0 w-72 h-72 bg-brand-accent/20 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/2" />
-      
-      <div className="relative z-10 max-w-4xl">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 text-white text-xs font-bold uppercase tracking-wider mb-8">
+    <div className="grid lg:grid-cols-2 gap-12 items-center">
+      {/* Image Column */}
+      <motion.div
+        initial={{ opacity: 0, x: -30 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        className="order-2 lg:order-1"
+      >
+        <div className="relative">
+          <div className="absolute -top-6 -left-6 w-48 h-48 bg-brand-accent/20 rounded-full blur-2xl" />
+          <img 
+            src="https://customer-assets.emergentagent.com/job_website-wizard-15/artifacts/gsw64l7k_1000025272.jpg"
+            alt="Mother with book of knowledge guiding child through the justice system" 
+            className="relative rounded-3xl shadow-2xl w-full object-cover"
+          />
+        </div>
+      </motion.div>
+
+      {/* Content Column */}
+      <motion.div 
+        initial={{ opacity: 0, x: 30 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        className="order-1 lg:order-2"
+      >
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-bold uppercase tracking-wider mb-6">
           <Clock size={14} strokeWidth={1.5} /> Critical Support
         </div>
-        <h2 className="text-4xl md:text-5xl font-heading font-bold mb-8 leading-tight">
+        <h2 className="text-4xl md:text-5xl font-heading font-bold mb-6 leading-tight text-brand-primary">
           First 48 Hours After Removal
         </h2>
-        <p className="text-xl text-white/80 mb-12 max-w-2xl leading-relaxed">
+        <p className="text-lg text-text-secondary mb-8 leading-relaxed">
           The early stages of Child Protection involvement are often the most stressful. This guide helps you understand what to expect immediately after removal.
         </p>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="space-y-4">
           {[
-            { title: "Immediate Actions", desc: "Stay calm, listen, and take notes of everything said. Ask for names and contact details of all workers." },
+            { title: "Stay Calm & Listen", desc: "Take notes of everything said. Ask for names and contact details of all workers." },
             { title: "Gather Information", desc: "Request copies of any orders or documents. You have a right to know the basis of involvement." },
             { title: "Organise Documents", desc: "Keep all paperwork in one place. Start a timeline of events and conversations." },
-            { title: "First Court Hearing", desc: "Understand that a court hearing will happen quickly. Seek legal advice immediately." },
+            { title: "Seek Legal Help", desc: "A court hearing will happen quickly. Contact Victoria Legal Aid (1300 792 387) immediately." },
             { title: "Prepare for Meetings", desc: "Identify key questions you need answered and identify your support network." }
           ].map((item, i) => (
             <motion.div 
               key={i}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="bg-white/5 border border-white/10 p-6 rounded-2xl hover:bg-white/10 transition-colors"
+              className="flex gap-4 items-start"
             >
-              <h4 className="font-heading font-bold text-brand-accent mb-2">{item.title}</h4>
-              <p className="text-sm text-white/70 leading-relaxed">{item.desc}</p>
+              <div className="w-8 h-8 bg-brand-primary/10 rounded-lg flex items-center justify-center text-brand-primary shrink-0 mt-0.5">
+                <CheckCircle2 size={16} strokeWidth={2} />
+              </div>
+              <div>
+                <h4 className="font-heading font-bold text-text-primary">{item.title}</h4>
+                <p className="text-sm text-text-secondary leading-relaxed">{item.desc}</p>
+              </div>
             </motion.div>
           ))}
         </div>
-      </div>
-    </motion.div>
+
+        <div className="mt-8 p-5 bg-brand-secondary rounded-2xl border border-purple-100">
+          <p className="text-sm text-text-muted italic">
+            <strong className="text-brand-primary">Important:</strong> PANS provides guidance and navigation support only. We do not provide legal advice. Please seek legal assistance as soon as possible.
+          </p>
+        </div>
+      </motion.div>
+    </div>
   </section>
 );
 
