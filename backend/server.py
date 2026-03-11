@@ -32,7 +32,7 @@ DB_NAME = os.environ.get("DB_NAME", "pans_victoria")
 # Resend setup
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
 SENDER_EMAIL = os.environ.get("SENDER_EMAIL", "onboarding@resend.dev")
-RECIPIENT_EMAIL = os.environ.get("RECIPIENT_EMAIL", "support@pansvictoria.org.au")
+RECIPIENT_EMAIL = os.environ.get("RECIPIENT_EMAIL", "yourvoicemattersaus@gmail.com")
 
 if RESEND_API_KEY and RESEND_API_KEY != "re_your_api_key_here":
     resend.api_key = RESEND_API_KEY

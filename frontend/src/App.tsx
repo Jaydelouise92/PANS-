@@ -42,6 +42,7 @@ const IMAGES = {
   about: "https://images.unsplash.com/photo-1709127347876-114b147e270c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA0MTJ8MHwxfHNlYXJjaHwzfHxzdXBwb3J0aXZlJTIwcGFyZW50JTIwY2hpbGQlMjBhZHZvY2FjeSUyMGNvbXBhc3Npb25hdGUlMjB0aGVyYXB5JTIwbGlzdGVuaW5nJTIwc2Vzc2lvbiUyMGZhbWlseSUyMGd1aWRhbmNlfGVufDB8fHx8MTc3MzIxMjY4MXww&ixlib=rb-4.1.0&q=85",
   support: "https://images.unsplash.com/photo-1701055448945-fb948dd48ef1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA0MTJ8MHwxfHNlYXJjaHw0fHxzdXBwb3J0aXZlJTIwcGFyZW50JTIwY2hpbGQlMjBhZHZvY2FjeSUyMGNvbXBhc3Npb25hdGUlMjB0aGVyYXB5JTIwbGlzdGVuaW5nJTIwc2Vzc2lvbiUyMGZhbWlseSUyMGd1aWRhbmNlfGVufDB8fHx8MTc3MzIxMjY4MXww&ixlib=rb-4.1.0&q=85",
   therapy: "https://images.unsplash.com/photo-1758273240373-370993d0275d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA0MTJ8MHwxfHNlYXJjaHwxfHxzdXBwb3J0aXZlJTIwcGFyZW50JTIwY2hpbGQlMjBhZHZvY2FjeSUyMGNvbXBhc3Npb25hdGUlMjB0aGVyYXB5JTIwbGlzdGVuaW5nJTIwc2Vzc2lvbiUyMGZhbWlseSUyMGd1aWRhbmNlfGVufDB8fHx8MTc3MzIxMjY4MXww&ixlib=rb-4.1.0&q=85",
+  founder: "https://images.unsplash.com/photo-1581197326868-51cafbd1a169?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzB8MHwxfHNlYXJjaHwxfHx3b21hbiUyMHNpbGhvdWV0dGUlMjBzdHJlbmd0aCUyMGNvdXJhZ2UlMjBob3BlJTIwbGlnaHR8ZW58MHx8fHwxNzczMjE1MDY2fDA&ixlib=rb-4.1.0&q=85",
 };
 
 // Scroll to section helper
@@ -354,9 +355,49 @@ const WhyParentsContact = () => (
   </section>
 );
 
-// --- About Section ---
+// --- About Section (Why PANS Was Created + Founder) ---
 const AboutSection = () => (
-  <section id="about" data-testid="about-section" className="section-padding">
+  <section id="about" data-testid="about-section" className="section-padding space-y-20">
+    {/* Why PANS Was Created */}
+    <div className="max-w-4xl mx-auto">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="text-center mb-12"
+      >
+        <h2 className="text-4xl font-heading font-bold text-brand-primary mb-4">Why PANS Was Created</h2>
+        <div className="w-20 h-1 bg-brand-primary mx-auto rounded-full" />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="space-y-6 text-text-secondary leading-relaxed"
+      >
+        <p>
+          PANS was created to respond to a clear gap many parents face when they first encounter the child protection system. Families often enter the system during periods of crisis or significant stress, yet they are expected to quickly understand investigations, legal processes, assessments, and case planning requirements with little accessible information explaining how the system works.
+        </p>
+        <p>
+          For many parents, the system feels complex, unfamiliar, and difficult to navigate. Important decisions affecting children and families are often made within legal and administrative processes that use specialised language and procedures. Without clear guidance, many parents struggle to understand what is happening, what steps they are expected to take, and how to meaningfully participate in decisions that affect their family.
+        </p>
+        <p>
+          PANS was created to provide a place where parents can access clear, practical information about the child protection system and Children's Court processes in plain language. The aim is to break down complex procedures into understandable guidance so families can better prepare for meetings, investigations, assessments, and court proceedings.
+        </p>
+        <p>
+          Another purpose of PANS is to support parents who may feel isolated or overwhelmed when navigating these systems. Many families experience uncertainty about where to turn for information or support, particularly during the early stages of involvement with child protection services.
+        </p>
+        <p>
+          Through information, resources, and guidance, PANS aims to help parents better understand the stages of the child protection process, what roles different professionals play, and how families can engage with the system in a more informed and confident way.
+        </p>
+        <p className="font-medium text-brand-primary">
+          By improving access to clear information, PANS seeks to reduce confusion and help parents feel more prepared when navigating processes that have a significant impact on their children and their family life.
+        </p>
+      </motion.div>
+    </div>
+
+    {/* About the Founder */}
     <div className="grid lg:grid-cols-2 gap-16 items-center">
       <motion.div
         initial={{ opacity: 0, x: -30 }}
@@ -365,10 +406,11 @@ const AboutSection = () => (
         className="order-2 lg:order-1"
       >
         <div className="relative">
-          <div className="absolute -top-6 -left-6 w-48 h-48 bg-brand-accent/20 rounded-full blur-2xl" />
+          <div className="absolute -top-6 -left-6 w-48 h-48 bg-brand-accent/30 rounded-full blur-2xl" />
+          <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-brand-primary/20 rounded-full blur-xl" />
           <img 
-            src={IMAGES.about}
-            alt="Supportive family moment" 
+            src={IMAGES.founder}
+            alt="Strength, hope, and empowerment" 
             className="relative rounded-3xl shadow-xl w-full object-cover max-h-[500px]"
           />
         </div>
@@ -380,23 +422,32 @@ const AboutSection = () => (
         viewport={{ once: true }}
         className="space-y-6 order-1 lg:order-2"
       >
-        <h2 className="text-4xl font-heading font-bold text-brand-primary">Why PANS Exists</h2>
-        <p className="text-text-secondary leading-relaxed">
-          Many parents involved with Child Protection report feeling overwhelmed by the complexity of the system. Legal processes can be complex, and for some families, especially those living in regional Victoria, access to advocacy and support services can be limited.
-        </p>
-        <p className="text-text-secondary leading-relaxed">
-          PANS was created after the founder experienced the child protection system firsthand and recognised the lack of clear guidance available to parents. Through this experience, it became clear that parents often need practical guidance to help them understand the system, prepare for meetings and court, and stay organised throughout their case.
-        </p>
-        <div className="pt-4">
-          <div className="bg-brand-secondary p-6 rounded-2xl border border-purple-100">
-            <h4 className="font-heading font-bold text-text-primary mb-2">About the Founder</h4>
-            <p className="text-sm text-brand-primary font-medium uppercase tracking-wider mb-3">
-              Criminology & Criminal Justice Student | WWCC Holder
-            </p>
-            <p className="text-text-secondary text-sm leading-relaxed">
-              Alongside lived experience, the founder is studying criminology and criminal justice with a focus on justice systems and the experiences of families involved in child protection matters.
-            </p>
-          </div>
+        <div>
+          <h2 className="text-4xl font-heading font-bold text-brand-primary mb-2">About the Founder</h2>
+          <p className="text-sm text-brand-primary font-medium uppercase tracking-wider">
+            Criminology & Criminal Justice Student | WWCC Holder | Magistrates' Court Volunteer
+          </p>
+        </div>
+
+        <div className="space-y-4 text-text-secondary leading-relaxed">
+          <p>
+            PANS was founded by a Criminology and Criminal Justice student with a strong interest in justice systems and the way legal and welfare systems impact families. Through academic study and practical exposure to court environments, the founder has developed a growing understanding of how complex systems operate and how they affect the lives of parents and children.
+          </p>
+          <p>
+            The founder is also a mother who has spent several years navigating the child protection system and Children's Court processes. Through this experience she developed a deep awareness of how overwhelming the system can be for parents who are trying to understand investigations, assessments, legal procedures, and expectations placed upon them.
+          </p>
+          <p>
+            During this time the founder also spent periods representing herself within court processes. This experience provided direct insight into how difficult it can be for parents to navigate legal systems without clear guidance or accessible information.
+          </p>
+          <p>
+            In addition to her studies, the founder holds a valid Working With Children Check and has volunteered within the Magistrates' Court environment. This role provided exposure to court operations and strengthened her understanding of how justice processes function in practice.
+          </p>
+        </div>
+
+        <div className="bg-brand-secondary p-6 rounded-2xl border border-purple-100">
+          <p className="text-text-secondary text-sm leading-relaxed italic">
+            "These combined experiences shaped the perspective behind PANS and the organisation's focus on helping parents better understand the systems they are navigating. The aim is to contribute to greater awareness, clearer information, and stronger support networks for families who are trying to navigate complex systems affecting their children and their futures."
+          </p>
         </div>
       </motion.div>
     </div>
@@ -910,8 +961,8 @@ const ContactSection = () => {
               </div>
               <div>
                 <h4 className="font-heading font-bold text-text-primary">Email Us</h4>
-                <a href="mailto:support@pansvictoria.org.au" className="text-brand-primary hover:underline">
-                  support@pansvictoria.org.au
+                <a href="mailto:yourvoicemattersaus@gmail.com" className="text-brand-primary hover:underline">
+                  yourvoicemattersaus@gmail.com
                 </a>
               </div>
             </div>
@@ -1041,8 +1092,8 @@ const Footer = () => (
       </div>
       
       <div className="flex flex-col md:flex-row justify-center gap-8 text-text-muted text-sm mb-12">
-        <a href="mailto:support@pansvictoria.org.au" className="flex items-center gap-2 justify-center hover:text-brand-primary transition-colors">
-          <Mail size={16} strokeWidth={1.5} /> support@pansvictoria.org.au
+        <a href="mailto:yourvoicemattersaus@gmail.com" className="flex items-center gap-2 justify-center hover:text-brand-primary transition-colors">
+          <Mail size={16} strokeWidth={1.5} /> yourvoicemattersaus@gmail.com
         </a>
         <span className="flex items-center gap-2 justify-center">
           <MapPin size={16} strokeWidth={1.5} /> Victoria, Australia
