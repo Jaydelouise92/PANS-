@@ -1231,6 +1231,28 @@ const Resources = () => {
             </div>
           </motion.button>
         </div>
+
+        {/* First 48 Hours Infographic */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.2 }}
+          className="mt-10 max-w-2xl mx-auto"
+        >
+          <div className="bg-gradient-to-br from-brand-primary/5 to-brand-accent/10 rounded-3xl p-6 border border-brand-primary/20">
+            <h4 className="text-lg font-heading font-bold text-brand-primary mb-4 text-center">Quick Visual Guide</h4>
+            <motion.img 
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.3 }}
+              src="https://customer-assets.emergentagent.com/job_website-wizard-15/artifacts/j7ktbmnr_1000025285.png"
+              alt="Navigating Child Protection: The First 48 Hours - Visual guide showing immediate actions and documentation steps"
+              className="w-full rounded-2xl shadow-lg cursor-pointer"
+              onClick={() => window.open('https://customer-assets.emergentagent.com/job_website-wizard-15/artifacts/j7ktbmnr_1000025285.png', '_blank')}
+            />
+            <p className="text-xs text-text-muted text-center mt-3">Click image to view full size</p>
+          </div>
+        </motion.div>
       </div>
       
       {/* External Links */}
