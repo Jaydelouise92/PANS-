@@ -42,7 +42,7 @@ const IMAGES = {
   about: "https://images.unsplash.com/photo-1709127347876-114b147e270c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA0MTJ8MHwxfHNlYXJjaHwzfHxzdXBwb3J0aXZlJTIwcGFyZW50JTIwY2hpbGQlMjBhZHZvY2FjeSUyMGNvbXBhc3Npb25hdGUlMjB0aGVyYXB5JTIwbGlzdGVuaW5nJTIwc2Vzc2lvbiUyMGZhbWlseSUyMGd1aWRhbmNlfGVufDB8fHx8MTc3MzIxMjY4MXww&ixlib=rb-4.1.0&q=85",
   support: "https://images.unsplash.com/photo-1701055448945-fb948dd48ef1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA0MTJ8MHwxfHNlYXJjaHw0fHxzdXBwb3J0aXZlJTIwcGFyZW50JTIwY2hpbGQlMjBhZHZvY2FjeSUyMGNvbXBhc3Npb25hdGUlMjB0aGVyYXB5JTIwbGlzdGVuaW5nJTIwc2Vzc2lvbiUyMGZhbWlseSUyMGd1aWRhbmNlfGVufDB8fHx8MTc3MzIxMjY4MXww&ixlib=rb-4.1.0&q=85",
   therapy: "https://images.unsplash.com/photo-1758273240373-370993d0275d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA0MTJ8MHwxfHNlYXJjaHwxfHxzdXBwb3J0aXZlJTIwcGFyZW50JTIwY2hpbGQlMjBhZHZvY2FjeSUyMGNvbXBhc3Npb25hdGUlMjB0aGVyYXB5JTIwbGlzdGVuaW5nJTIwc2Vzc2lvbiUyMGZhbWlseSUyMGd1aWRhbmNlfGVufDB8fHx8MTc3MzIxMjY4MXww&ixlib=rb-4.1.0&q=85",
-  founder: "https://images.unsplash.com/photo-1581197326868-51cafbd1a169?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzB8MHwxfHNlYXJjaHwxfHx3b21hbiUyMHNpbGhvdWV0dGUlMjBzdHJlbmd0aCUyMGNvdXJhZ2UlMjBob3BlJTIwbGlnaHR8ZW58MHx8fHwxNzczMjE1MDY2fDA&ixlib=rb-4.1.0&q=85",
+  founder: "https://customer-assets.emergentagent.com/job_website-wizard-15/artifacts/g1tt20q4_1000025270.jpg",
 };
 
 // Scroll to section helper
