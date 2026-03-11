@@ -1,0 +1,162 @@
+{
+  "identity": {
+    "persona": "E1",
+    "mission": "Create a calming, supportive, and professional digital sanctuary for parents in crisis.",
+    "tone": "Compassionate, Clear, Trustworthy, Non-Judgmental",
+    "principles": [
+      "Clarity is Kindness: Information must be digestible, not overwhelming.",
+      "Soft Utility: Functional design that feels like a warm hug, not a cold form.",
+      "Nature as Anchor: Use organic shapes and breathing room to reduce anxiety.",
+      "Pathways, Not Walls: Visuals should suggest movement forward and navigation."
+    ]
+  },
+  "typography": {
+    "headings": {
+      "family": "Manrope",
+      "weights": ["600", "700", "800"],
+      "usage": "Main section headers. Use tight tracking (-0.02em) for a modern feel. If Manrope is unavailable, use the existing Cormorant Garamond for a more classic, serious tone, but ensure it is Bold.",
+      "fallback": "sans-serif"
+    },
+    "body": {
+      "family": "DM Sans",
+      "weights": ["400", "500"],
+      "usage": "All paragraph text. High legibility is critical.",
+      "fallback": "sans-serif"
+    },
+    "special": {
+      "family": "Cormorant Garamond",
+      "usage": "Pull quotes, 'First 48 Hours' emphasis, and testimonials.",
+      "style": "Italic"
+    }
+  },
+  "colors": {
+    "primary": "#7C6A96",
+    "secondary": "#F9F8FF",
+    "accent": "#B5A1D1",
+    "text": {
+      "primary": "#2D3748",
+      "secondary": "#4A5568",
+      "muted": "#718096"
+    },
+    "feedback": {
+      "success": "#C6F6D5",
+      "success_text": "#22543D",
+      "warning": "#FEEBC8",
+      "warning_text": "#744210",
+      "error": "#FED7D7",
+      "error_text": "#822727"
+    },
+    "backgrounds": {
+      "page": "#F9F8FF",
+      "card": "#FFFFFF",
+      "overlay": "rgba(124, 106, 150, 0.1)"
+    }
+  },
+  "spacing": {
+    "scale": {
+      "xs": "0.5rem",
+      "sm": "1rem",
+      "md": "2rem",
+      "lg": "4rem",
+      "xl": "6rem",
+      "2xl": "8rem"
+    },
+    "container_padding": "px-6 md:px-12 lg:px-24"
+  },
+  "layout_strategies": {
+    "hero": {
+      "type": "Asymmetric Split",
+      "description": "Text on the left (60%), Image with organic mask/blob shape on the right (40%). Avoid standard rectangles.",
+      "motion": "Fade up text, slow drift for image."
+    },
+    "bento_grid": {
+      "usage": "Services and Resources sections.",
+      "columns": "grid-cols-1 md:grid-cols-3",
+      "gap": "gap-6 md:gap-8",
+      "style": "Cards should have soft shadows (shadow-lg shadow-purple-900/5) and rounded-2xl corners."
+    },
+    "process_steps": {
+      "usage": "How It Works",
+      "style": "Vertical timeline with connecting lines. Use the Primary Purple for the line and active step."
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#7C6A96] text-white hover:bg-[#6A5A82] rounded-full px-8 py-3 transition-transform hover:scale-105 shadow-md",
+      "secondary": "bg-white text-[#7C6A96] border-2 border-[#7C6A96] hover:bg-[#F9F8FF] rounded-full px-8 py-3",
+      "ghost": "text-[#7C6A96] hover:bg-[#F9F8FF] rounded-lg px-4 py-2"
+    },
+    "cards": {
+      "default": "bg-white rounded-2xl p-8 shadow-sm border border-purple-100/50 hover:shadow-md transition-shadow",
+      "glass": "bg-white/70 backdrop-blur-xl border border-white/40 shadow-lg rounded-2xl"
+    },
+    "navigation": {
+      "style": "Sticky glassmorphism header. Links should have a sliding underline effect on hover."
+    },
+    "forms": {
+      "input": "bg-white border-purple-200 focus:border-[#7C6A96] focus:ring-2 focus:ring-[#7C6A96]/20 rounded-xl p-4 transition-all",
+      "label": "text-sm font-bold text-[#7C6A96] mb-2 block"
+    }
+  },
+  "visual_enhancers": {
+    "texture": "Add a subtle 'noise' overlay (opacity 0.03) to the entire body to reduce digital sterility.",
+    "blobs": "Use large, blurred, colorful orbs (Purple/Lilac) in the background behind glass cards.",
+    "icons": "Lucide React icons. Use stroke-width={1.5} for a lighter, elegant look."
+  },
+  "motion": {
+    "entrance": {
+      "type": "stagger",
+      "delay": 0.1,
+      "duration": 0.5,
+      "ease": "easeOut"
+    },
+    "hover": {
+      "scale": 1.02,
+      "lift": "-4px"
+    }
+  },
+  "accessibility": {
+    "contrast": "Ensure all text on purple backgrounds is white. All text on white backgrounds is dark slate.",
+    "focus": "Visible focus ring using the accent color (#B5A1D1).",
+    "reduced_motion": "Respect 'prefers-reduced-motion' media query."
+  },
+  "image_urls": {
+    "hero": {
+      "url": "https://images.unsplash.com/photo-1742210167640-35d0ada27189?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzMzl8MHwxfHNlYXJjaHwyfHxjYWxtJTIwbmF0dXJlJTIwcGF0aHdheSUyMHBlYWNlZnVsJTIwZm9yZXN0JTIwc3VubGlnaHR8ZW58MHx8fHwxNzczMjEyNjg3fDA&ixlib=rb-4.1.0&q=85",
+      "alt": "Sunlight streaming through trees on a peaceful path",
+      "usage": "Hero background with overlay or side image"
+    },
+    "about": {
+      "url": "https://images.unsplash.com/photo-1709127347876-114b147e270c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA0MTJ8MHwxfHNlYXJjaHwzfHxzdXBwb3J0aXZlJTIwcGFyZW50JTIwY2hpbGQlMjBhZHZvY2FjeSUyMGNvbXBhc3Npb25hdGUlMjB0aGVyYXB5JTIwbGlzdGVuaW5nJTIwc2Vzc2lvbiUyMGZhbWlseSUyMGd1aWRhbmNlfGVufDB8fHx8MTc3MzIxMjY4MXww&ixlib=rb-4.1.0&q=85",
+      "alt": "Supportive family moment on a bench",
+      "usage": "About section or Who We Support"
+    },
+    "support": {
+      "url": "https://images.unsplash.com/photo-1701055448945-fb948dd48ef1?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA0MTJ8MHwxfHNlYXJjaHw0fHxzdXBwb3J0aXZlJTIwcGFyZW50JTIwY2hpbGQlMjBhZHZvY2FjeSUyMGNvbXBhc3Npb25hdGUlMjB0aGVyYXB5JTIwbGlzdGVuaW5nJTIwc2Vzc2lvbiUyMGZhbWlseSUyMGd1aWRhbmNlfGVufDB8fHx8MTc3MzIxMjY4MXww&ixlib=rb-4.1.0&q=85",
+      "alt": "Mother and child sharing a quiet moment",
+      "usage": "Services or First 48 Hours section"
+    },
+    "therapy": {
+      "url": "https://images.unsplash.com/photo-1758273240373-370993d0275d?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA0MTJ8MHwxfHNlYXJjaHwxfHxzdXBwb3J0aXZlJTIwcGFyZW50JTIwY2hpbGQlMjBhZHZvY2FjeSUyMGNvbXBhc3Npb25hdGUlMjB0aGVyYXB5JTIwbGlzdGVuaW5nJTIwc2Vzc2lvbiUyMGZhbWlseSUyMGd1aWRhbmNlfGVufDB8fHx8MTc3MzIxMjY4MXww&ixlib=rb-4.1.0&q=85",
+      "alt": "Professional listening session",
+      "usage": "Contact or Advocacy section"
+    }
+  },
+  "instructions_to_main_agent": [
+    "1. IMPLEMENTATION: Use 'App.tsx' as the main entry point. Create a components folder if not present.",
+    "2. THEME: Update 'index.css' to include the new font families (Manrope/DM Sans) via Google Fonts import.",
+    "3. NAVIGATION: Create a sticky header that changes background on scroll (transparent to glass).",
+    "4. SECTIONS: Build sections as separate components: Hero, About, WhoWeSupport, Services, Process, First48Hours, Resources, Contact.",
+    "5. CHATBOT: Implement the floating AI Chat button at the bottom right with a pulsing effect.",
+    "6. ANIMATION: Use framer-motion for all scroll reveals. Do not use static blocks.",
+    "7. DATA-TESTID: Add data-testid to all buttons, inputs, and major sections.",
+    "8. GLASSMORPHISM: Apply the .glass-card utility to the 'First 48 Hours' guide to make it stand out as a critical resource."
+  ],
+  "universal_guidelines": [
+    "Do not use gradients for text.",
+    "Ensure 2-3x more padding than usual.",
+    "Use pill-shaped buttons.",
+    "No generic AI emojis.",
+    "Respect the purple constraints but use white space generously."
+  ]
+}
