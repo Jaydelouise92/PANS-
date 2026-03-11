@@ -4,6 +4,7 @@
 **Project Name:** PANS Victoria (Parent Advocacy & Navigation Support)  
 **Type:** Advocacy/Support Website  
 **Target Audience:** Parents navigating the child protection system in Victoria, Australia
+**Contact Email:** yourvoicemattersaus@gmail.com
 
 ## Original Problem Statement
 - Redesign and improve existing PANS Victoria website
@@ -16,6 +17,8 @@
 - Change name from "Service" to "Support"
 - Add downloadable PDF guides
 - Add analytics tracking
+- Update founder section with detailed bio
+- Add "Why PANS Was Created" section
 
 ## Tech Stack
 - **Frontend:** React 19 + Vite 6 + TypeScript + Tailwind CSS v4
@@ -39,14 +42,15 @@
 
 ### 2. Navigation
 - Sticky glassmorphism navbar with active section indicator
-- Smooth scroll to all 9 sections
+- Smooth scroll to all sections
 - Mobile-responsive hamburger menu
 
 ### 3. Sections
 - Hero with compelling CTA
 - "Start Here" quick access section  
 - "Why Parents Contact PANS" with 3 key differentiators
-- About PANS section with founder information
+- **"Why PANS Was Created"** - comprehensive explanation of the gap PANS fills
+- **"About the Founder"** - detailed bio with credentials and experience
 - Testimonials carousel (auto-rotating)
 - "Who We Support" grid
 - Support Services with 5 service cards
@@ -68,14 +72,14 @@
 - First name, last name, email, message fields
 - Backend validation
 - MongoDB storage of submissions
-- Email notification (requires Resend API key)
+- Email notification to yourvoicemattersaus@gmail.com (requires Resend API key)
 - Success/error feedback
 
-### 6. Downloadable PDF Resources (NEW)
+### 6. Downloadable PDF Resources
 - **First 48 Hours Guide**: Essential steps after Child Protection involvement
 - **Timeline Template**: Track events, meetings, contacts, and important dates
 
-### 7. Analytics (NEW)
+### 7. Analytics
 - Google Analytics integration (needs GA_MEASUREMENT_ID)
 - Custom PANS analytics tracking page views and scroll depth
 
@@ -95,10 +99,13 @@
 - External resource links
 - Analytics tracking
 - Mobile responsive design
+- New detailed founder section
+- "Why PANS Was Created" section
 
 ## Configuration Notes
 - Backend URL: Configured in `/app/frontend/.env`
 - Emergent LLM Key: Configured in `/app/backend/.env`
+- Email recipient: yourvoicemattersaus@gmail.com
 - Email: Resend API key placeholder in backend (needs real key for email delivery)
 - Analytics: Replace `GA_MEASUREMENT_ID` in index.html with actual Google Analytics ID
 
@@ -125,4 +132,4 @@
 
 ---
 **Last Updated:** January 2026  
-**Status:** MVP Complete with Downloads & Analytics
+**Status:** MVP Complete with Downloads, Analytics, & Founder Bio
