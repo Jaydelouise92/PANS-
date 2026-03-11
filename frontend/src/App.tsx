@@ -1189,22 +1189,22 @@ const Resources = () => {
       {/* Downloadable Resources */}
       <div className="mb-16">
         <h3 className="text-2xl font-heading font-bold mb-8 text-center text-brand-primary">Downloadable Guides</h3>
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
           <motion.button
             onClick={() => handleDownload('first-48-hours')}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             data-testid="download-first-48-hours"
-            className="card flex gap-6 items-start group cursor-pointer text-left hover:shadow-lg border-2 border-brand-primary/20 hover:border-brand-primary transition-all"
+            className="card flex flex-col gap-4 items-center group cursor-pointer text-center hover:shadow-lg border-2 border-brand-primary/20 hover:border-brand-primary transition-all"
           >
-            <div className="w-14 h-14 bg-brand-primary rounded-xl flex items-center justify-center text-white shrink-0">
+            <div className="w-14 h-14 bg-brand-primary rounded-xl flex items-center justify-center text-white">
               <FileText size={24} strokeWidth={1.5} />
             </div>
-            <div className="flex-1">
-              <h3 className="font-heading text-xl font-bold mb-2">First 48 Hours Guide</h3>
-              <p className="text-text-secondary text-sm mb-3">Essential steps to take immediately after Child Protection involvement begins. Print this and keep it handy.</p>
-              <span className="text-brand-primary font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+            <div>
+              <h3 className="font-heading text-lg font-bold mb-2">First 48 Hours Guide</h3>
+              <p className="text-text-secondary text-sm mb-3">Essential steps to take immediately after Child Protection involvement.</p>
+              <span className="text-brand-primary font-semibold text-sm flex items-center justify-center gap-1 group-hover:gap-2 transition-all">
                 <Download size={14} strokeWidth={1.5} /> Download PDF
               </span>
             </div>
@@ -1217,42 +1217,45 @@ const Resources = () => {
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
             data-testid="download-timeline-template"
-            className="card flex gap-6 items-start group cursor-pointer text-left hover:shadow-lg border-2 border-brand-primary/20 hover:border-brand-primary transition-all"
+            className="card flex flex-col gap-4 items-center group cursor-pointer text-center hover:shadow-lg border-2 border-brand-primary/20 hover:border-brand-primary transition-all"
           >
-            <div className="w-14 h-14 bg-brand-primary rounded-xl flex items-center justify-center text-white shrink-0">
+            <div className="w-14 h-14 bg-brand-primary rounded-xl flex items-center justify-center text-white">
               <Clock size={24} strokeWidth={1.5} />
             </div>
-            <div className="flex-1">
-              <h3 className="font-heading text-xl font-bold mb-2">Timeline Template</h3>
-              <p className="text-text-secondary text-sm mb-3">Track events, meetings, and communications. Essential for staying organised and preparing for court.</p>
-              <span className="text-brand-primary font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+            <div>
+              <h3 className="font-heading text-lg font-bold mb-2">Timeline Template</h3>
+              <p className="text-text-secondary text-sm mb-3">Track events, meetings, and communications for court preparation.</p>
+              <span className="text-brand-primary font-semibold text-sm flex items-center justify-center gap-1 group-hover:gap-2 transition-all">
                 <Download size={14} strokeWidth={1.5} /> Download PDF
               </span>
             </div>
           </motion.button>
-        </div>
 
-        {/* First 48 Hours Infographic */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
-          className="mt-10 max-w-2xl mx-auto"
-        >
-          <div className="bg-gradient-to-br from-brand-primary/5 to-brand-accent/10 rounded-3xl p-6 border border-brand-primary/20">
-            <h4 className="text-lg font-heading font-bold text-brand-primary mb-4 text-center">Quick Visual Guide</h4>
-            <motion.img 
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.3 }}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="card flex flex-col gap-4 items-center group cursor-pointer text-center hover:shadow-lg border-2 border-brand-primary/20 hover:border-brand-primary transition-all"
+            onClick={() => window.open('https://customer-assets.emergentagent.com/job_website-wizard-15/artifacts/j7ktbmnr_1000025285.png', '_blank')}
+          >
+            <div className="w-14 h-14 bg-brand-primary rounded-xl flex items-center justify-center text-white">
+              <FileText size={24} strokeWidth={1.5} />
+            </div>
+            <div>
+              <h3 className="font-heading text-lg font-bold mb-2">48 Hours Infographic</h3>
+              <p className="text-text-secondary text-sm mb-3">Quick visual reference guide for the first 48 hours.</p>
+              <span className="text-brand-primary font-semibold text-sm flex items-center justify-center gap-1 group-hover:gap-2 transition-all">
+                <ExternalLink size={14} strokeWidth={1.5} /> View Image
+              </span>
+            </div>
+            <img 
               src="https://customer-assets.emergentagent.com/job_website-wizard-15/artifacts/j7ktbmnr_1000025285.png"
-              alt="Navigating Child Protection: The First 48 Hours - Visual guide showing immediate actions and documentation steps"
-              className="w-full rounded-2xl shadow-lg cursor-pointer"
-              onClick={() => window.open('https://customer-assets.emergentagent.com/job_website-wizard-15/artifacts/j7ktbmnr_1000025285.png', '_blank')}
+              alt="First 48 Hours Infographic"
+              className="w-full rounded-xl mt-2 group-hover:scale-[1.02] transition-transform"
             />
-            <p className="text-xs text-text-muted text-center mt-3">Click image to view full size</p>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
       
       {/* External Links */}
