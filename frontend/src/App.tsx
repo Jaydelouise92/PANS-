@@ -27,14 +27,17 @@ import {
   Phone,
   Mail,
   ExternalLink,
-  Download
+  Download,
+  HeartHandshake,
+  Sparkles,
+  AlertTriangle
 } from 'lucide-react';
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL || '';
 
 // Types
-type Section = 'home' | 'about' | 'who-we-support' | 'support' | 'how-it-works' | 'guide' | 'resources' | 'supporting-pans' | 'contact';
+type Section = 'home' | 'about' | 'who-we-support' | 'support' | 'how-it-works' | 'guide' | 'mental-health' | 'resources' | 'supporting-pans' | 'contact';
 
 // Animation variants for reuse
 const fadeInUp = {
@@ -110,6 +113,7 @@ const Navbar = ({ activeSection }: { activeSection: Section }) => {
     { id: 'support', label: 'Support' },
     { id: 'how-it-works', label: 'Process' },
     { id: 'guide', label: 'First 48 Hours' },
+    { id: 'mental-health', label: 'Mental Health' },
     { id: 'resources', label: 'Resources' },
     { id: 'contact', label: 'Contact' },
   ];
@@ -894,6 +898,258 @@ const First48Hours = () => (
   </section>
 );
 
+// --- Mental Health & Wellbeing Section ---
+const MentalHealthSection = () => {
+  const supportServices = [
+    {
+      name: "Lifeline Australia",
+      desc: "24 hour crisis support and suicide prevention.",
+      phone: "13 11 14",
+      website: "https://www.lifeline.org.au"
+    },
+    {
+      name: "Beyond Blue",
+      desc: "Support for anxiety, depression, and emotional wellbeing.",
+      phone: "1300 22 4636",
+      website: "https://www.beyondblue.org.au"
+    },
+    {
+      name: "Suicide Call Back Service",
+      desc: "24 hour counselling for people experiencing distress or supporting someone in crisis.",
+      phone: "1300 659 467",
+      website: "https://www.suicidecallbackservice.org.au"
+    },
+    {
+      name: "Head to Health",
+      desc: "Government mental health service directory that helps people find local support.",
+      phone: null,
+      website: "https://www.headtohealth.gov.au"
+    },
+    {
+      name: "MensLine Australia",
+      desc: "Telephone and online counselling for men dealing with stress, family issues, or relationship difficulties.",
+      phone: "1300 78 99 78",
+      website: "https://www.mensline.org.au"
+    }
+  ];
+
+  const wellbeingTips = [
+    "Speaking with a counsellor or mental health professional",
+    "Maintaining supportive relationships with trusted people",
+    "Taking breaks from stressful situations when possible",
+    "Keeping records and notes to reduce mental overload",
+    "Seeking peer support from others who understand the experience"
+  ];
+
+  return (
+    <section id="mental-health" data-testid="mental-health-section" className="section-padding overflow-hidden">
+      {/* Why Mental Health Matters */}
+      <div className="max-w-4xl mx-auto mb-20">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={staggerContainer}
+          className="text-center mb-12"
+        >
+          <motion.div 
+            variants={staggerItem}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-primary/10 text-brand-primary text-xs font-bold uppercase tracking-wider mb-6"
+          >
+            <HeartHandshake size={14} strokeWidth={1.5} /> Emotional Wellbeing • Crisis Support • Practical Coping
+          </motion.div>
+          <motion.h2 
+            variants={staggerItem}
+            className="text-4xl md:text-5xl font-heading font-bold text-brand-primary mb-4"
+          >
+            Mental Health & Wellbeing
+          </motion.h2>
+          <motion.div 
+            initial={{ scaleX: 0 }}
+            whileInView={{ scaleX: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="w-20 h-1 bg-brand-primary mx-auto rounded-full origin-center mb-8" 
+          />
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="bg-gradient-to-br from-brand-primary/5 to-brand-accent/10 border border-brand-primary/20 rounded-3xl p-8 md:p-10"
+        >
+          <h3 className="text-2xl font-heading font-bold text-brand-primary mb-6">Why Mental Health Support Matters</h3>
+          <div className="space-y-4 text-text-secondary leading-relaxed">
+            <p>
+              Parents navigating child protection investigations and court processes often experience high levels of stress, anxiety, grief, and uncertainty. These experiences affect emotional wellbeing and daily functioning. Seeking support during this time is a positive step toward maintaining stability and caring for yourself while working through complex processes.
+            </p>
+            <p className="font-medium text-brand-primary">
+              PANS encourages parents to prioritise their mental health and reach out for support when needed.
+            </p>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Support Services */}
+      <div className="mb-20">
+        <motion.h3 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-3xl font-heading font-bold text-center mb-4"
+        >
+          Support Services
+        </motion.h3>
+        <motion.p 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1 }}
+          className="text-center text-text-secondary mb-12 max-w-2xl mx-auto"
+        >
+          Trusted national services in Australia so parents know where to turn for mental health support.
+        </motion.p>
+
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={staggerContainer}
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
+        >
+          {supportServices.map((service, i) => (
+            <motion.div
+              key={i}
+              variants={staggerItem}
+              whileHover={{ y: -8, boxShadow: "0 20px 40px rgba(124, 106, 150, 0.15)" }}
+              className="bg-white rounded-2xl p-6 border border-purple-100 shadow-sm"
+            >
+              <div className="flex items-start gap-4 mb-4">
+                <div className="w-12 h-12 bg-brand-primary/10 rounded-xl flex items-center justify-center text-brand-primary shrink-0">
+                  <HeartHandshake size={22} strokeWidth={1.5} />
+                </div>
+                <div>
+                  <h4 className="font-heading font-bold text-lg text-text-primary">{service.name}</h4>
+                  {service.phone && (
+                    <a href={`tel:${service.phone.replace(/\s/g, '')}`} className="text-brand-primary font-semibold text-sm hover:underline">
+                      {service.phone}
+                    </a>
+                  )}
+                </div>
+              </div>
+              <p className="text-text-secondary text-sm mb-4 leading-relaxed">{service.desc}</p>
+              <a 
+                href={service.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-brand-primary font-semibold text-sm hover:gap-2 transition-all"
+              >
+                Visit Website <ExternalLink size={14} strokeWidth={1.5} />
+              </a>
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+
+      {/* Parent Wellbeing Tips */}
+      <div className="grid lg:grid-cols-2 gap-12 items-start max-w-6xl mx-auto mb-16">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeInLeft}
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-brand-primary rounded-xl flex items-center justify-center text-white">
+              <Sparkles size={22} strokeWidth={1.5} />
+            </div>
+            <h3 className="text-2xl font-heading font-bold text-brand-primary">Parent Wellbeing Tips</h3>
+          </div>
+          <p className="text-text-secondary mb-6 leading-relaxed">
+            Parents navigating the child protection system often carry intense emotional pressure. Taking steps to protect your wellbeing is important.
+          </p>
+          <p className="text-text-secondary font-medium mb-6">Helpful strategies include:</p>
+          <motion.ul 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="space-y-3"
+          >
+            {wellbeingTips.map((tip, i) => (
+              <motion.li 
+                key={i}
+                variants={staggerItem}
+                className="flex items-start gap-3"
+              >
+                <div className="w-6 h-6 bg-brand-primary/10 rounded-full flex items-center justify-center text-brand-primary shrink-0 mt-0.5">
+                  <CheckCircle2 size={14} strokeWidth={2} />
+                </div>
+                <span className="text-text-secondary">{tip}</span>
+              </motion.li>
+            ))}
+          </motion.ul>
+        </motion.div>
+
+        {/* Crisis Support Card */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          variants={fadeInRight}
+        >
+          <div className="bg-brand-dark text-white p-8 md:p-10 rounded-3xl relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-48 h-48 bg-brand-primary/20 rounded-full blur-[60px] -translate-y-1/2 translate-x-1/2" />
+            
+            <div className="relative z-10">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
+                  <AlertTriangle size={22} strokeWidth={1.5} className="text-brand-accent" />
+                </div>
+                <h3 className="text-2xl font-heading font-bold">Crisis Support</h3>
+              </div>
+              
+              <p className="text-white/80 mb-8 leading-relaxed">
+                If you or someone you know is in immediate distress or at risk of harm, contact emergency services or one of the crisis lines listed above.
+              </p>
+
+              <div className="space-y-4">
+                <a 
+                  href="tel:000"
+                  className="flex items-center gap-4 bg-white/10 hover:bg-white/15 p-4 rounded-xl transition-colors"
+                >
+                  <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
+                    <Phone size={18} strokeWidth={2} />
+                  </div>
+                  <div>
+                    <span className="font-bold block">Emergency Services</span>
+                    <span className="text-white/70 text-sm">Call 000</span>
+                  </div>
+                </a>
+                
+                <a 
+                  href="tel:131114"
+                  className="flex items-center gap-4 bg-white/10 hover:bg-white/15 p-4 rounded-xl transition-colors"
+                >
+                  <div className="w-10 h-10 bg-brand-primary rounded-full flex items-center justify-center">
+                    <Phone size={18} strokeWidth={2} />
+                  </div>
+                  <div>
+                    <span className="font-bold block">Lifeline 24/7</span>
+                    <span className="text-white/70 text-sm">Call 13 11 14</span>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+};
+
 // --- Resources ---
 const Resources = () => {
   const handleDownload = async (type: 'first-48-hours' | 'timeline-template') => {
@@ -1430,7 +1686,7 @@ export default function App() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections: Section[] = ['home', 'about', 'who-we-support', 'support', 'how-it-works', 'guide', 'resources', 'supporting-pans', 'contact'];
+      const sections: Section[] = ['home', 'about', 'who-we-support', 'support', 'how-it-works', 'guide', 'mental-health', 'resources', 'supporting-pans', 'contact'];
       const scrollPosition = window.scrollY + 150;
 
       for (const section of sections) {
@@ -1463,6 +1719,7 @@ export default function App() {
         <SupportServices />
         <HowItWorks />
         <First48Hours />
+        <MentalHealthSection />
         <Resources />
         <SupportingPANS />
         <ContactSection />
