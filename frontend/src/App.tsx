@@ -1,5 +1,5 @@
 /**
- * PANS Victoria - Parent Advocacy & Navigation Service
+ * PANS Victoria - Parent Advocacy & Navigation Support
  * Redesigned website with improved UI/UX
  */
 
@@ -26,7 +26,8 @@ import {
   Bot,
   Phone,
   Mail,
-  ExternalLink
+  ExternalLink,
+  Download
 } from 'lucide-react';
 import axios from 'axios';
 
@@ -71,7 +72,7 @@ const Navbar = ({ activeSection }: { activeSection: Section }) => {
     { id: 'home', label: 'Home' },
     { id: 'about', label: 'About' },
     { id: 'who-we-support', label: 'Who We Support' },
-    { id: 'support', label: 'Services' },
+    { id: 'support', label: 'Support' },
     { id: 'how-it-works', label: 'Process' },
     { id: 'guide', label: 'First 48 Hours' },
     { id: 'resources', label: 'Resources' },
@@ -194,7 +195,7 @@ const Hero = () => (
           <MapPin size={14} strokeWidth={1.5} /> Supporting Regional Victoria
         </div>
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-[1.1] mb-6 text-text-primary">
-          Parent Advocacy & Navigation Service
+          Parent Advocacy & Navigation Support
           <span className="text-brand-primary"> Victoria</span>
         </h1>
         <p className="text-lg text-text-secondary mb-10 max-w-lg leading-relaxed">
@@ -684,56 +685,125 @@ const First48Hours = () => (
 );
 
 // --- Resources ---
-const Resources = () => (
-  <section id="resources" data-testid="resources-section" className="section-padding bg-white rounded-[3rem]">
-    <div className="text-center max-w-3xl mx-auto mb-16">
-      <motion.h2 
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        className="text-4xl font-heading font-bold mb-6"
-      >
-        Resources for Parents
-      </motion.h2>
-      <p className="text-lg text-text-secondary">
-        Helpful information and links to support your navigation of the child protection process.
-      </p>
-    </div>
-    
-    <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-      {[
-        { title: "Victoria Legal Aid", desc: "Free legal information, advice and representation.", icon: <Scale strokeWidth={1.5} />, link: "https://www.legalaid.vic.gov.au" },
-        { title: "Children's Court of Victoria", desc: "Information about court procedures and what to expect.", icon: <Gavel strokeWidth={1.5} />, link: "https://www.childrenscourt.vic.gov.au" },
-        { title: "DFFH - Child Protection", desc: "Official information about the child protection system.", icon: <BookOpen strokeWidth={1.5} />, link: "https://services.dffh.vic.gov.au/child-protection" },
-        { title: "Parentline", desc: "Counselling and support for parents - Call 13 22 89", icon: <Phone strokeWidth={1.5} />, link: "tel:132289" }
-      ].map((item, i) => (
-        <motion.a
-          key={i}
-          href={item.link}
-          target={item.link.startsWith('http') ? '_blank' : undefined}
-          rel={item.link.startsWith('http') ? 'noopener noreferrer' : undefined}
+const Resources = () => {
+  const handleDownload = async (type: 'first-48-hours' | 'timeline-template') => {
+    try {
+      const response = await axios.get(`${API_URL}/api/downloads/${type}`, {
+        responseType: 'blob'
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', type === 'first-48-hours' ? 'PANS_First_48_Hours_Guide.pdf' : 'PANS_Timeline_Template.pdf');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download error:', error);
+    }
+  };
+
+  return (
+    <section id="resources" data-testid="resources-section" className="section-padding bg-white rounded-[3rem]">
+      <div className="text-center max-w-3xl mx-auto mb-16">
+        <motion.h2 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ delay: i * 0.1 }}
-          data-testid={`resource-link-${i}`}
-          className="card flex gap-6 items-start group cursor-pointer"
+          className="text-4xl font-heading font-bold mb-6"
         >
-          <div className="w-12 h-12 bg-brand-primary/10 rounded-xl flex items-center justify-center text-brand-primary shrink-0 group-hover:bg-brand-primary group-hover:text-white transition-colors">
-            {item.icon}
-          </div>
-          <div className="flex-1">
-            <h3 className="font-heading text-xl font-bold mb-2 group-hover:text-brand-primary transition-colors">{item.title}</h3>
-            <p className="text-text-secondary text-sm mb-3">{item.desc}</p>
-            <span className="text-brand-primary font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
-              View Resource <ExternalLink size={14} strokeWidth={1.5} />
-            </span>
-          </div>
-        </motion.a>
-      ))}
-    </div>
-  </section>
-);
+          Resources for Parents
+        </motion.h2>
+        <p className="text-lg text-text-secondary">
+          Helpful information, downloadable guides, and links to support your navigation of the child protection process.
+        </p>
+      </div>
+
+      {/* Downloadable Resources */}
+      <div className="mb-16">
+        <h3 className="text-2xl font-heading font-bold mb-8 text-center text-brand-primary">Downloadable Guides</h3>
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <motion.button
+            onClick={() => handleDownload('first-48-hours')}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            data-testid="download-first-48-hours"
+            className="card flex gap-6 items-start group cursor-pointer text-left hover:shadow-lg border-2 border-brand-primary/20 hover:border-brand-primary transition-all"
+          >
+            <div className="w-14 h-14 bg-brand-primary rounded-xl flex items-center justify-center text-white shrink-0">
+              <FileText size={24} strokeWidth={1.5} />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-heading text-xl font-bold mb-2">First 48 Hours Guide</h3>
+              <p className="text-text-secondary text-sm mb-3">Essential steps to take immediately after Child Protection involvement begins. Print this and keep it handy.</p>
+              <span className="text-brand-primary font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                <Download size={14} strokeWidth={1.5} /> Download PDF
+              </span>
+            </div>
+          </motion.button>
+
+          <motion.button
+            onClick={() => handleDownload('timeline-template')}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            data-testid="download-timeline-template"
+            className="card flex gap-6 items-start group cursor-pointer text-left hover:shadow-lg border-2 border-brand-primary/20 hover:border-brand-primary transition-all"
+          >
+            <div className="w-14 h-14 bg-brand-primary rounded-xl flex items-center justify-center text-white shrink-0">
+              <Clock size={24} strokeWidth={1.5} />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-heading text-xl font-bold mb-2">Timeline Template</h3>
+              <p className="text-text-secondary text-sm mb-3">Track events, meetings, and communications. Essential for staying organised and preparing for court.</p>
+              <span className="text-brand-primary font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                <Download size={14} strokeWidth={1.5} /> Download PDF
+              </span>
+            </div>
+          </motion.button>
+        </div>
+      </div>
+      
+      {/* External Links */}
+      <h3 className="text-2xl font-heading font-bold mb-8 text-center text-brand-primary">Helpful Links</h3>
+      <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+        {[
+          { title: "Victoria Legal Aid", desc: "Free legal information, advice and representation.", icon: <Scale strokeWidth={1.5} />, link: "https://www.legalaid.vic.gov.au" },
+          { title: "Children's Court of Victoria", desc: "Information about court procedures and what to expect.", icon: <Gavel strokeWidth={1.5} />, link: "https://www.childrenscourt.vic.gov.au" },
+          { title: "DFFH - Child Protection", desc: "Official information about the child protection system.", icon: <BookOpen strokeWidth={1.5} />, link: "https://services.dffh.vic.gov.au/child-protection" },
+          { title: "Parentline", desc: "Counselling and support for parents - Call 13 22 89", icon: <Phone strokeWidth={1.5} />, link: "tel:132289" }
+        ].map((item, i) => (
+          <motion.a
+            key={i}
+            href={item.link}
+            target={item.link.startsWith('http') ? '_blank' : undefined}
+            rel={item.link.startsWith('http') ? 'noopener noreferrer' : undefined}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: i * 0.1 }}
+            data-testid={`resource-link-${i}`}
+            className="card flex gap-6 items-start group cursor-pointer"
+          >
+            <div className="w-12 h-12 bg-brand-primary/10 rounded-xl flex items-center justify-center text-brand-primary shrink-0 group-hover:bg-brand-primary group-hover:text-white transition-colors">
+              {item.icon}
+            </div>
+            <div className="flex-1">
+              <h3 className="font-heading text-xl font-bold mb-2 group-hover:text-brand-primary transition-colors">{item.title}</h3>
+              <p className="text-text-secondary text-sm mb-3">{item.desc}</p>
+              <span className="text-brand-primary font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                View Resource <ExternalLink size={14} strokeWidth={1.5} />
+              </span>
+            </div>
+          </motion.a>
+        ))}
+      </div>
+    </section>
+  );
+};
 
 // --- Supporting PANS ---
 const SupportingPANS = () => (
@@ -747,7 +817,7 @@ const SupportingPANS = () => (
         <h2 className="text-4xl font-heading font-bold mb-8 text-brand-primary">Supporting PANS</h2>
         <div className="space-y-6 text-text-secondary leading-relaxed">
           <p>
-            Parent Advocacy & Navigation Service Victoria (PANS) is currently being developed as an independent community support initiative focused on helping parents navigate the child protection system.
+            Parent Advocacy & Navigation Support Victoria (PANS) is currently being developed as an independent community support initiative focused on helping parents navigate the child protection system.
           </p>
           <p>
             At this stage, PANS operates without formal funding and support is being provided on a voluntary basis while the service grows.
@@ -988,7 +1058,7 @@ const Footer = () => (
     </div>
     
     <div className="max-w-7xl mx-auto pt-8 border-t border-purple-100 text-center text-text-muted text-xs">
-      <p>&copy; 2026 Parent Advocacy and Navigation Service Victoria. All rights reserved.</p>
+      <p>&copy; 2026 Parent Advocacy and Navigation Support Victoria. All rights reserved.</p>
     </div>
   </footer>
 );

@@ -100,7 +100,7 @@ async def chat(request: ChatRequest):
         from emergentintegrations.llm.chat import LlmChat, UserMessage
         
         # System message for the PANS assistant
-        system_message = """You are a supportive, empathetic, and knowledgeable assistant for PANS (Parent Advocacy & Navigation Service Victoria). Your role is to help parents understand the child protection system in Victoria, Australia. 
+        system_message = """You are a supportive, empathetic, and knowledgeable assistant for PANS (Parent Advocacy & Navigation Support Victoria). Your role is to help parents understand the child protection system in Victoria, Australia. 
 
 Key guidelines:
 - Provide clear, non-judgmental, and practical information
@@ -220,6 +220,228 @@ async def health_check():
         "service": "PANS Victoria API",
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
+
+# --- PDF Generation Endpoints ---
+
+from fastapi.responses import StreamingResponse
+from io import BytesIO
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.units import cm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, ListFlowable, ListItem
+from reportlab.lib.colors import HexColor
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
+
+# Brand colors
+BRAND_PRIMARY = HexColor('#7C6A96')
+BRAND_DARK = HexColor('#2D2438')
+BRAND_LIGHT = HexColor('#F9F8FF')
+
+@app.get("/api/downloads/first-48-hours")
+async def download_first_48_hours_guide():
+    """Generate and download the First 48 Hours Guide PDF"""
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=2*cm, leftMargin=2*cm, topMargin=2*cm, bottomMargin=2*cm)
+    
+    styles = getSampleStyleSheet()
+    
+    # Custom styles
+    title_style = ParagraphStyle('Title', parent=styles['Heading1'], fontSize=24, textColor=BRAND_PRIMARY, spaceAfter=20, alignment=TA_CENTER)
+    subtitle_style = ParagraphStyle('Subtitle', parent=styles['Normal'], fontSize=12, textColor=BRAND_DARK, spaceAfter=30, alignment=TA_CENTER)
+    heading_style = ParagraphStyle('CustomHeading', parent=styles['Heading2'], fontSize=16, textColor=BRAND_PRIMARY, spaceBefore=20, spaceAfter=10)
+    body_style = ParagraphStyle('CustomBody', parent=styles['Normal'], fontSize=11, textColor=BRAND_DARK, spaceAfter=8, leading=16)
+    bullet_style = ParagraphStyle('Bullet', parent=styles['Normal'], fontSize=11, textColor=BRAND_DARK, leftIndent=20, spaceAfter=6, leading=14)
+    
+    story = []
+    
+    # Title
+    story.append(Paragraph("PANS Victoria", title_style))
+    story.append(Paragraph("First 48 Hours Guide", title_style))
+    story.append(Paragraph("What to do immediately after Child Protection involvement begins", subtitle_style))
+    story.append(Spacer(1, 20))
+    
+    # Important Notice
+    story.append(Paragraph("<b>Important Notice:</b> This guide provides general information only. It is not legal advice. Please seek legal assistance as soon as possible.", body_style))
+    story.append(Spacer(1, 20))
+    
+    # Section 1
+    story.append(Paragraph("1. Stay Calm and Listen", heading_style))
+    story.append(Paragraph("The first moments are overwhelming, but try to stay as calm as possible.", body_style))
+    story.append(Paragraph("• Take deep breaths before responding", bullet_style))
+    story.append(Paragraph("• Listen carefully to what is being said", bullet_style))
+    story.append(Paragraph("• Ask questions if you don't understand", bullet_style))
+    story.append(Paragraph("• Don't sign anything without understanding it fully", bullet_style))
+    
+    # Section 2
+    story.append(Paragraph("2. Gather Information", heading_style))
+    story.append(Paragraph("Write down everything you can:", body_style))
+    story.append(Paragraph("• Names and contact details of all workers present", bullet_style))
+    story.append(Paragraph("• The date and time of the visit or call", bullet_style))
+    story.append(Paragraph("• What was said (write it down as soon as possible)", bullet_style))
+    story.append(Paragraph("• Any orders or documents provided", bullet_style))
+    story.append(Paragraph("• Where your children are being placed", bullet_style))
+    
+    # Section 3
+    story.append(Paragraph("3. Know Your Rights", heading_style))
+    story.append(Paragraph("You have the right to:", body_style))
+    story.append(Paragraph("• Know the reasons for Child Protection's involvement", bullet_style))
+    story.append(Paragraph("• Receive copies of any orders made", bullet_style))
+    story.append(Paragraph("• Seek legal advice and representation", bullet_style))
+    story.append(Paragraph("• Have contact with your children (unless court orders say otherwise)", bullet_style))
+    story.append(Paragraph("• Participate in decisions about your children's care", bullet_style))
+    
+    # Section 4
+    story.append(Paragraph("4. Seek Legal Help Immediately", heading_style))
+    story.append(Paragraph("Contact these services as soon as possible:", body_style))
+    story.append(Paragraph("• Victoria Legal Aid: 1300 792 387", bullet_style))
+    story.append(Paragraph("• Your local Community Legal Centre", bullet_style))
+    story.append(Paragraph("• A private family lawyer if you can afford one", bullet_style))
+    
+    # Section 5
+    story.append(Paragraph("5. Prepare for Court", heading_style))
+    story.append(Paragraph("A court hearing will likely happen within days:", body_style))
+    story.append(Paragraph("• The first hearing is usually a 'mention' - a brief appearance", bullet_style))
+    story.append(Paragraph("• You should have legal representation if at all possible", bullet_style))
+    story.append(Paragraph("• Bring any documents or evidence you have gathered", bullet_style))
+    story.append(Paragraph("• Dress respectfully and arrive early", bullet_style))
+    
+    # Contact PANS
+    story.append(Spacer(1, 30))
+    story.append(Paragraph("Need Support?", heading_style))
+    story.append(Paragraph("PANS Victoria provides navigation support for parents. Contact us:", body_style))
+    story.append(Paragraph("Email: support@pansvictoria.org.au", body_style))
+    story.append(Paragraph("Website: pansvictoria.org.au", body_style))
+    
+    # Footer
+    story.append(Spacer(1, 40))
+    story.append(Paragraph("© 2026 Parent Advocacy and Navigation Support Victoria", ParagraphStyle('Footer', parent=styles['Normal'], fontSize=9, textColor=HexColor('#718096'), alignment=TA_CENTER)))
+    
+    doc.build(story)
+    buffer.seek(0)
+    
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=PANS_First_48_Hours_Guide.pdf"}
+    )
+
+@app.get("/api/downloads/timeline-template")
+async def download_timeline_template():
+    """Generate and download a Timeline Template PDF"""
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, rightMargin=1.5*cm, leftMargin=1.5*cm, topMargin=2*cm, bottomMargin=2*cm)
+    
+    styles = getSampleStyleSheet()
+    
+    # Custom styles
+    title_style = ParagraphStyle('Title', parent=styles['Heading1'], fontSize=22, textColor=BRAND_PRIMARY, spaceAfter=10, alignment=TA_CENTER)
+    subtitle_style = ParagraphStyle('Subtitle', parent=styles['Normal'], fontSize=11, textColor=BRAND_DARK, spaceAfter=20, alignment=TA_CENTER)
+    heading_style = ParagraphStyle('CustomHeading', parent=styles['Heading2'], fontSize=14, textColor=BRAND_PRIMARY, spaceBefore=15, spaceAfter=8)
+    body_style = ParagraphStyle('CustomBody', parent=styles['Normal'], fontSize=10, textColor=BRAND_DARK, spaceAfter=6)
+    
+    story = []
+    
+    # Title
+    story.append(Paragraph("PANS Victoria", title_style))
+    story.append(Paragraph("Case Timeline Template", title_style))
+    story.append(Paragraph("Use this template to track important events, meetings, and communications", subtitle_style))
+    
+    # Instructions
+    story.append(Paragraph("How to Use This Template", heading_style))
+    story.append(Paragraph("Record every interaction with Child Protection, court dates, and important events. Keep this document updated and bring it to all meetings and court appearances.", body_style))
+    story.append(Spacer(1, 10))
+    
+    # Timeline Table
+    story.append(Paragraph("Event Log", heading_style))
+    
+    # Create table with empty rows
+    table_data = [
+        ["Date", "Time", "Event/Contact", "People Present", "Notes/Outcomes"],
+    ]
+    
+    # Add 15 empty rows for the user to fill in
+    for i in range(15):
+        table_data.append(["", "", "", "", ""])
+    
+    table = Table(table_data, colWidths=[2.5*cm, 1.8*cm, 4.5*cm, 3.5*cm, 5*cm])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), BRAND_PRIMARY),
+        ('TEXTCOLOR', (0, 0), (-1, 0), HexColor('#FFFFFF')),
+        ('FONTSIZE', (0, 0), (-1, 0), 9),
+        ('FONTSIZE', (0, 1), (-1, -1), 9),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('GRID', (0, 0), (-1, -1), 0.5, HexColor('#B5A1D1')),
+        ('ROWHEIGHT', (0, 1), (-1, -1), 1.2*cm),
+        ('TOPPADDING', (0, 0), (-1, -1), 4),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+    ]))
+    story.append(table)
+    
+    story.append(Spacer(1, 20))
+    
+    # Key Contacts Section
+    story.append(Paragraph("Key Contacts", heading_style))
+    
+    contacts_data = [
+        ["Role", "Name", "Phone", "Email"],
+        ["Child Protection Worker", "", "", ""],
+        ["Supervisor", "", "", ""],
+        ["Lawyer", "", "", ""],
+        ["Support Person", "", "", ""],
+        ["Other", "", "", ""],
+    ]
+    
+    contacts_table = Table(contacts_data, colWidths=[4*cm, 4.5*cm, 3.5*cm, 5.5*cm])
+    contacts_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), BRAND_PRIMARY),
+        ('TEXTCOLOR', (0, 0), (-1, 0), HexColor('#FFFFFF')),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('GRID', (0, 0), (-1, -1), 0.5, HexColor('#B5A1D1')),
+        ('ROWHEIGHT', (0, 1), (-1, -1), 0.9*cm),
+        ('TOPPADDING', (0, 0), (-1, -1), 4),
+    ]))
+    story.append(contacts_table)
+    
+    story.append(Spacer(1, 20))
+    
+    # Important Dates
+    story.append(Paragraph("Upcoming Important Dates", heading_style))
+    
+    dates_data = [
+        ["Date", "Event Type", "Location", "Notes"],
+        ["", "Court Hearing", "", ""],
+        ["", "Case Plan Meeting", "", ""],
+        ["", "Contact Visit", "", ""],
+        ["", "Service Appointment", "", ""],
+        ["", "", "", ""],
+    ]
+    
+    dates_table = Table(dates_data, colWidths=[3*cm, 4.5*cm, 4.5*cm, 5.5*cm])
+    dates_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), BRAND_PRIMARY),
+        ('TEXTCOLOR', (0, 0), (-1, 0), HexColor('#FFFFFF')),
+        ('FONTSIZE', (0, 0), (-1, -1), 9),
+        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+        ('GRID', (0, 0), (-1, -1), 0.5, HexColor('#B5A1D1')),
+        ('ROWHEIGHT', (0, 1), (-1, -1), 0.9*cm),
+        ('TOPPADDING', (0, 0), (-1, -1), 4),
+    ]))
+    story.append(dates_table)
+    
+    # Footer
+    story.append(Spacer(1, 30))
+    story.append(Paragraph("© 2026 Parent Advocacy and Navigation Support Victoria | support@pansvictoria.org.au", ParagraphStyle('Footer', parent=styles['Normal'], fontSize=8, textColor=HexColor('#718096'), alignment=TA_CENTER)))
+    
+    doc.build(story)
+    buffer.seek(0)
+    
+    return StreamingResponse(
+        buffer,
+        media_type="application/pdf",
+        headers={"Content-Disposition": "attachment; filename=PANS_Timeline_Template.pdf"}
+    )
 
 if __name__ == "__main__":
     import uvicorn

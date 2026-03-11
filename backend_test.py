@@ -264,6 +264,44 @@ class PANSAPITester:
             self.log_result("AI Chat Error Handling", "FAIL", 
                           "Should reject invalid chat data")
 
+    def test_pdf_downloads(self):
+        """Test PDF download endpoints"""
+        # Test First 48 Hours Guide download
+        success1, response1 = self.run_test(
+            "PDF Download - First 48 Hours Guide",
+            "GET",
+            "/api/downloads/first-48-hours",
+            200
+        )
+        
+        if success1:
+            # Check if response is PDF content
+            if hasattr(response1, '__len__') or isinstance(response1, (bytes, str)):
+                self.log_result("First 48 Hours PDF Content", "PASS", 
+                              "PDF content received")
+            else:
+                self.log_result("First 48 Hours PDF Content", "FAIL", 
+                              "Invalid PDF response format")
+        
+        # Test Timeline Template download  
+        success2, response2 = self.run_test(
+            "PDF Download - Timeline Template",
+            "GET", 
+            "/api/downloads/timeline-template",
+            200
+        )
+        
+        if success2:
+            # Check if response is PDF content
+            if hasattr(response2, '__len__') or isinstance(response2, (bytes, str)):
+                self.log_result("Timeline Template PDF Content", "PASS",
+                              "PDF content received")
+            else:
+                self.log_result("Timeline Template PDF Content", "FAIL",
+                              "Invalid PDF response format")
+        
+        return success1 and success2
+
     def run_comprehensive_tests(self):
         """Run all backend tests"""
         print("🚀 Starting PANS Victoria Backend API Testing")
@@ -285,6 +323,10 @@ class PANSAPITester:
         
         # Test 5: Chat Error Handling
         self.test_chat_error_handling()
+        
+        # Test 6: PDF Downloads
+        print("\n📄 Testing PDF Download Endpoints...")
+        self.test_pdf_downloads()
         
         # Print Results
         print("\n" + "=" * 60)

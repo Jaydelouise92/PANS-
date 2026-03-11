@@ -3,11 +3,52 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="PANS Victoria - Parent Advocacy & Navigation Service. Supporting parents navigating the child protection system in Victoria, Australia." />
-    <meta name="keywords" content="parent advocacy, child protection, Victoria, PANS, family support, navigation service" />
-    <title>PANS Victoria | Parent Advocacy & Navigation Service</title>
+    <meta name="description" content="PANS Victoria - Parent Advocacy & Navigation Support. Supporting parents navigating the child protection system in Victoria, Australia." />
+    <meta name="keywords" content="parent advocacy, child protection, Victoria, PANS, family support, navigation support" />
+    <title>PANS Victoria | Parent Advocacy & Navigation Support</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Google Analytics - Replace GA_MEASUREMENT_ID with your actual ID -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+    
+    <!-- Simple Page View Analytics (works without external service) -->
+    <script>
+      // Track page views and basic interactions
+      (function() {
+        const analytics = {
+          pageViews: 0,
+          events: [],
+          init: function() {
+            this.pageViews++;
+            this.trackEvent('page_view', { path: window.location.pathname });
+            // Track scroll depth
+            let maxScroll = 0;
+            window.addEventListener('scroll', () => {
+              const scrollPercent = Math.round((window.scrollY / (document.body.scrollHeight - window.innerHeight)) * 100);
+              if (scrollPercent > maxScroll) {
+                maxScroll = scrollPercent;
+                if (maxScroll % 25 === 0) {
+                  this.trackEvent('scroll_depth', { percent: maxScroll });
+                }
+              }
+            });
+          },
+          trackEvent: function(name, data) {
+            this.events.push({ name, data, timestamp: new Date().toISOString() });
+            console.log('Analytics:', name, data);
+          }
+        };
+        window.pansAnalytics = analytics;
+        document.addEventListener('DOMContentLoaded', () => analytics.init());
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
