@@ -1,0 +1,153 @@
+{
+  "summary": {
+    "total_tests": 12,
+    "passed": 12,
+    "failed": 0,
+    "success_rate": 100.0
+  },
+  "test_results": [
+    {
+      "test_name": "Health Check",
+      "status": "PASS",
+      "details": "Status: 200",
+      "response_data": {
+        "status": "healthy",
+        "service": "PANS Victoria API",
+        "timestamp": "2026-03-11T07:15:50.412092+00:00"
+      },
+      "timestamp": "2026-03-11T07:15:50.428796"
+    },
+    {
+      "test_name": "Health Check Structure",
+      "status": "PASS",
+      "details": "Healthy status confirmed",
+      "response_data": null,
+      "timestamp": "2026-03-11T07:15:50.429412"
+    },
+    {
+      "test_name": "Contact Form - Valid Submission",
+      "status": "PASS",
+      "details": "Status: 200",
+      "response_data": {
+        "status": "success",
+        "message": "Thank you for reaching out. We have received your message and will get back to you within 24-48 hours.",
+        "contact_id": "3a58ea6d"
+      },
+      "timestamp": "2026-03-11T07:15:50.593675"
+    },
+    {
+      "test_name": "Contact Form Response Structure",
+      "status": "PASS",
+      "details": "Contact ID: 3a58ea6d",
+      "response_data": null,
+      "timestamp": "2026-03-11T07:15:50.594364"
+    },
+    {
+      "test_name": "Contact Form - Invalid Data",
+      "status": "PASS",
+      "details": "Status: 422",
+      "response_data": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "last_name"
+            ],
+            "msg": "Field required",
+            "input": {
+              "first_name": "Test",
+              "email": "invalid-email",
+              "message": ""
+            }
+          },
+          {
+            "type": "value_error",
+            "loc": [
+              "body",
+              "email"
+            ],
+            "msg": "value is not a valid email address: An email address must have an @-sign.",
+            "input": "invalid-email",
+            "ctx": {
+              "reason": "An email address must have an @-sign."
+            }
+          }
+        ]
+      },
+      "timestamp": "2026-03-11T07:15:50.737393"
+    },
+    {
+      "test_name": "Contact Form Validation",
+      "status": "PASS",
+      "details": "Properly rejected invalid data",
+      "response_data": null,
+      "timestamp": "2026-03-11T07:15:50.737974"
+    },
+    {
+      "test_name": "AI Chat - Basic Question",
+      "status": "PASS",
+      "details": "Status: 200",
+      "response_data": {
+        "response": "**PANS Victoria** stands for the **Parent Advocacy & Navigation Service**. We are a dedicated service based in Victoria, Australia, designed to support parents who are involved with the child protection system.\n\nWe understand that dealing with Child Protection can be overwhelming, frightening, and confusing. Our goal is to ensure that parents are not alone during this process and have the information they need to navigate the system effectively.\n\n### What we do:\n*   **Support & Advocacy:** We provide a voice for parents, helping you understand your rights and ensuring your perspective is heard.\n*   **System Navigation:** We explain the complex processes of the Victorian child protection system and the Children\u2019s Court in plain language.\n*   **Empowerment:** We help you prepare for meetings with Child Protection workers and court hearings so you can feel more confident and informed.\n*   **Connection:** We link parents to relevant resources, support services, and legal practitioners.\n\n### What we are not:\n*   **We are not lawyers:** While we can explain the process, we cannot provide legal advice. We always recommend that you seek professional legal counsel.\n*   **We are not Child Protection:** We are an independent service focused on supporting parents.\n\n**If you are feeling overwhelmed, please remember that you don't have to do this alone.** \n\nIf you would like to speak with someone who understands what you are going through or need help navigating your current situation, please reach out to us directly for personalized support.",
+        "session_id": "test_session_1773213350"
+      },
+      "timestamp": "2026-03-11T07:15:57.260459"
+    },
+    {
+      "test_name": "AI Chat Response Quality",
+      "status": "PASS",
+      "details": "Response length: 1554 chars",
+      "response_data": null,
+      "timestamp": "2026-03-11T07:15:57.261082"
+    },
+    {
+      "test_name": "AI Chat - With History",
+      "status": "PASS",
+      "details": "Status: 200",
+      "response_data": {
+        "response": "It is completely normal to feel overwhelmed or anxious about the **Children\u2019s Court of Victoria**. The court\u2019s primary role is to make decisions about the safety and wellbeing of children, but for a parent, it can feel like a very intimidating environment.\n\nHere is a simplified overview of how the process generally works:\n\n### 1. The Protection Application\nThe process usually begins when Child Protection (DFFH) files a 'Protection Application.' This happens if they believe a child is in need of protection. You will be served with paperwork that outlines their concerns and the date you need to attend court.\n\n### 2. Legal Representation\nThis is the most important step. **You should have a lawyer.** \n*   If you don't have one, you can contact **Victoria Legal Aid (VLA)** or a private solicitor who specialises in child protection.\n*   On your first day at court, there is usually a \"Duty Registrar\" or Legal Aid lawyer who may be able to provide some initial guidance.\n\n### 3. Mentions (The first few hearings)\nThe first time you go to court is called a **Mention**. \n*   Usually, no final decisions are made on this day. \n*   The Magistrate will check if everyone has a lawyer and if any progress has been made toward an agreement.\n*   If everyone agrees on a plan, an \"Interim Order\" might be made. If there is no agreement, the case will be adjourned (postponed) to another date.\n\n### 4. Dispute Resolution Conference (DRC)\nBefore a case goes to a full trial, the court often schedules a **DRC**. \n*   This is a less formal meeting facilitated by a person called a Convenor. \n*   It is an opportunity for you, your lawyer, and Child Protection to sit down and try to reach an agreement without a Magistrate making the final decision for you.\n\n### 5. Contested Hearing\nIf an agreement cannot be reached at a DRC or through mentions, the case goes to a **Contested Hearing**. This is like a trial where a Magistrate listens to evidence from both sides and then makes a final decision (Order).\n\n### Important Things to Remember:\n*   **Be Prepared:** Bring all your paperwork, a notebook, and a pen.\n*   **Support:** You are allowed to bring a support person with you to court, though they may not be allowed into the actual courtroom depending on the Magistrate\u2019s rules.\n*   **The Best Interests of the Child:** In Victoria, the law requires the court to make decisions based on what is best for the child\u2019s safety and development.\n\n### How PANS can help:\nWe can help you understand the terminology used in court and help you prepare what you want to say to your lawyer so your voice is heard clearly.\n\n**Do you have a court date coming up soon, or have you received paperwork that you would like help understanding?** \n\n*Note: I am an information service and cannot provide legal advice. Please ensure you contact a legal professional regarding your specific case.*",
+        "session_id": "test_session_1773213350"
+      },
+      "timestamp": "2026-03-11T07:16:08.109114"
+    },
+    {
+      "test_name": "AI Chat History Context",
+      "status": "PASS",
+      "details": "Successfully handled conversation history",
+      "response_data": null,
+      "timestamp": "2026-03-11T07:16:08.109754"
+    },
+    {
+      "test_name": "AI Chat - Invalid Data",
+      "status": "PASS",
+      "details": "Status: 422",
+      "response_data": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "message"
+            ],
+            "msg": "Field required",
+            "input": {
+              "session_id": "test_session_1773213350",
+              "history": []
+            }
+          }
+        ]
+      },
+      "timestamp": "2026-03-11T07:16:08.226927"
+    },
+    {
+      "test_name": "AI Chat Error Handling",
+      "status": "PASS",
+      "details": "Properly handled invalid data",
+      "response_data": null,
+      "timestamp": "2026-03-11T07:16:08.227541"
+    }
+  ],
+  "endpoint": "https://9adadd97-aa8f-44ac-8dfc-22302e500ee4.preview.emergentagent.com",
+  "timestamp": "2026-03-11T07:16:08.227816"
+}
