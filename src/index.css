@@ -1,0 +1,188 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Lora:ital,wght@0,400..700;1,400..700&family=IBM+Plex+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* PANS Support Hub — Soft Purple/Lilac Palette */
+    --background: 300 20% 99%;
+    --foreground: 270 25% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 270 25% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 270 25% 20%;
+    --primary: 268 60% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 270 50% 95%;
+    --secondary-foreground: 268 40% 35%;
+    --muted: 270 30% 96%;
+    --muted-foreground: 270 15% 50%;
+    --accent: 280 45% 88%;
+    --accent-foreground: 268 40% 30%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 270 25% 88%;
+    --input: 270 25% 88%;
+    --ring: 268 60% 50%;
+
+    /* Charts */
+    --chart-1: 268 60% 50%;
+    --chart-2: 280 55% 60%;
+    --chart-3: 260 50% 65%;
+    --chart-4: 290 45% 55%;
+    --chart-5: 250 55% 58%;
+
+    /* Sidebar */
+    --sidebar: 270 50% 95%;
+    --sidebar-foreground: 270 25% 20%;
+    --sidebar-primary: 268 60% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 280 45% 88%;
+    --sidebar-accent-foreground: 268 40% 30%;
+    --sidebar-border: 270 25% 88%;
+    --sidebar-ring: 268 60% 50%;
+
+    /* Fonts */
+    --font-sans: DM Sans, sans-serif;
+    --font-serif: Lora, serif;
+    --font-mono: IBM Plex Mono, monospace;
+
+    /* Shadows */
+    --shadow-2xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
+    --shadow-xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
+    --shadow-sm: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 1px 2px -2px hsl(0 0% 0% / 0.10);
+    --shadow: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 1px 2px -2px hsl(0 0% 0% / 0.10);
+    --shadow-md: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 2px 4px -2px hsl(0 0% 0% / 0.10);
+    --shadow-lg: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 4px 6px -2px hsl(0 0% 0% / 0.10);
+    --shadow-xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 8px 10px -2px hsl(0 0% 0% / 0.10);
+    --shadow-2xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.25);
+
+    /* Misc */
+    --tracking-normal: 0em;
+    --spacing: 0.25rem;
+    --radius: 0.625rem;
+
+    /* Custom PANS Design Tokens */
+    --gradient-hero: linear-gradient(150deg, hsl(268 60% 50% / 0.06) 0%, hsl(280 45% 88% / 0.25) 50%, hsl(300 20% 99%) 100%);
+    --gradient-purple: linear-gradient(135deg, hsl(268 60% 50%), hsl(280 55% 62%));
+    --shadow-purple: 0 4px 24px -4px hsl(268 60% 50% / 0.22);
+    --shadow-card: 0 2px 12px -2px hsl(270 25% 20% / 0.08);
+    --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    --background: 270 25% 10%;
+    --foreground: 270 20% 92%;
+    --card: 270 22% 14%;
+    --card-foreground: 270 20% 92%;
+    --popover: 270 22% 14%;
+    --popover-foreground: 270 20% 92%;
+    --primary: 268 55% 62%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 270 20% 20%;
+    --secondary-foreground: 270 20% 78%;
+    --muted: 270 18% 18%;
+    --muted-foreground: 270 15% 55%;
+    --accent: 270 18% 24%;
+    --accent-foreground: 270 20% 80%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 270 20% 22%;
+    --input: 270 20% 22%;
+    --ring: 268 55% 62%;
+
+    --chart-1: 268 55% 62%;
+    --chart-2: 280 50% 65%;
+    --chart-3: 260 45% 68%;
+    --chart-4: 290 45% 60%;
+    --chart-5: 250 50% 65%;
+
+    --sidebar: 270 22% 14%;
+    --sidebar-foreground: 270 20% 92%;
+    --sidebar-primary: 268 55% 62%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 270 18% 24%;
+    --sidebar-accent-foreground: 270 20% 80%;
+    --sidebar-border: 270 20% 22%;
+    --sidebar-ring: 268 55% 62%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans), 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    letter-spacing: var(--tracking-normal);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif), 'Lora', Georgia, serif;
+  }
+}
+
+@layer utilities {
+  .gradient-text {
+    background: var(--gradient-purple);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-gradient {
+    background: var(--gradient-hero);
+  }
+
+  .card-hover {
+    transition: var(--transition-smooth);
+  }
+
+  .card-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-purple);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out both;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
