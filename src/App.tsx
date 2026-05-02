@@ -70,6 +70,7 @@ const Navbar = ({ activeSection }: { activeSection: Section }) => {
     { id: 'guide', label: 'First 48 Hours' },
     { id: 'resources', label: 'Resources' },
     { id: 'supporting-pans', label: 'Supporting PANS' },
+    { id: 'contact', label: 'Contact' },
   ];
 
   const scrollToSection = (id: string) => {
@@ -181,7 +182,7 @@ const Hero = ({ heroImage }: { heroImage: string | null }) => {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="/input_file_1.png" 
+          src={heroImage || "https://images.unsplash.com/photo-1521791136064-7986c2923216?auto=format&fit=crop&q=80&w=2000"}
           alt="PANS Heart" 
           className="w-full h-full object-cover"
           referrerPolicy="no-referrer"
@@ -368,10 +369,17 @@ const LivedExperience = () => {
 
   const filteredStories = activeFilter === 'all' ? stories : stories.filter(s => s.stage === activeFilter);
 
-  const handleStorySubmit = (e: React.FormEvent) => {
+  const handleStorySubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would send data to a backend
-    console.log("Story submitted:", submissionData);
+    try {
+      await fetch('/api/story', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(submissionData)
+      });
+    } catch (error) {
+      console.error("Story submission error:", error);
+    }
     setShowShareModal(false);
     setSubmissionData({
       title: '',
@@ -783,7 +791,7 @@ const AboutPANS = ({ founderImage }: { founderImage: string | null }) => (
       <div className="grid md:grid-cols-2 gap-12 items-center">
         <div className="order-2 md:order-1">
           <img 
-            src="/input_file_0.png" 
+            src={founderImage || "https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&q=80&w=800"}
             alt="Founder of PANS" 
             className="rounded-3xl shadow-xl w-full object-cover max-h-[600px]"
             referrerPolicy="no-referrer"
@@ -927,9 +935,9 @@ const WhoWeSupport = () => (
 
     <div className="max-w-5xl mx-auto mb-20">
       <img 
-        src="/input_file_2.png" 
-        alt="Advocacy Word Cloud" 
-        className="w-full rounded-[3rem] shadow-lg border border-stone-100"
+        src="https://images.unsplash.com/photo-1593113630400-ea4288922559?auto=format&fit=crop&q=80&w=1200"
+        alt="Community Support" 
+        className="w-full rounded-[3rem] shadow-lg border border-stone-100 object-cover max-h-[400px]"
         referrerPolicy="no-referrer"
       />
     </div>

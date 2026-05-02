@@ -1,7 +1,7 @@
 # PANS Victoria - Parent Advocacy & Navigation Service
 
 ## Project Overview
-A React + Vite + Express web application for PANS Victoria, a parent advocacy and navigation service focused on lived experience in the child protection system. The app features an AI assistant (Gemini), a contact form, and rich informational content.
+A React + Vite + Express web application for PANS Victoria, a parent advocacy and navigation service focused on lived experience in the child protection system. The app features an AI assistant (Gemini), a contact form, story sharing, and rich informational content.
 
 ## Architecture
 
@@ -16,23 +16,35 @@ A React + Vite + Express web application for PANS Victoria, a parent advocacy an
 ### Backend
 - **Express** server (`server.ts`) that serves both API routes and Vite dev middleware
 - **Nodemailer** for email sending via Gmail
-- **better-sqlite3** (dependency, available if needed)
 
 ### Key Files
-- `server.ts` — Express server (port 5000 in dev, serves API + Vite middleware)
-- `src/App.tsx` — Main React application (large single-file app)
+- `server.ts` — Express server (port 5000), serves API + Vite middleware
+- `src/App.tsx` — Main React application (all sections, navigation, images)
 - `src/main.tsx` — React entry point
-- `src/index.css` — Global styles
-- `src/components/ChatWidget.tsx` — AI chat widget component
-- `src/components/VoiceAssistant.tsx` — Voice assistant component
-- `src/services/imageService.ts` — Gemini image generation service
-- `vite.config.ts` — Vite configuration (allowedHosts: true, port 5000, host 0.0.0.0)
+- `src/index.css` — Global styles + Tailwind theme (brand colors)
+- `src/components/ChatWidget.tsx` — AI chat widget (gemini-2.5-pro / gemini-2.5-flash)
+- `src/components/VoiceAssistant.tsx` — Live voice assistant (gemini-2.5-flash-native-audio)
+- `src/services/imageService.ts` — Gemini image generation with Unsplash fallbacks
+
+## API Endpoints
+- `POST /api/contact` — Contact form submission (emails to ourvoicemattersaus@gmail.com)
+- `POST /api/feedback` — AI assistant feedback (emails thumbs up/down)
+- `POST /api/story` — Story submission from Lived Experience section (emails to admin)
 
 ## Environment Variables
 Required secrets (configure in Replit Secrets panel):
-- `GEMINI_API_KEY` — Google Gemini API key (for AI chat and image generation)
-- `EMAIL_USER` — Gmail address for sending contact/feedback emails
-- `EMAIL_PASS` — Gmail app password for authentication
+- `GEMINI_API_KEY` — Google Gemini API key (for AI chat, TTS, image generation)
+- `EMAIL_USER` — Gmail address for sending emails
+- `EMAIL_PASS` — Gmail app password
+
+## Image Strategy
+- Hero image: Gemini-generated or Unsplash fallback (hands linking/holding)
+- Founder image: Gemini-generated or Unsplash fallback (soft flowers)
+- Who We Support section: Unsplash community support image
+- All images work without the Gemini API key via Unsplash fallbacks
+
+## Navigation Sections
+Home → Lived Experience → About PANS → Who We Support → Support Services → Mental Health → How it Works → First 48 Hours → Resources → Supporting PANS → Contact
 
 ## Development
 - Run: `npm run dev` (starts Express + Vite dev server on port 5000)
@@ -45,6 +57,6 @@ Required secrets (configure in Replit Secrets panel):
 - Port: 5000
 
 ## Notes
-- The Gemini API key is required for AI features; the app renders without it but AI features will fail gracefully
-- Email features require both `EMAIL_USER` and `EMAIL_PASS` to be set
-- Vite is configured with `allowedHosts: true` so the Replit preview proxy works correctly
+- Vite configured with `allowedHosts: true` and HMR on port 24679 for Replit proxy compatibility
+- Server binds to `0.0.0.0:5000` for preview pane access
+- All API features gracefully degrade without environment variables set

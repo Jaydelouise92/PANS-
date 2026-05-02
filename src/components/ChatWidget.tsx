@@ -77,7 +77,7 @@ const ChatWidget = () => {
     setIsLoading(true);
 
     try {
-      const model = isThinkingMode ? "gemini-3.1-pro-preview" : "gemini-3.1-flash-lite-preview";
+      const model = isThinkingMode ? "gemini-2.5-pro" : "gemini-2.5-flash";
       const config: any = {
         systemInstruction: "You are a supportive, empathetic guide for parents navigating the Victorian child protection system. Answer general questions and provide practical information on case navigation, court prep, and appeals. Clearly state that you do not provide legal advice. If in thinking mode, provide a deep, well-reasoned analysis of the situation.",
       };

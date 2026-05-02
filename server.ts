@@ -70,6 +70,37 @@ async function startServer() {
     }
   });
 
+  app.post("/api/story", async (req, res) => {
+    const { title, author, content, stage, situation, urgency } = req.body;
+
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      // Store in memory as fallback if email not configured
+      console.log("Story submission received (email not configured):", { title, author, stage });
+      return res.json({ success: true });
+    }
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    try {
+      await transporter.sendMail({
+        from: process.env.EMAIL_USER,
+        to: "ourvoicemattersaus@gmail.com",
+        subject: `New Story Submission: ${title} (${stage})`,
+        text: `Title: ${title}\nAuthor: ${author || 'Anonymous'}\nStage: ${stage}\nSituation: ${situation}\nUrgency: ${urgency}\n\nStory:\n${content}`,
+      });
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error sending story email:", error);
+      res.status(500).json({ error: "Failed to submit story" });
+    }
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
