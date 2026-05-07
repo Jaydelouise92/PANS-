@@ -15,8 +15,9 @@ const crisisLines = [
 export default function MentalHealth() {
   return (
     <div className="pt-16">
-      <section className="bg-brand-secondary py-20 px-6">
-        <div className="max-w-4xl mx-auto text-center">
+      <section className="relative bg-brand-secondary py-20 px-6 overflow-hidden">
+        <img src="/mental-health-hands.png" alt="" aria-hidden className="absolute right-0 bottom-0 h-full max-w-sm object-contain opacity-30 pointer-events-none select-none" />
+        <div className="relative max-w-4xl mx-auto text-center">
           <span className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-4 block">Mental Health Support</span>
           <h1 className="text-4xl md:text-5xl font-serif text-stone-900 mb-6">Looking After Yourself Through This</h1>
           <p className="text-lg text-stone-600 leading-relaxed max-w-2xl mx-auto">

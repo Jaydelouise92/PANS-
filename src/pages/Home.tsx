@@ -74,10 +74,9 @@ export default function Home() {
           <FadeIn delay={0.2} className="hidden md:block">
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1476703993599-0035a21b17a9?auto=format&fit=crop&q=80&w=800"
-                alt="Parent and child walking a path together"
-                className="w-full rounded-[2.5rem] shadow-2xl object-cover h-[500px]"
-                referrerPolicy="no-referrer"
+                src="/home-pathway.png"
+                alt="A calm lavender pathway forward"
+                className="w-full rounded-[2.5rem] object-contain h-[500px]"
               />
               <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-sm rounded-2xl p-4 border border-purple-100 shadow-lg">
                 <p className="text-sm text-stone-700 font-medium italic">

@@ -20,10 +20,9 @@ export default function Founder() {
           <div className="md:col-span-2">
             <div className="sticky top-24">
               <img
-                src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=600"
+                src="/founder-silhouette.png"
                 alt="PANS Founder"
                 className="w-full rounded-3xl shadow-xl object-cover aspect-[4/5]"
-                referrerPolicy="no-referrer"
               />
               <div className="mt-6 bg-brand-secondary border border-purple-100 rounded-2xl p-5">
                 <div className="space-y-4">
