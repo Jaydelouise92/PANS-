@@ -239,6 +239,54 @@ export default function Home() {
         </div>
       </section>
 
+      {/* What parents say */}
+      <section className="py-20 px-6 bg-white">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-4 block">What Parents Say</span>
+            <h2 className="text-4xl font-serif text-stone-900 mb-4">You are not the first to feel this way</h2>
+            <p className="text-stone-500 text-sm max-w-xl mx-auto">Anonymous reflections from parents who have used PANS for guidance and support.</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              {
+                quote: "PANS helped me understand where to begin when everything felt overwhelming. I didn't know what to do or who to trust — having someone explain it clearly made a real difference.",
+                label: 'Parent, regional Victoria',
+              },
+              {
+                quote: "I finally understood what the case plan actually required of me. I'd been too afraid to ask questions. PANS helped me prepare so I felt ready, not just scared.",
+                label: 'Mother, Melbourne',
+              },
+              {
+                quote: "Knowing my rights changed everything. I stopped feeling like things were just happening to me. I felt like I could actually participate in the process.",
+                label: 'Parent, outer Melbourne',
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-brand-secondary border border-purple-100 rounded-2xl p-7 flex flex-col gap-5"
+              >
+                <div className="flex gap-1">
+                  {[...Array(3)].map((_, j) => (
+                    <div key={j} className="w-1.5 h-1.5 rounded-full bg-brand-primary/40" />
+                  ))}
+                </div>
+                <p className="text-stone-700 leading-relaxed font-serif text-[15px] flex-1 italic">
+                  "{item.quote}"
+                </p>
+                <p className="text-xs text-stone-400 font-medium">— {item.label}</p>
+              </motion.div>
+            ))}
+          </div>
+          <p className="text-center mt-8 text-xs text-stone-400">
+            All quotes are anonymised and shared with permission. Identifying details have been removed.
+          </p>
+        </div>
+      </section>
+
       {/* Disclaimer */}
       <section className="py-10 px-6 bg-amber-50 border-t border-amber-200">
         <div className="max-w-4xl mx-auto flex gap-4 items-start">

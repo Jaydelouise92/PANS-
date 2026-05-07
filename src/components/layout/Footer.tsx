@@ -1,13 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Mail, AlertTriangle } from 'lucide-react';
+import { MapPin, AlertTriangle, Phone } from 'lucide-react';
 
 export default function Footer() {
   return (
     <footer className="bg-[#F2F0F7] border-t border-purple-100 mt-auto">
       <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid md:grid-cols-3 gap-12 mb-12">
-          <div>
+        <div className="grid md:grid-cols-4 gap-10 mb-12">
+          {/* Brand */}
+          <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-9 h-9 bg-brand-primary rounded-full flex items-center justify-center text-white font-serif font-bold text-lg">P</div>
               <div>
@@ -15,61 +16,100 @@ export default function Footer() {
                 <p className="text-[10px] text-stone-400 uppercase tracking-widest">Parent Advocacy & Navigation</p>
               </div>
             </div>
-            <p className="text-stone-500 text-sm leading-relaxed">
+            <p className="text-stone-500 text-sm leading-relaxed mb-4">
               Clear information, practical resources, and support for parents facing Child Protection involvement in Victoria.
             </p>
-            <div className="flex items-center gap-2 mt-4 text-stone-400 text-sm">
-              <MapPin size={14} /> Victoria, Australia
+            <div className="flex items-center gap-2 text-stone-400 text-xs">
+              <MapPin size={13} /> Victoria, Australia
             </div>
           </div>
 
+          {/* Quick links */}
           <div>
-            <h4 className="font-bold text-stone-700 mb-4 text-sm uppercase tracking-wider">Quick Links</h4>
-            <ul className="space-y-2">
+            <h4 className="font-bold text-stone-700 mb-4 text-xs uppercase tracking-wider">Get Support</h4>
+            <ul className="space-y-2.5">
               {[
                 { label: 'Start Here', path: '/start-here' },
+                { label: 'Advocacy & Support', path: '/advocacy-support' },
                 { label: 'First 48 Hours Guide', path: '/first-48-hours' },
-                { label: 'Resources', path: '/resources' },
-                { label: "Who We Support", path: '/who-we-support' },
+                { label: 'Who We Support', path: '/who-we-support' },
                 { label: 'How It Works', path: '/how-it-works' },
-                { label: 'Contact', path: '/contact' },
+                { label: 'Contact PANS', path: '/contact' },
               ].map((l) => (
                 <li key={l.path}>
-                  <Link to={l.path} className="text-sm text-stone-500 hover:text-brand-primary transition-colors">{l.label}</Link>
+                  <Link to={l.path} className="text-xs text-stone-500 hover:text-brand-primary transition-colors">{l.label}</Link>
                 </li>
               ))}
             </ul>
           </div>
 
+          {/* Guides */}
           <div>
-            <h4 className="font-bold text-stone-700 mb-4 text-sm uppercase tracking-wider">Guides</h4>
-            <ul className="space-y-2">
+            <h4 className="font-bold text-stone-700 mb-4 text-xs uppercase tracking-wider">Guides & Resources</h4>
+            <ul className="space-y-2.5">
               {[
+                { label: 'All Resources', path: '/resources' },
                 { label: 'Parent Rights Guide', path: '/parent-rights' },
                 { label: 'The System Explained', path: '/system-explained' },
-                { label: "Understanding Children's Court", path: '/childrens-court' },
+                { label: "Children's Court Guide", path: '/childrens-court' },
                 { label: 'Mental Health Support', path: '/mental-health' },
-                { label: 'About the Founder', path: '/founder' },
-                { label: 'Funding & Transparency', path: '/funding' },
+                { label: 'Support PANS', path: '/support-pans' },
               ].map((l) => (
                 <li key={l.path}>
-                  <Link to={l.path} className="text-sm text-stone-500 hover:text-brand-primary transition-colors">{l.label}</Link>
+                  <Link to={l.path} className="text-xs text-stone-500 hover:text-brand-primary transition-colors">{l.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Emergency contacts */}
+          <div>
+            <h4 className="font-bold text-stone-700 mb-4 text-xs uppercase tracking-wider flex items-center gap-1.5"><Phone size={12} /> Key Numbers</h4>
+            <ul className="space-y-3">
+              {[
+                { name: 'Lifeline (crisis)', number: '13 11 14', note: '24/7' },
+                { name: 'Victoria Legal Aid', number: '1300 792 387', note: 'Free legal advice' },
+                { name: 'Child Protection', number: '13 12 78', note: 'DFFH' },
+                { name: 'Parentline', number: '13 22 89', note: 'Mon–Fri' },
+                { name: 'Emergency', number: '000', note: 'Immediate danger' },
+              ].map((c, i) => (
+                <li key={i} className="flex flex-col">
+                  <span className="text-xs text-stone-500">{c.name} <span className="text-stone-400">({c.note})</span></span>
+                  <span className="font-bold text-brand-primary text-sm">{c.number}</span>
                 </li>
               ))}
             </ul>
           </div>
         </div>
 
+        {/* Disclaimer — broken into clear sentences */}
         <div className="border-t border-purple-200 pt-8">
-          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 flex gap-3">
-            <AlertTriangle size={18} className="text-amber-500 shrink-0 mt-0.5" />
-            <p className="text-xs text-amber-800 leading-relaxed">
-              <strong>Important:</strong> PANS provides general information and navigation support only. This is not legal advice and does not replace legal representation. If you need legal advice, please contact Victoria Legal Aid on 1300 792 387.
-            </p>
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 mb-6">
+            <div className="flex gap-3 items-start">
+              <AlertTriangle size={17} className="text-amber-500 shrink-0 mt-0.5" />
+              <div className="space-y-1.5">
+                <p className="text-xs text-amber-800 font-semibold">
+                  PANS provides general information and support only.
+                </p>
+                <p className="text-xs text-amber-800">
+                  PANS does not provide legal advice, legal representation, or emergency services.
+                </p>
+                <p className="text-xs text-amber-700">
+                  If you are in immediate danger or crisis, contact emergency services on <strong>000</strong> or Lifeline on <strong>13 11 14</strong>.
+                </p>
+              </div>
+            </div>
           </div>
-          <p className="text-center text-stone-400 text-xs">
-            © {new Date().getFullYear()} PANS – Parent Advocacy and Navigation Support. All rights reserved. General information only, not legal advice.
-          </p>
+          <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+            <p className="text-stone-400 text-xs">
+              © {new Date().getFullYear()} PANS – Parent Advocacy and Navigation Support, Victoria. All rights reserved.
+            </p>
+            <div className="flex gap-4">
+              <Link to="/about" className="text-xs text-stone-400 hover:text-brand-primary transition-colors">About</Link>
+              <Link to="/funding" className="text-xs text-stone-400 hover:text-brand-primary transition-colors">Transparency</Link>
+              <Link to="/contact" className="text-xs text-stone-400 hover:text-brand-primary transition-colors">Contact</Link>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

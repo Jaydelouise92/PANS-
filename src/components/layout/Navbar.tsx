@@ -5,21 +5,29 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 const navLinks = [
   { label: 'Home', path: '/' },
   { label: 'Start Here', path: '/start-here' },
-  { label: 'About PANS', path: '/about' },
-  { label: 'Who We Support', path: '/who-we-support' },
-  { label: 'How It Works', path: '/how-it-works' },
+  {
+    label: 'About',
+    children: [
+      { label: 'About PANS', path: '/about' },
+      { label: 'Who We Support', path: '/who-we-support' },
+      { label: 'How It Works', path: '/how-it-works' },
+      { label: 'Meet the Founder', path: '/founder' },
+      { label: 'Funding & Transparency', path: '/funding' },
+    ],
+  },
+  { label: 'Advocacy & Support', path: '/advocacy-support' },
   {
     label: 'Guides & Resources',
     children: [
       { label: 'First 48 Hours', path: '/first-48-hours' },
-      { label: 'Resources', path: '/resources' },
+      { label: 'All Resources', path: '/resources' },
       { label: 'Parent Rights Guide', path: '/parent-rights' },
       { label: 'The System Explained', path: '/system-explained' },
       { label: "Children's Court", path: '/childrens-court' },
       { label: 'Mental Health Support', path: '/mental-health' },
     ],
   },
-  { label: 'Founder', path: '/founder' },
+  { label: 'Support PANS', path: '/support-pans' },
   { label: 'Contact', path: '/contact' },
 ];
 

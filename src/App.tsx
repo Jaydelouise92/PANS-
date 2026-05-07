@@ -19,6 +19,8 @@ import MentalHealth from './pages/MentalHealth';
 import Founder from './pages/Founder';
 import Funding from './pages/Funding';
 import Contact from './pages/Contact';
+import AdvocacySupport from './pages/AdvocacySupport';
+import SupportPANS from './pages/SupportPANS';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -48,6 +50,8 @@ function AppLayout() {
           <Route path="/founder" element={<Founder />} />
           <Route path="/funding" element={<Funding />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/advocacy-support" element={<AdvocacySupport />} />
+          <Route path="/support-pans" element={<SupportPANS />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </main>
