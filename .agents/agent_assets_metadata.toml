@@ -18,3 +18,39 @@ id = "_Mc-T3Wkkue5EgiTdlUJX"
 uri = "file://public/parent-child-silhouette-new.png"
 type = "image"
 title = "gentle parent-child silhouette"
+
+[[generated]]
+id = "OSXczdDBvnXVBQFY8vXkj"
+uri = "file://public/about-hero.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "W8lHcLKzGEUnPp3D0fdWS"
+uri = "file://public/support-hands.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "YfoLQFaWBH7-NB5CZY5A-"
+uri = "file://public/checklist-notebook.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "gS6KphIf5R7sGIlpC0Orj"
+uri = "file://public/path-forward.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "ggLSEjhLuhO03Gfu01gSq"
+uri = "file://public/safe-home.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "SlXlYnYIXGSfxSj6Vtht4"
+uri = "file://public/documents-folder.png"
+type = "image"
+title = "generated_image"

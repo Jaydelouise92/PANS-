@@ -77,6 +77,10 @@ export default function StartHere() {
         </div>
       </section>
 
+      <div className="w-full overflow-hidden max-h-64">
+        <img src="/safe-home.png" alt="A warm safe home" className="w-full object-cover object-center" />
+      </div>
+
       <section className="py-16 px-6 bg-white">
         <div className="max-w-3xl mx-auto">
           <div className="space-y-4">

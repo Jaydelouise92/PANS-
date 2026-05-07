@@ -100,7 +100,9 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="relative">
+              <img src="/about-hero.png" alt="Parent and child walking a calm path together" className="w-full rounded-3xl shadow-lg object-cover max-h-80" />
+              <div className="grid grid-cols-2 gap-3 mt-4">
               {[
                 { icon: <BookOpen size={20} />, label: 'Plain language guides' },
                 { icon: <Scale size={20} />, label: 'Know your rights' },
@@ -114,12 +116,13 @@ export default function Home() {
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ delay: i * 0.07 }}
-                  className="bg-brand-secondary p-5 rounded-2xl border border-purple-100 flex flex-col gap-3"
+                  className="bg-brand-secondary p-4 rounded-xl border border-purple-100 flex items-center gap-3"
                 >
-                  <div className="text-brand-primary">{item.icon}</div>
+                  <div className="text-brand-primary shrink-0">{item.icon}</div>
                   <span className="text-sm font-semibold text-stone-700">{item.label}</span>
                 </motion.div>
               ))}
+            </div>
             </div>
           </div>
         </div>

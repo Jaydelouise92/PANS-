@@ -15,6 +15,10 @@ export default function Founder() {
         </div>
       </section>
 
+      <div className="w-full overflow-hidden max-h-72">
+        <img src="/path-forward.png" alt="A calm path forward" className="w-full object-cover object-center" />
+      </div>
+
       <section className="py-20 px-6 bg-white">
         <div className="max-w-5xl mx-auto grid md:grid-cols-5 gap-16 items-start">
           <div className="md:col-span-2">

@@ -24,6 +24,10 @@ export default function HowItWorks() {
         </div>
       </section>
 
+      <div className="w-full overflow-hidden max-h-72">
+        <img src="/path-forward.png" alt="A calm winding path forward" className="w-full object-cover object-center" />
+      </div>
+
       <section className="py-20 px-6 bg-white">
         <div className="max-w-4xl mx-auto">
           <div className="space-y-8">

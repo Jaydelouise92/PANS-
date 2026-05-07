@@ -16,6 +16,10 @@ export default function About() {
         </div>
       </section>
 
+      <div className="w-full overflow-hidden max-h-80">
+        <img src="/about-hero.png" alt="A parent and child walking together on a calm path" className="w-full object-cover object-center" />
+      </div>
+
       <section className="py-20 px-6 bg-white">
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-16 items-center">
           <div>
@@ -61,6 +65,7 @@ export default function About() {
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12">
             <div>
+              <img src="/support-hands.png" alt="Supportive hands reaching out" className="w-full rounded-2xl mb-8 shadow-sm object-cover max-h-56" />
               <h2 className="text-3xl font-serif text-stone-900 mb-8">Our Values</h2>
               <div className="space-y-6">
                 {[

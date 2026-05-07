@@ -10,13 +10,13 @@ import { Scene6 } from './video_scenes/Scene6';
 import { Scene7 } from './video_scenes/Scene7';
 
 const SCENE_DURATIONS = {
-  scene1: 5000,
-  scene2: 8000,
-  scene3: 10000,
-  scene4: 10000,
-  scene5: 10000,
-  scene6: 8000,
-  scene7: 9000,
+  scene1: 2500,
+  scene2: 4000,
+  scene3: 5000,
+  scene4: 5000,
+  scene5: 5000,
+  scene6: 4000,
+  scene7: 4500,
 };
 
 export default function VideoTemplate() {

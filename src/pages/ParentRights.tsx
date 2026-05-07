@@ -56,6 +56,10 @@ export default function ParentRights() {
         </div>
       </section>
 
+      <div className="w-full overflow-hidden max-h-72">
+        <img src="/checklist-notebook.png" alt="An organised notebook and checklist" className="w-full object-cover object-center" />
+      </div>
+
       <section className="py-6 px-6 bg-amber-50 border-b border-amber-200">
         <div className="max-w-5xl mx-auto flex gap-3 items-start">
           <AlertTriangle size={18} className="text-amber-600 shrink-0 mt-0.5" />
