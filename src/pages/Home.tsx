@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ChevronRight, BookOpen, Scale, Shield, Clock, Heart, Users, AlertTriangle, CheckCircle2, ArrowRight } from 'lucide-react';
+import { ChevronRight, BookOpen, Scale, Shield, Clock, Heart, Users, AlertTriangle, CheckCircle2, ArrowRight, Play } from 'lucide-react';
 
 const FadeIn = ({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) => (
   <motion.div
@@ -57,7 +57,7 @@ export default function Home() {
               </p>
             </FadeIn>
             <FadeIn delay={0.3}>
-              <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
                 <Link to="/start-here" className="bg-brand-primary text-white px-7 py-4 rounded-full font-bold hover:bg-brand-primary/90 transition-all shadow-lg shadow-brand-primary/20 flex items-center justify-center gap-2">
                   Start Here <ChevronRight size={18} />
                 </Link>
@@ -66,6 +66,9 @@ export default function Home() {
                 </Link>
                 <Link to="/first-48-hours" className="bg-white border border-stone-200 text-stone-700 px-7 py-4 rounded-full font-bold hover:bg-stone-50 transition-all flex items-center justify-center gap-2">
                   <Clock size={18} /> First 48 Hours
+                </Link>
+                <Link to="/video" className="bg-brand-accent/20 border border-brand-accent text-brand-primary px-7 py-4 rounded-full font-bold hover:bg-brand-accent/30 transition-all flex items-center justify-center gap-2">
+                  <Play size={16} className="fill-brand-primary" /> Watch Intro
                 </Link>
               </div>
             </FadeIn>
