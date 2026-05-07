@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { ChevronRight, BookOpen, Scale, Shield, Clock, Heart, Users, AlertTriangle, CheckCircle2, ArrowRight, Play } from 'lucide-react';
+import { ChevronRight, BookOpen, Scale, Shield, Clock, Heart, Users, AlertTriangle, CheckCircle2, ArrowRight, ChevronsDown } from 'lucide-react';
+import VideoTemplate from '../components/video/VideoTemplate';
 
 const FadeIn = ({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) => (
   <motion.div
@@ -32,62 +33,34 @@ const Card = ({ icon, title, desc, link, linkLabel }: { icon: React.ReactNode; t
 export default function Home() {
   return (
     <div className="flex flex-col">
-      {/* Hero */}
-      <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-gradient-to-br from-[#F2F0F7] via-white to-[#EDE9F8]">
-        <div className="absolute inset-0 opacity-30 pointer-events-none">
-          <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-brand-accent rounded-full blur-[120px] opacity-30" />
-          <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand-primary rounded-full blur-[100px] opacity-20" />
-        </div>
+      {/* Hero — full-screen video banner */}
+      <section className="relative w-full h-screen overflow-hidden">
+        <VideoTemplate />
 
-        <div className="relative max-w-7xl mx-auto px-6 py-24 grid md:grid-cols-2 gap-16 items-center">
-          <div>
-            <FadeIn>
-              <div className="inline-flex items-center gap-2 bg-brand-primary/10 text-brand-primary text-xs font-bold uppercase tracking-widest px-4 py-2 rounded-full mb-6">
-                <Shield size={13} /> Victoria, Australia
-              </div>
-            </FadeIn>
-            <FadeIn delay={0.1}>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif leading-tight text-stone-900 mb-6">
-                Helping parents understand Child Protection and Children's Court processes.
-              </h1>
-            </FadeIn>
-            <FadeIn delay={0.2}>
-              <p className="text-lg text-stone-600 leading-relaxed mb-10">
-                Clear information, practical resources, and support for parents facing Child Protection involvement in Victoria. You are not alone, and this does not have to be as confusing as it feels right now.
-              </p>
-            </FadeIn>
-            <FadeIn delay={0.3}>
-              <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
-                <Link to="/start-here" className="bg-brand-primary text-white px-7 py-4 rounded-full font-bold hover:bg-brand-primary/90 transition-all shadow-lg shadow-brand-primary/20 flex items-center justify-center gap-2">
-                  Start Here <ChevronRight size={18} />
+        {/* CTA overlay — sits at the bottom of the video */}
+        <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-[#F9F8FF]/95 via-[#F9F8FF]/60 to-transparent pt-16 pb-8 px-6">
+          <div className="max-w-4xl mx-auto flex flex-col items-center gap-5">
+            <FadeIn delay={0.4}>
+              <div className="flex flex-wrap justify-center gap-3">
+                <Link to="/start-here" className="bg-brand-primary text-white px-7 py-3.5 rounded-full font-bold hover:bg-brand-primary/90 transition-all shadow-lg shadow-brand-primary/20 flex items-center gap-2 text-sm">
+                  Start Here <ChevronRight size={16} />
                 </Link>
-                <Link to="/resources" className="bg-white border-2 border-brand-primary text-brand-primary px-7 py-4 rounded-full font-bold hover:bg-brand-secondary transition-all flex items-center justify-center gap-2">
-                  View Resources <BookOpen size={18} />
+                <Link to="/resources" className="bg-white border-2 border-brand-primary text-brand-primary px-7 py-3.5 rounded-full font-bold hover:bg-brand-secondary transition-all flex items-center gap-2 text-sm">
+                  View Resources <BookOpen size={16} />
                 </Link>
-                <Link to="/first-48-hours" className="bg-white border border-stone-200 text-stone-700 px-7 py-4 rounded-full font-bold hover:bg-stone-50 transition-all flex items-center justify-center gap-2">
-                  <Clock size={18} /> First 48 Hours
-                </Link>
-                <Link to="/video" className="bg-brand-accent/20 border border-brand-accent text-brand-primary px-7 py-4 rounded-full font-bold hover:bg-brand-accent/30 transition-all flex items-center justify-center gap-2">
-                  <Play size={16} className="fill-brand-primary" /> Watch Intro
+                <Link to="/first-48-hours" className="bg-white border border-stone-200 text-stone-700 px-7 py-3.5 rounded-full font-bold hover:bg-stone-50 transition-all flex items-center gap-2 text-sm">
+                  <Clock size={16} /> First 48 Hours
                 </Link>
               </div>
             </FadeIn>
+            <motion.div
+              animate={{ y: [0, 6, 0] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+              className="text-brand-primary/40"
+            >
+              <ChevronsDown size={22} />
+            </motion.div>
           </div>
-
-          <FadeIn delay={0.2} className="hidden md:block">
-            <div className="relative">
-              <img
-                src="/home-pathway.png"
-                alt="A calm lavender pathway forward"
-                className="w-full rounded-[2.5rem] object-contain h-[500px]"
-              />
-              <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-sm rounded-2xl p-4 border border-purple-100 shadow-lg">
-                <p className="text-sm text-stone-700 font-medium italic">
-                  "You don't have to understand everything at once. Start with one step."
-                </p>
-              </div>
-            </div>
-          </FadeIn>
         </div>
       </section>
 
