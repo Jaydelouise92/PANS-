@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Clock, AlertTriangle, CheckCircle2, ArrowRight, Phone } from 'lucide-react';
+import PrintButton from '../components/PrintButton';
+import LastUpdated from '../components/LastUpdated';
 
 const actions = [
   {
@@ -51,9 +53,13 @@ export default function FirstFortyEightHours() {
             <Clock size={13} /> Critical Guide
           </div>
           <h1 className="text-4xl md:text-5xl font-serif mb-6 leading-tight">First 48 Hours After Child Protection Becomes Involved</h1>
-          <p className="text-lg text-stone-300 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-stone-300 leading-relaxed max-w-2xl mx-auto mb-6">
             The first 48 hours are often the most overwhelming. This guide tells you what to do, step by step, in plain language.
           </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <PrintButton label="Print / Save as PDF" className="bg-white/10 border-white/30 text-white hover:bg-white/20" />
+            <LastUpdated date="May 2026" className="text-white/50" />
+          </div>
         </div>
       </section>
 

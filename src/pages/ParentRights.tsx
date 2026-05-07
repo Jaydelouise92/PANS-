@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Scale, CheckCircle2, AlertTriangle, ArrowRight } from 'lucide-react';
+import PrintButton from '../components/PrintButton';
+import LastUpdated from '../components/LastUpdated';
 
 const rights = [
   {
@@ -44,9 +46,13 @@ export default function ParentRights() {
         <div className="max-w-4xl mx-auto text-center">
           <span className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-4 block">Parent Rights Guide</span>
           <h1 className="text-4xl md:text-5xl font-serif text-stone-900 mb-6">Your Rights as a Parent</h1>
-          <p className="text-lg text-stone-600 leading-relaxed max-w-2xl mx-auto">
+          <p className="text-lg text-stone-600 leading-relaxed max-w-2xl mx-auto mb-6">
             Knowing your rights is one of the most important things you can do when Child Protection becomes involved. This guide explains your rights in plain language.
           </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <PrintButton />
+            <LastUpdated date="May 2026" />
+          </div>
         </div>
       </section>
 

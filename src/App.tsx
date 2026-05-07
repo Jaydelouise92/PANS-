@@ -21,6 +21,9 @@ import Funding from './pages/Funding';
 import Contact from './pages/Contact';
 import AdvocacySupport from './pages/AdvocacySupport';
 import SupportPANS from './pages/SupportPANS';
+import MeetingPreparationGuide from './pages/guides/MeetingPreparationGuide';
+import CourtTermsGuide from './pages/guides/CourtTermsGuide';
+import OrganiseDocumentsGuide from './pages/guides/OrganiseDocumentsGuide';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -52,6 +55,9 @@ function AppLayout() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/advocacy-support" element={<AdvocacySupport />} />
           <Route path="/support-pans" element={<SupportPANS />} />
+          <Route path="/guides/meeting-preparation" element={<MeetingPreparationGuide />} />
+          <Route path="/guides/court-terms" element={<CourtTermsGuide />} />
+          <Route path="/guides/organise-documents" element={<OrganiseDocumentsGuide />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </main>
