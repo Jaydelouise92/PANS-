@@ -1,0 +1,20 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "koJCxGKfb5hzOUr0lJhDj"
+uri = "file://public/watercolour-pathway.png"
+type = "image"
+title = "soft watercolour pathway"
+
+[[generated]]
+id = "7jR0_H0swIuu3sW98K-X2"
+uri = "file://public/soft-light-beam.png"
+type = "image"
+title = "soft light beam"
+
+[[generated]]
+id = "_Mc-T3Wkkue5EgiTdlUJX"
+uri = "file://public/parent-child-silhouette-new.png"
+type = "image"
+title = "gentle parent-child silhouette"

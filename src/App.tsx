@@ -24,6 +24,7 @@ import SupportPANS from './pages/SupportPANS';
 import MeetingPreparationGuide from './pages/guides/MeetingPreparationGuide';
 import CourtTermsGuide from './pages/guides/CourtTermsGuide';
 import OrganiseDocumentsGuide from './pages/guides/OrganiseDocumentsGuide';
+import Video from './pages/Video';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -58,6 +59,7 @@ function AppLayout() {
           <Route path="/guides/meeting-preparation" element={<MeetingPreparationGuide />} />
           <Route path="/guides/court-terms" element={<CourtTermsGuide />} />
           <Route path="/guides/organise-documents" element={<OrganiseDocumentsGuide />} />
+          <Route path="/video" element={<Video />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </main>
@@ -67,11 +69,22 @@ function AppLayout() {
   );
 }
 
+function VideoRoute() {
+  return (
+    <div className="w-full h-screen overflow-hidden">
+      <Video />
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
-      <AppLayout />
+      <Routes>
+        <Route path="/video" element={<VideoRoute />} />
+        <Route path="*" element={<AppLayout />} />
+      </Routes>
     </BrowserRouter>
   );
 }
