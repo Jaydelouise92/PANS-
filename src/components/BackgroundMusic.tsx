@@ -59,7 +59,10 @@ export default function BackgroundMusic() {
             className="bg-white border border-purple-200 shadow-lg rounded-2xl px-4 py-2.5 text-xs text-stone-600 flex items-center gap-2 max-w-[200px]"
           >
             <Music size={13} className="text-brand-primary shrink-0" />
-            <span>Music by PANS — tap to play</span>
+            <div>
+              <p className="font-semibold text-stone-700 leading-tight">Song by the Founder</p>
+              <p className="text-stone-400 leading-tight">Tap to play</p>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
