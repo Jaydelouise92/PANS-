@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Music, VolumeX, Volume2 } from 'lucide-react';
 
-const AUDIO_URL = 'https://cdn1.suno.ai/a8b8a8c3-dc69-4b79-ab18-5b26b915b858.mp3';
+const AUDIO_URL = '/background-music.mp3';
 const DEFAULT_VOLUME = 0.18;
 
 export default function BackgroundMusic() {
