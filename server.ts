@@ -227,6 +227,7 @@ async function startServer() {
         html: htmlBody,
         text: `Name: ${name}\nEmail: ${email}\nSubject: ${subject || supportType}\nSupport needed: ${supportType}\n\nMessage:\n${message}`,
       });
+      console.log(`Contact email sent successfully from ${safeEmail} — subject: ${safeSubject}`);
       res.json({ success: true });
     } catch (error) {
       console.error("Error sending contact email:", error);
