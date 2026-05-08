@@ -179,7 +179,7 @@ async function startServer() {
     if (!isEmailConfigured()) {
       console.log("Contact form submission (email not configured):", { name, email, subject });
       return res.status(500).json({
-        error: "Email is not yet configured. Please add EMAIL_USER and EMAIL_PASS to Secrets.",
+        error: "Email is not yet configured. Please add EMAIL_PASS to Secrets.",
       });
     }
 
@@ -270,7 +270,7 @@ async function startServer() {
     try {
       const transporter = getTransporter();
       await transporter.sendMail({
-        from: `"PANS Story Submission" <${process.env.EMAIL_USER}>`,
+        from: `"PANS Story Submission" <${GMAIL_USER}>`,
         to: ADMIN_EMAIL,
         subject: `[PANS Story] ${title} — ${stage}`,
         text: `Title: ${title}\nAuthor: ${author || "Anonymous"}\nStage: ${stage}\nSituation: ${situation}\nUrgency: ${urgency}\n\nStory:\n${content}`,
