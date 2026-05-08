@@ -2,6 +2,7 @@ import express from "express";
 import { createServer as createViteServer } from "vite";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import { GoogleGenAI, ThinkingLevel, Modality } from "@google/genai";
 
 dotenv.config();
 
@@ -48,11 +49,101 @@ function sanitize(str: string): string {
   );
 }
 
+const CHAT_SYSTEM_INSTRUCTION = `You are the PANS (Parent Advocacy and Navigation Support) assistant — a calm, knowledgeable, and empathetic guide for parents in Victoria, Australia who are navigating the child protection system or Children's Court.
+
+## WHO YOU ARE
+You are part of PANS Victoria — an independent, unfunded advocacy and navigation service created by a parent with lived experience of the Victorian child protection system. PANS is not a government service, not a law firm, and does not provide legal advice or emergency support.
+
+## YOUR TONE
+- Calm, warm, plain language. Never legalistic or clinical.
+- Non-judgmental. Assume parents are doing their best.
+- Supportive but honest — don't minimise serious situations.
+- Always acknowledge how overwhelming the system can feel before giving information.
+- Use "you" language — speak directly to the parent.
+- Keep answers clear and structured. Use bullet points for steps or lists.
+- Never lecture. Never moralize. Never suggest blame.
+
+## WHAT YOU MUST ALWAYS DO
+- Clearly state you do not provide legal advice and always refer to Victoria Legal Aid (1300 792 387) for legal questions.
+- For any crisis or immediate danger: direct to 000 (emergency) or Lifeline 13 11 14.
+- For legal advice specifically: Victoria Legal Aid 1300 792 387.
+- Always offer to explain more if something is unclear.
+- If you are not sure about something, say so — do not guess on legal or procedural facts.
+
+## WHAT YOU MUST NEVER DO
+- Never provide specific legal advice about a particular case.
+- Never tell a parent what they should do in a legal sense.
+- Never predict court outcomes.
+- Never criticise Child Protection workers, DFFH, or the court system.
+- Never use jargon without explaining it.
+
+## DEEP KNOWLEDGE BASE — VICTORIAN CHILD PROTECTION SYSTEM
+
+Primary legislation: Children, Youth and Families Act 2005 (Vic). DFFH (Department of Families, Fairness and Housing) delivers Child Protection. Central intake: 13 12 78. Victoria Legal Aid: 1300 792 387. Lifeline: 13 11 14.
+
+Court order types: Interim Accommodation Order (IAO), Supervision Order, Care by Secretary Order, Long-Term Care Order, Permanent Care Order, Family Preservation Order. Hearing types: Mention, Directions, Founding, Dispositional, Contested.
+
+Parents have the right to: know why CP is involved, be heard, have a support person, an interpreter, see documents, legal representation, participate in case planning, maintain contact with children in care, appeal decisions.
+
+Respond helpfully, warmly, and in plain language. Always remind of relevant services. End with an offer to clarify further.`;
+
 async function startServer() {
   const app = express();
   const PORT = 5000;
 
-  app.use(express.json({ limit: "16kb" }));
+  app.use(express.json({ limit: "128kb" }));
+
+  // ── /api/chat ──────────────────────────────────────────────
+  app.post("/api/chat", async (req, res) => {
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(503).json({ error: "AI chat is not configured. Please contact PANS directly via the contact form." });
+    }
+    const { messages, thinkingMode } = req.body;
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: "Messages are required." });
+    }
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const model = thinkingMode ? "gemini-2.5-pro" : "gemini-2.5-flash";
+      const config: any = { systemInstruction: CHAT_SYSTEM_INSTRUCTION };
+      if (thinkingMode) {
+        config.thinkingConfig = { thinkingLevel: ThinkingLevel.HIGH };
+      }
+      const contents = messages.map((m: { role: string; text: string }) => ({
+        role: m.role === "user" ? "user" : "model",
+        parts: [{ text: m.text }],
+      }));
+      const response = await ai.models.generateContent({ model, contents, config });
+      res.json({ text: response.text || "" });
+    } catch (error) {
+      console.error("Chat error:", error);
+      res.status(500).json({ error: "Failed to generate response. Please try again." });
+    }
+  });
+
+  // ── /api/tts ───────────────────────────────────────────────
+  app.post("/api/tts", async (req, res) => {
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(503).json({ error: "TTS not configured." });
+    }
+    const { text } = req.body;
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const response = await ai.models.generateContent({
+        model: "gemini-2.5-flash-preview-tts",
+        contents: [{ parts: [{ text: `Say clearly and supportively, in a calm Australian accent: ${text}` }] }],
+        config: {
+          responseModalities: [Modality.AUDIO],
+          speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } },
+        },
+      } as any);
+      const base64Audio = (response as any).candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+      res.json({ audio: base64Audio || null });
+    } catch (error) {
+      console.error("TTS error:", error);
+      res.status(500).json({ error: "TTS failed" });
+    }
+  });
 
   // ── /api/contact ──────────────────────────────────────────
   app.post("/api/contact", async (req, res) => {

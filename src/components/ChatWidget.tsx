@@ -1,9 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Bot, Volume2, Brain, Zap, ThumbsUp, ThumbsDown, AlertCircle, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { GoogleGenAI, ThinkingLevel, Modality } from "@google/genai";
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SYSTEM INSTRUCTION — deep knowledge of Victorian child protection + PANS
@@ -226,17 +223,13 @@ const ChatWidget = () => {
 
   const speakText = async (text: string) => {
     try {
-      const response = await ai.models.generateContent({
-        model: "gemini-2.5-flash-preview-tts",
-        contents: [{ parts: [{ text: `Say clearly and supportively, in a calm Australian accent: ${text}` }] }],
-        config: {
-          responseModalities: [Modality.AUDIO],
-          speechConfig: {
-            voiceConfig: { prebuiltVoiceConfig: { voiceName: 'Kore' } },
-          },
-        },
+      const res = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
       });
-      const base64Audio = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+      const data = await res.json();
+      const base64Audio = data.audio;
       if (base64Audio) {
         const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
         const arrayBuffer = Uint8Array.from(atob(base64Audio), c => c.charCodeAt(0)).buffer;
@@ -268,20 +261,13 @@ const ChatWidget = () => {
     setIsLoading(true);
 
     try {
-      const model = isThinkingMode ? "gemini-2.5-pro" : "gemini-2.5-flash";
-      const config: any = { systemInstruction: SYSTEM_INSTRUCTION };
-      if (isThinkingMode) {
-        config.thinkingConfig = { thinkingLevel: ThinkingLevel.HIGH };
-      }
-
-      // Build conversation history for context
-      const contents = updatedMessages.map((m) => ({
-        role: m.role === 'user' ? 'user' : 'model',
-        parts: [{ text: m.text }],
-      }));
-
-      const response = await ai.models.generateContent({ model, contents, config });
-      const reply = response.text || "I'm sorry, I wasn't able to process that. Please try again or contact PANS directly via the contact form.";
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: updatedMessages, thinkingMode: isThinkingMode }),
+      });
+      const data = await res.json();
+      const reply = data.text || data.error || "I'm sorry, I wasn't able to process that. Please try again or contact PANS directly via the contact form.";
       setMessages((prev) => [...prev, { role: 'assistant', text: reply }]);
     } catch (error) {
       console.error("Chat error:", error);
