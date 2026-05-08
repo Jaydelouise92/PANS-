@@ -29,20 +29,20 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
+const GMAIL_USER = "ourvoicemattersaus@gmail.com";
+
 function getTransporter() {
-  const user = (process.env.EMAIL_USER || "").trim();
   const pass = (process.env.EMAIL_PASS || "").replace(/\s/g, "");
-  console.log(`Email auth: user="${user}", pass length=${pass.length}`);
   return nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
-    auth: { user, pass },
+    auth: { user: GMAIL_USER, pass },
   });
 }
 
 function isEmailConfigured() {
-  return !!(process.env.EMAIL_USER && process.env.EMAIL_PASS);
+  return !!(process.env.EMAIL_PASS);
 }
 
 function sanitize(str: string): string {
@@ -220,7 +220,7 @@ async function startServer() {
     try {
       const transporter = getTransporter();
       await transporter.sendMail({
-        from: `"PANS Contact Form" <${process.env.EMAIL_USER}>`,
+        from: `"PANS Contact Form" <${GMAIL_USER}>`,
         to: ADMIN_EMAIL,
         replyTo: email,
         subject: `[PANS Contact] ${subject || safeType} — from ${safeName}`,
@@ -245,7 +245,7 @@ async function startServer() {
     try {
       const transporter = getTransporter();
       await transporter.sendMail({
-        from: `"PANS Feedback" <${process.env.EMAIL_USER}>`,
+        from: `"PANS Feedback" <${GMAIL_USER}>`,
         to: ADMIN_EMAIL,
         subject: `[PANS Feedback] ${rating === "positive" ? "👍 Positive" : "👎 Negative"} — AI assistant`,
         text: `Rating: ${rating}\nMessage: ${message || "No comment"}\n\nContext:\n${JSON.stringify(context, null, 2)}`,
