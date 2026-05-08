@@ -205,6 +205,31 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── 5b. Featured article ──────────────────────────────── */}
+      <section className="px-6 py-14">
+        <div className="max-w-3xl mx-auto">
+          <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-3 text-center">
+            Featured article
+          </p>
+          <Link
+            to="/articles/child-protection-process-victoria"
+            className="block bg-white border border-purple-100 rounded-2xl p-6 md:p-8 hover:border-brand-primary/40 hover:shadow-md transition"
+          >
+            <h2 className="text-2xl md:text-3xl font-serif text-stone-900 mb-3 leading-tight">
+              Understanding the Child Protection process in Victoria
+            </h2>
+            <p className="text-stone-700 leading-relaxed mb-4">
+              From the first phone call to your first case planning meeting —
+              what usually happens, what the words mean, and where you can stop
+              and breathe. Written for parents, in plain English.
+            </p>
+            <span className="inline-flex items-center gap-2 text-brand-primary font-semibold">
+              Read the full article <ArrowRight size={16} />
+            </span>
+          </Link>
+        </div>
+      </section>
+
       {/* ── 6. Common questions (FAQ for SEO + parent help) ──── */}
       <section className="px-6 py-16">
         <div className="max-w-3xl mx-auto">

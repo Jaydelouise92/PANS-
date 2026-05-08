@@ -29,6 +29,7 @@ import MeetingPreparationGuide from './pages/guides/MeetingPreparationGuide';
 import CourtTermsGuide from './pages/guides/CourtTermsGuide';
 import OrganiseDocumentsGuide from './pages/guides/OrganiseDocumentsGuide';
 import Video from './pages/Video';
+import CPProcessFromFirstContact from './pages/articles/CPProcessFromFirstContact';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -66,6 +67,7 @@ function AppLayout() {
           <Route path="/guides/meeting-preparation" element={<MeetingPreparationGuide />} />
           <Route path="/guides/court-terms" element={<CourtTermsGuide />} />
           <Route path="/guides/organise-documents" element={<OrganiseDocumentsGuide />} />
+          <Route path="/articles/child-protection-process-victoria" element={<CPProcessFromFirstContact />} />
           <Route path="/video" element={<Video />} />
           <Route path="*" element={<Home />} />
         </Routes>
