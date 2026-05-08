@@ -93,6 +93,8 @@ async function startServer() {
   const app = express();
   const PORT = 5000;
 
+  app.set("trust proxy", 1);
+
   app.use(express.json({ limit: "128kb" }));
 
   // ── /api/chat ──────────────────────────────────────────────
@@ -154,7 +156,7 @@ async function startServer() {
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "Voice assistant is not configured." });
     }
-    const ip = (req.headers["x-forwarded-for"] as string) || req.socket.remoteAddress || "unknown";
+    const ip = req.ip || req.socket.remoteAddress || "unknown";
     if (!checkRateLimit(ip)) {
       return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
@@ -192,7 +194,7 @@ async function startServer() {
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "Image generation not configured." });
     }
-    const ip = (req.headers["x-forwarded-for"] as string) || req.socket.remoteAddress || "unknown";
+    const ip = req.ip || req.socket.remoteAddress || "unknown";
     if (!checkRateLimit(ip)) {
       return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
@@ -230,7 +232,7 @@ async function startServer() {
       return res.json({ success: true }); // silently discard
     }
 
-    const ip = (req.headers["x-forwarded-for"] as string) || req.socket.remoteAddress || "unknown";
+    const ip = req.ip || req.socket.remoteAddress || "unknown";
     if (!checkRateLimit(ip)) {
       return res.status(429).json({ error: "Too many submissions. Please wait a few minutes and try again." });
     }
@@ -313,19 +315,35 @@ async function startServer() {
 
   // ── /api/feedback ─────────────────────────────────────────
   app.post("/api/feedback", async (req, res) => {
-    if (!isEmailConfigured()) {
-      console.log("Feedback received (email not configured):", req.body.rating);
-      return res.json({ success: true });
+    const ip = req.ip || req.socket.remoteAddress || "unknown";
+    if (!checkRateLimit(ip)) {
+      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
 
     const { rating, message, context } = req.body;
+
+    if (!rating || !["positive", "negative", "issue_report"].includes(rating)) {
+      return res.status(400).json({ error: "Invalid feedback rating." });
+    }
+    if (message && typeof message === "string" && message.length > 2000) {
+      return res.status(400).json({ error: "Feedback message is too long." });
+    }
+
+    if (!isEmailConfigured()) {
+      console.log("Feedback received (email not configured):", rating);
+      return res.json({ success: true });
+    }
+
+    const safeRating = sanitize(rating);
+    const safeMessage = sanitize(typeof message === "string" ? message : "No comment");
+
     try {
       const transporter = getTransporter();
       await transporter.sendMail({
         from: `"PANS Feedback" <${GMAIL_USER}>`,
         to: ADMIN_EMAIL,
-        subject: `[PANS Feedback] ${rating === "positive" ? "👍 Positive" : "👎 Negative"} — AI assistant`,
-        text: `Rating: ${rating}\nMessage: ${message || "No comment"}\n\nContext:\n${JSON.stringify(context, null, 2)}`,
+        subject: `[PANS Feedback] ${rating === "positive" ? "Positive" : rating === "negative" ? "Negative" : "Issue Report"} — AI assistant`,
+        text: `Rating: ${safeRating}\nMessage: ${safeMessage}\n\nContext:\n${JSON.stringify(context, null, 2)}`,
       });
       res.json({ success: true });
     } catch (error) {
@@ -336,20 +354,45 @@ async function startServer() {
 
   // ── /api/story ────────────────────────────────────────────
   app.post("/api/story", async (req, res) => {
+    const ip = req.ip || req.socket.remoteAddress || "unknown";
+    if (!checkRateLimit(ip)) {
+      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
+    }
+
     const { title, author, content, stage, situation, urgency } = req.body;
 
+    if (!title || typeof title !== "string" || title.trim().length === 0) {
+      return res.status(400).json({ error: "Story title is required." });
+    }
+    if (!content || typeof content !== "string" || content.trim().length < 10) {
+      return res.status(400).json({ error: "Story content is required and must be at least 10 characters." });
+    }
+    if (content.length > 10000) {
+      return res.status(400).json({ error: "Story content is too long (max 10000 characters)." });
+    }
+    if (!stage || typeof stage !== "string") {
+      return res.status(400).json({ error: "Stage is required." });
+    }
+
     if (!isEmailConfigured()) {
-      console.log("Story submission received (email not configured):", { title, author, stage });
+      console.log("Story submission received (email not configured):", { title: sanitize(title), stage: sanitize(stage) });
       return res.json({ success: true });
     }
+
+    const safeTitle = sanitize(title);
+    const safeAuthor = sanitize(typeof author === "string" ? author : "Anonymous");
+    const safeContent = sanitize(content);
+    const safeStage = sanitize(stage);
+    const safeSituation = sanitize(typeof situation === "string" ? situation : "");
+    const safeUrgency = sanitize(typeof urgency === "string" ? urgency : "");
 
     try {
       const transporter = getTransporter();
       await transporter.sendMail({
         from: `"PANS Story Submission" <${GMAIL_USER}>`,
         to: ADMIN_EMAIL,
-        subject: `[PANS Story] ${title} — ${stage}`,
-        text: `Title: ${title}\nAuthor: ${author || "Anonymous"}\nStage: ${stage}\nSituation: ${situation}\nUrgency: ${urgency}\n\nStory:\n${content}`,
+        subject: `[PANS Story] ${safeTitle} — ${safeStage}`,
+        text: `Title: ${safeTitle}\nAuthor: ${safeAuthor}\nStage: ${safeStage}\nSituation: ${safeSituation}\nUrgency: ${safeUrgency}\n\nStory:\n${safeContent}`,
       });
       res.json({ success: true });
     } catch (error) {
