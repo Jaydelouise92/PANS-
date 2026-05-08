@@ -30,14 +30,14 @@ function checkRateLimit(ip: string): boolean {
 }
 
 function getTransporter() {
+  const user = (process.env.EMAIL_USER || "").trim();
+  const pass = (process.env.EMAIL_PASS || "").replace(/\s/g, "");
+  console.log(`Email auth: user="${user}", pass length=${pass.length}`);
   return nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: (process.env.EMAIL_PASS || "").replace(/\s/g, ""),
-    },
+    auth: { user, pass },
   });
 }
 
