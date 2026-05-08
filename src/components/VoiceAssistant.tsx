@@ -3,8 +3,6 @@ import { Mic, MicOff, X, Volume2, Bot } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { GoogleGenAI, Modality, LiveServerMessage } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
-
 const VoiceAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -21,6 +19,11 @@ const VoiceAssistant = () => {
   const startSession = async () => {
     setIsConnecting(true);
     try {
+      const tokenRes = await fetch('/api/voice-token', { method: 'POST' });
+      if (!tokenRes.ok) throw new Error('Failed to get voice token');
+      const { token } = await tokenRes.json();
+
+      const ai = new GoogleGenAI({ apiKey: token });
       const session = await ai.live.connect({
         model: "gemini-2.5-flash-native-audio-preview-09-2025",
         config: {
@@ -48,7 +51,6 @@ const VoiceAssistant = () => {
             if (message.serverContent?.modelTurn?.parts[0]?.text) {
               setAssistantTranscription(prev => prev + message.serverContent!.modelTurn!.parts[0].text);
             }
-            // Handle transcriptions if enabled
           },
           onclose: () => {
             setIsConnected(false);
@@ -127,7 +129,6 @@ const VoiceAssistant = () => {
   };
 
   const stopAudio = () => {
-    // Implementation to stop current playback if needed
   };
 
   const closeSession = () => {

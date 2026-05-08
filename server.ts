@@ -2,7 +2,7 @@ import express from "express";
 import { createServer as createViteServer } from "vite";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
-import { GoogleGenAI, ThinkingLevel, Modality } from "@google/genai";
+import { GoogleGenAI, ThinkingLevel, Modality, type Part, type GenerateContentParameters } from "@google/genai";
 
 dotenv.config();
 
@@ -131,19 +131,95 @@ async function startServer() {
     const { text } = req.body;
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-      const response = await ai.models.generateContent({
+      const ttsParams: GenerateContentParameters = {
         model: "gemini-2.5-flash-preview-tts",
         contents: [{ parts: [{ text: `Say clearly and supportively, in a calm Australian accent: ${text}` }] }],
         config: {
           responseModalities: [Modality.AUDIO],
           speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: "Kore" } } },
         },
-      } as any);
-      const base64Audio = (response as any).candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
+      };
+      const response = await ai.models.generateContent(ttsParams);
+      const ttsParts: Part[] = response.candidates?.[0]?.content?.parts ?? [];
+      const base64Audio = ttsParts[0]?.inlineData?.data ?? null;
       res.json({ audio: base64Audio || null });
     } catch (error) {
       console.error("TTS error:", error);
       res.status(500).json({ error: "TTS failed" });
+    }
+  });
+
+  // ── /api/voice-token ──────────────────────────────────────
+  app.post("/api/voice-token", async (req, res) => {
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(503).json({ error: "Voice assistant is not configured." });
+    }
+    const ip = (req.headers["x-forwarded-for"] as string) || req.socket.remoteAddress || "unknown";
+    if (!checkRateLimit(ip)) {
+      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
+    }
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const expireTime = new Date(Date.now() + 60 * 1000).toISOString();
+      const newSessionExpireTime = new Date(Date.now() + 10 * 60 * 1000).toISOString();
+      const authToken = await ai.authTokens.create({
+        config: {
+          uses: 1,
+          expireTime,
+          newSessionExpireTime,
+        },
+      });
+      res.json({ token: authToken.name });
+    } catch (error) {
+      console.error("Voice token error:", error);
+      res.status(500).json({ error: "Failed to create voice session." });
+    }
+  });
+
+  // ── /api/image ────────────────────────────────────────────
+  const IMAGE_PROMPTS: Record<string, { prompt: string; aspectRatio: string }> = {
+    hero: {
+      prompt: "A beautiful, warm, and supportive close-up illustration of two hands linking or holding each other firmly. The style should be soft, hand-drawn or artistic, evoking a sense of connection, support, and guidance. Gentle, warm colors like lavender, soft gold, and cream.",
+      aspectRatio: "4:5",
+    },
+    founder: {
+      prompt: "A beautiful, artistic illustration of soft flowers or a gentle heart shape. The style should be elegant, warm, and supportive. Soft lighting, gentle colors like lavender and cream. No people, just the symbolic representation of care and growth.",
+      aspectRatio: "1:1",
+    },
+  };
+
+  app.post("/api/image", async (req, res) => {
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(503).json({ error: "Image generation not configured." });
+    }
+    const ip = (req.headers["x-forwarded-for"] as string) || req.socket.remoteAddress || "unknown";
+    if (!checkRateLimit(ip)) {
+      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
+    }
+    const type = typeof req.body.type === "string" ? req.body.type : "";
+    const imageSpec = IMAGE_PROMPTS[type];
+    if (!imageSpec) {
+      return res.status(400).json({ error: "Invalid image type." });
+    }
+    try {
+      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      const params: GenerateContentParameters = {
+        model: "gemini-2.5-flash-image",
+        contents: { parts: [{ text: imageSpec.prompt }] },
+        config: {
+          imageConfig: { aspectRatio: imageSpec.aspectRatio },
+        },
+      };
+      const response = await ai.models.generateContent(params);
+      const parts: Part[] = response.candidates?.[0]?.content?.parts ?? [];
+      const imagePart = parts.find((p) => p.inlineData != null);
+      if (imagePart?.inlineData?.data) {
+        return res.json({ image: `data:image/png;base64,${imagePart.inlineData.data}` });
+      }
+      res.status(500).json({ error: "No image generated." });
+    } catch (error) {
+      console.error("Image generation error:", error);
+      res.status(500).json({ error: "Failed to generate image." });
     }
   });
 
