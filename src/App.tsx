@@ -22,6 +22,9 @@ import Funding from './pages/Funding';
 import Contact from './pages/Contact';
 import AdvocacySupport from './pages/AdvocacySupport';
 import SupportPANS from './pages/SupportPANS';
+import SupervisedContact from './pages/SupervisedContact';
+import SelfRepresented from './pages/SelfRepresented';
+import EmotionalImpact from './pages/EmotionalImpact';
 import MeetingPreparationGuide from './pages/guides/MeetingPreparationGuide';
 import CourtTermsGuide from './pages/guides/CourtTermsGuide';
 import OrganiseDocumentsGuide from './pages/guides/OrganiseDocumentsGuide';
@@ -51,6 +54,9 @@ function AppLayout() {
           <Route path="/parent-rights" element={<ParentRights />} />
           <Route path="/system-explained" element={<SystemExplained />} />
           <Route path="/childrens-court" element={<ChildrensCourt />} />
+          <Route path="/supervised-contact" element={<SupervisedContact />} />
+          <Route path="/self-represented" element={<SelfRepresented />} />
+          <Route path="/emotional-impact" element={<EmotionalImpact />} />
           <Route path="/mental-health" element={<MentalHealth />} />
           <Route path="/founder" element={<Founder />} />
           <Route path="/funding" element={<Funding />} />
