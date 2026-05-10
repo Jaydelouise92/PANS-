@@ -30,6 +30,8 @@ import CourtTermsGuide from './pages/guides/CourtTermsGuide';
 import OrganiseDocumentsGuide from './pages/guides/OrganiseDocumentsGuide';
 import Video from './pages/Video';
 import CPProcessFromFirstContact from './pages/articles/CPProcessFromFirstContact';
+import Privacy from './pages/Privacy';
+import CookieBanner from './components/CookieBanner';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -68,6 +70,7 @@ function AppLayout() {
           <Route path="/guides/court-terms" element={<CourtTermsGuide />} />
           <Route path="/guides/organise-documents" element={<OrganiseDocumentsGuide />} />
           <Route path="/articles/child-protection-process-victoria" element={<CPProcessFromFirstContact />} />
+          <Route path="/privacy" element={<Privacy />} />
           <Route path="/video" element={<Video />} />
           <Route path="*" element={<Home />} />
         </Routes>
@@ -75,6 +78,7 @@ function AppLayout() {
       <Footer />
       <ChatWidget />
       <BackgroundMusic />
+      <CookieBanner />
     </div>
   );
 }

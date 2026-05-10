@@ -31,13 +31,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Google tag (gtag.js) -->
+    <!-- Google tag (gtag.js) — Consent Mode v2: deny analytics until user accepts -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-2GCNHGP2SZ"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied'
+      });
       gtag('js', new Date());
-      gtag('config', 'G-2GCNHGP2SZ');
+      gtag('config', 'G-2GCNHGP2SZ', { anonymize_ip: true });
     </script>
 
     <!-- Structured data -->
