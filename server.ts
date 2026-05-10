@@ -14,19 +14,40 @@ dotenv.config();
 // ─────────────────────────────────────────────────────────
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "ourvoicemattersaus@gmail.com";
 
-// Simple in-memory rate limiter (max 5 submissions per IP per 10 minutes)
-const rateLimit = new Map<string, { count: number; resetAt: number }>();
+// ── Rate limiting ──────────────────────────────────────────
+// Each mail-sending endpoint has its own independent bucket so that
+// one endpoint cannot exhaust another's quota, and each limit is tuned
+// to the expected legitimate usage pattern.
 
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const entry = rateLimit.get(ip);
-  if (!entry || now > entry.resetAt) {
-    rateLimit.set(ip, { count: 1, resetAt: now + 10 * 60 * 1000 });
+function makeRateLimiter(maxCount: number, windowMs: number) {
+  const store = new Map<string, { count: number; resetAt: number }>();
+  return function check(key: string): boolean {
+    const now = Date.now();
+    const entry = store.get(key);
+    if (!entry || now > entry.resetAt) {
+      store.set(key, { count: 1, resetAt: now + windowMs });
+      return true;
+    }
+    if (entry.count >= maxCount) return false;
+    entry.count++;
     return true;
-  }
-  if (entry.count >= 5) return false;
-  entry.count++;
-  return true;
+  };
+}
+
+// General limiter for non-email, resource-intensive endpoints (voice, image)
+const checkRateLimit = makeRateLimiter(5, 10 * 60 * 1000);
+// Contact form: 5 submissions per 10 minutes per connection
+const checkContactLimit = makeRateLimiter(5, 10 * 60 * 1000);
+// Feedback: 10 per 10 minutes (lightweight, chat-adjacent action)
+const checkFeedbackLimit = makeRateLimiter(10, 10 * 60 * 1000);
+// Story: 3 per 10 minutes (longer form, lower expected volume)
+const checkStoryLimit = makeRateLimiter(3, 10 * 60 * 1000);
+
+// Use the actual TCP socket address as the rate-limit key.
+// Unlike req.ip / X-Forwarded-For, req.socket.remoteAddress cannot be
+// manipulated by an attacker via request headers — the OS owns that value.
+function getRateLimitKey(req: express.Request): string {
+  return req.socket.remoteAddress || "unknown";
 }
 
 const GMAIL_USER = "ourvoicemattersaus@gmail.com";
@@ -156,8 +177,7 @@ async function startServer() {
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "Voice assistant is not configured." });
     }
-    const ip = req.ip || req.socket.remoteAddress || "unknown";
-    if (!checkRateLimit(ip)) {
+    if (!checkRateLimit(getRateLimitKey(req))) {
       return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     try {
@@ -194,8 +214,7 @@ async function startServer() {
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "Image generation not configured." });
     }
-    const ip = req.ip || req.socket.remoteAddress || "unknown";
-    if (!checkRateLimit(ip)) {
+    if (!checkRateLimit(getRateLimitKey(req))) {
       return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const type = typeof req.body.type === "string" ? req.body.type : "";
@@ -232,8 +251,7 @@ async function startServer() {
       return res.json({ success: true }); // silently discard
     }
 
-    const ip = req.ip || req.socket.remoteAddress || "unknown";
-    if (!checkRateLimit(ip)) {
+    if (!checkContactLimit(getRateLimitKey(req))) {
       return res.status(429).json({ error: "Too many submissions. Please wait a few minutes and try again." });
     }
 
@@ -315,8 +333,7 @@ async function startServer() {
 
   // ── /api/feedback ─────────────────────────────────────────
   app.post("/api/feedback", async (req, res) => {
-    const ip = req.ip || req.socket.remoteAddress || "unknown";
-    if (!checkRateLimit(ip)) {
+    if (!checkFeedbackLimit(getRateLimitKey(req))) {
       return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
 
@@ -354,8 +371,7 @@ async function startServer() {
 
   // ── /api/story ────────────────────────────────────────────
   app.post("/api/story", async (req, res) => {
-    const ip = req.ip || req.socket.remoteAddress || "unknown";
-    if (!checkRateLimit(ip)) {
+    if (!checkStoryLimit(getRateLimitKey(req))) {
       return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
 
