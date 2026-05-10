@@ -23,7 +23,7 @@ export default function VideoTemplate() {
   const { currentScene } = useVideoPlayer({ durations: SCENE_DURATIONS });
 
   return (
-    <div className="relative w-full h-screen overflow-hidden bg-[#F9F8FF] font-sans">
+    <div className="relative w-full h-full overflow-hidden bg-[#F9F8FF] font-sans">
       {/* Persistent Background Layer */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div 

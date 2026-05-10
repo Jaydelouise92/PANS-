@@ -65,7 +65,7 @@ export default function OrganiseDocumentsGuide() {
     <div className="pt-16 print:pt-0">
       {/* Print header */}
       <div className="hidden print:block mb-8 pb-6 border-b-2 border-stone-300">
-        <p className="text-xs text-stone-500 uppercase tracking-widest mb-1">PANS Victoria — Parent Advocacy & Navigation Support</p>
+        <p className="text-xs text-stone-500 uppercase tracking-widest mb-1">PANS Victoria — Parent Advocacy, Navigation & Support</p>
         <h1 className="text-3xl font-serif text-stone-900">Organising Your Documents</h1>
         <p className="text-sm text-stone-500 mt-2">pansvictoria.org.au · For general information only, not legal advice · VLA: 1300 792 387</p>
       </div>

@@ -13,7 +13,7 @@ export default function Footer() {
               <div className="w-9 h-9 bg-brand-primary rounded-full flex items-center justify-center text-white font-serif font-bold text-lg">P</div>
               <div>
                 <p className="font-bold text-brand-primary text-sm">PANS Victoria</p>
-                <p className="text-[10px] text-stone-400 uppercase tracking-widest">Parent Advocacy & Navigation</p>
+                <p className="text-[10px] text-stone-400 uppercase tracking-widest">Parent Advocacy, Navigation & Support</p>
               </div>
             </div>
             <p className="text-stone-500 text-sm leading-relaxed mb-4">

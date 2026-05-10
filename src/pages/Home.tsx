@@ -17,9 +17,11 @@ export default function Home() {
   return (
     <div className="bg-brand-secondary">
       {/* ── 1. Hero video ───────────────────────────────────────── */}
-      <section className="relative w-full h-[60vh] md:h-[75vh] overflow-hidden" aria-label="PANS Victoria introduction">
-        <VideoTemplate />
-        <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-[#F9F8FF] via-[#F9F8FF]/70 to-transparent pt-16 pb-6 px-6">
+      <section className="w-full pt-16 bg-[#F9F8FF]" aria-label="PANS Victoria introduction">
+        <div className="relative w-full aspect-video max-h-[85vh] mx-auto">
+          <VideoTemplate />
+        </div>
+        <div className="px-6 pt-6 pb-8">
           <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-3">
             <Link
               to="/start-here"

@@ -64,7 +64,7 @@ export default function Navbar() {
           <div className="w-9 h-9 bg-brand-primary rounded-full flex items-center justify-center text-white font-serif font-bold text-lg">P</div>
           <div className="flex flex-col leading-none">
             <span className="font-bold text-brand-primary text-sm tracking-tight">PANS Victoria</span>
-            <span className="text-[10px] text-stone-400 uppercase tracking-widest">Parent Advocacy & Navigation</span>
+            <span className="text-[10px] text-stone-400 uppercase tracking-widest">Parent Advocacy, Navigation & Support</span>
           </div>
         </Link>
 
