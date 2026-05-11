@@ -46,9 +46,13 @@ export default function Home() {
             <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-4">
               PANS Victoria
             </p>
-            <h1 className="text-3xl md:text-4xl font-serif text-stone-900 mb-5 leading-tight">
+            <h1 className="text-3xl md:text-4xl font-serif text-stone-900 mb-3 leading-tight">
               Child Protection Victoria help and support for parents
             </h1>
+            <p className="inline-flex items-center gap-2 text-xs font-medium text-brand-primary bg-brand-secondary border border-purple-100 rounded-full px-3 py-1 mb-5">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-primary" />
+              Written by a Victorian parent with lived experience — not by AI
+            </p>
             <p className="text-lg text-stone-700 leading-relaxed mb-3">
               <strong>PANS Victoria</strong> is a free, independent, plain-language
               information service for parents across Victoria, Australia who are
@@ -274,6 +278,29 @@ export default function Home() {
               link={{ to: '/about', label: 'About PANS Victoria' }}
             />
           </div>
+        </div>
+      </section>
+
+      {/* ── 6b. Parent feedback CTA ───────────────────────────── */}
+      <section className="px-6 py-14 bg-brand-secondary border-y border-purple-100">
+        <div className="max-w-3xl mx-auto text-center">
+          <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-3">
+            Parent Feedback
+          </p>
+          <h2 className="text-3xl font-serif text-stone-900 mb-3">
+            Tell us how PANS is going
+          </h2>
+          <p className="text-stone-600 leading-relaxed max-w-xl mx-auto mb-6">
+            Every piece of feedback from a parent shapes what gets added next.
+            Share what helped, what was confusing, or what you wish was here —
+            anonymously if you'd prefer.
+          </p>
+          <Link
+            to="/parent-feedback"
+            className="inline-flex items-center gap-2 bg-brand-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-brand-primary/90 transition shadow-lg shadow-brand-primary/20"
+          >
+            Share your feedback <ArrowRight size={16} />
+          </Link>
         </div>
       </section>
 

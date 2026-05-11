@@ -42,6 +42,8 @@ const checkContactLimit = makeRateLimiter(5, 10 * 60 * 1000);
 const checkFeedbackLimit = makeRateLimiter(10, 10 * 60 * 1000);
 // Story: 3 per 10 minutes (longer form, lower expected volume)
 const checkStoryLimit = makeRateLimiter(3, 10 * 60 * 1000);
+// Parent feedback: 3 per 10 minutes (form-style, lower expected volume)
+const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
 
 // Use the actual TCP socket address as the rate-limit key.
 // Unlike req.ip / X-Forwarded-For, req.socket.remoteAddress cannot be
@@ -419,6 +421,94 @@ async function startServer() {
     } catch (error) {
       console.error("Error sending story email:", error);
       res.status(500).json({ error: "Failed to submit story" });
+    }
+  });
+
+  // ── /api/parent-feedback ──────────────────────────────────
+  // Public form for parents to share their experience of the PANS website / service.
+  app.post("/api/parent-feedback", async (req, res) => {
+    // Honeypot
+    if (req.body.website || req.body.phone_verify) {
+      return res.json({ success: true });
+    }
+
+    if (!checkParentFeedbackLimit(getRateLimitKey(req))) {
+      return res.status(429).json({ error: "Too many submissions. Please wait a few minutes and try again." });
+    }
+
+    const { name, email, rating, helpful, message, consentToShare } = req.body;
+
+    if (!message || typeof message !== "string" || message.trim().length < 10) {
+      return res.status(400).json({ error: "Please share at least a sentence so we can learn from your experience." });
+    }
+    if (message.length > 5000) {
+      return res.status(400).json({ error: "Feedback is too long (max 5000 characters)." });
+    }
+    if (rating !== undefined && rating !== "" && (typeof rating !== "string" || !["1", "2", "3", "4", "5"].includes(rating))) {
+      return res.status(400).json({ error: "Invalid rating." });
+    }
+    if (helpful !== undefined && helpful !== "" && (typeof helpful !== "string" || !["Yes", "Somewhat", "Not really"].includes(helpful))) {
+      return res.status(400).json({ error: "Invalid 'helpful' value." });
+    }
+    if (name !== undefined && (typeof name !== "string" || name.length > 100)) {
+      return res.status(400).json({ error: "Name is too long (max 100 characters)." });
+    }
+    if (email && typeof email === "string" && email.length > 0) {
+      if (email.length > 200 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        return res.status(400).json({ error: "Please enter a valid email address, or leave it blank." });
+      }
+    }
+    if (consentToShare !== undefined && typeof consentToShare !== "boolean") {
+      return res.status(400).json({ error: "Invalid consent value." });
+    }
+
+    if (!isEmailConfigured()) {
+      console.log("Parent feedback received (email not configured)");
+      return res.json({ success: true });
+    }
+
+    const safeName = sanitize(typeof name === "string" && name.trim() ? name : "Anonymous parent");
+    const safeEmail = sanitize(typeof email === "string" ? email : "Not provided");
+    const safeRating = sanitize(typeof rating === "string" ? rating : "Not given");
+    const safeHelpful = sanitize(typeof helpful === "string" ? helpful : "");
+    const safeMessage = sanitize(message).replace(/\n/g, "<br>");
+    const safeConsent = consentToShare === true ? "Yes — may be shared anonymously" : "No — keep private";
+
+    const htmlBody = `
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"></head>
+<body style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 24px; background: #fff; color: #333;">
+  <div style="border-top: 4px solid #7C6A96; padding-top: 24px; margin-bottom: 32px;">
+    <h1 style="font-size: 22px; color: #7C6A96; margin: 0 0 4px;">New Parent Feedback — PANS Victoria</h1>
+    <p style="font-size: 13px; color: #999; margin: 0;">${new Date().toLocaleString("en-AU", { timeZone: "Australia/Melbourne" })}</p>
+  </div>
+  <table style="width: 100%; border-collapse: collapse; margin-bottom: 24px;">
+    <tr><td style="padding: 10px 0; border-bottom: 1px solid #eee; font-size: 13px; color: #666; width: 160px;">From</td><td style="padding: 10px 0; border-bottom: 1px solid #eee; font-weight: bold;">${safeName}</td></tr>
+    <tr><td style="padding: 10px 0; border-bottom: 1px solid #eee; font-size: 13px; color: #666;">Email</td><td style="padding: 10px 0; border-bottom: 1px solid #eee;">${safeEmail}</td></tr>
+    <tr><td style="padding: 10px 0; border-bottom: 1px solid #eee; font-size: 13px; color: #666;">Rating</td><td style="padding: 10px 0; border-bottom: 1px solid #eee;">${safeRating} / 5</td></tr>
+    <tr><td style="padding: 10px 0; border-bottom: 1px solid #eee; font-size: 13px; color: #666;">Was it helpful?</td><td style="padding: 10px 0; border-bottom: 1px solid #eee;">${safeHelpful || "Not specified"}</td></tr>
+    <tr><td style="padding: 10px 0; font-size: 13px; color: #666;">Consent to share</td><td style="padding: 10px 0;">${safeConsent}</td></tr>
+  </table>
+  <div style="background: #F9F8FF; border-left: 4px solid #B5A1D1; padding: 16px 20px; border-radius: 0 8px 8px 0;">
+    <p style="font-size: 13px; color: #666; margin: 0 0 8px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em;">Their feedback</p>
+    <p style="margin: 0; line-height: 1.7;">${safeMessage}</p>
+  </div>
+</body></html>`;
+
+    try {
+      const transporter = getTransporter();
+      await transporter.sendMail({
+        from: `"PANS Parent Feedback" <${GMAIL_USER}>`,
+        to: ADMIN_EMAIL,
+        replyTo: typeof email === "string" && email ? email : undefined,
+        subject: `[PANS Feedback] From ${safeName} — rating ${safeRating}/5`,
+        html: htmlBody,
+        text: `From: ${safeName}\nEmail: ${safeEmail}\nRating: ${safeRating}/5\nHelpful: ${safeHelpful}\nConsent: ${safeConsent}\n\nFeedback:\n${message}`,
+      });
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error sending parent feedback email:", error);
+      res.status(500).json({ error: "Failed to send feedback. Please try again or email us directly." });
     }
   });
 

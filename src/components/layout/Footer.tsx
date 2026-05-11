@@ -54,6 +54,7 @@ export default function Footer() {
                 { label: "Children's Court Guide", path: '/childrens-court' },
                 { label: 'Mental Health Support', path: '/mental-health' },
                 { label: 'Support PANS', path: '/support-pans' },
+                { label: 'Share Your Feedback', path: '/parent-feedback' },
               ].map((l) => (
                 <li key={l.path}>
                   <Link to={l.path} className="text-xs text-stone-500 hover:text-brand-primary transition-colors">{l.label}</Link>
@@ -100,14 +101,21 @@ export default function Footer() {
               </div>
             </div>
           </div>
-          <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-            <p className="text-stone-400 text-xs">
-              © {new Date().getFullYear()} PANS – Parent Advocacy and Navigation Support, Victoria. All rights reserved.
-            </p>
-            <div className="flex gap-4">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-3">
+            <div className="text-stone-400 text-xs leading-relaxed text-center md:text-left">
+              <p>
+                © {new Date().getFullYear()} PANS Victoria — Parent Advocacy, Navigation &amp; Support. All rights reserved.
+              </p>
+              <p className="mt-1 text-stone-400/80">
+                Original content, guides and illustrations may not be copied, republished, or used to train AI models without written permission. <Link to="/copyright" className="underline hover:text-brand-primary">Read full copyright notice</Link>.
+              </p>
+            </div>
+            <div className="flex gap-4 flex-wrap justify-center">
               <Link to="/about" className="text-xs text-stone-400 hover:text-brand-primary transition-colors">About</Link>
               <Link to="/funding" className="text-xs text-stone-400 hover:text-brand-primary transition-colors">Transparency</Link>
-              <Link to="/privacy" className="text-xs text-stone-400 hover:text-brand-primary transition-colors">Privacy & Cookies</Link>
+              <Link to="/parent-feedback" className="text-xs text-stone-400 hover:text-brand-primary transition-colors">Feedback</Link>
+              <Link to="/privacy" className="text-xs text-stone-400 hover:text-brand-primary transition-colors">Privacy &amp; Cookies</Link>
+              <Link to="/copyright" className="text-xs text-stone-400 hover:text-brand-primary transition-colors">Copyright</Link>
               <Link to="/contact" className="text-xs text-stone-400 hover:text-brand-primary transition-colors">Contact</Link>
             </div>
           </div>

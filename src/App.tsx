@@ -31,6 +31,8 @@ import OrganiseDocumentsGuide from './pages/guides/OrganiseDocumentsGuide';
 import Video from './pages/Video';
 import CPProcessFromFirstContact from './pages/articles/CPProcessFromFirstContact';
 import Privacy from './pages/Privacy';
+import ParentFeedback from './pages/ParentFeedback';
+import Copyright from './pages/Copyright';
 import CookieBanner from './components/CookieBanner';
 
 function ScrollToTop() {
@@ -71,6 +73,8 @@ function AppLayout() {
           <Route path="/guides/organise-documents" element={<OrganiseDocumentsGuide />} />
           <Route path="/articles/child-protection-process-victoria" element={<CPProcessFromFirstContact />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/parent-feedback" element={<ParentFeedback />} />
+          <Route path="/copyright" element={<Copyright />} />
           <Route path="/video" element={<Video />} />
           <Route path="*" element={<Home />} />
         </Routes>
