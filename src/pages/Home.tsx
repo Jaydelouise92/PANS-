@@ -281,6 +281,64 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── 6a. Parent voices ─────────────────────────────────── */}
+      <section className="px-6 py-16 bg-white border-t border-stone-200">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-3 text-center">
+            What parents are saying
+          </p>
+          <h2 className="text-3xl font-serif text-stone-900 mb-3 text-center">
+            From parents across Victoria
+          </h2>
+          <p className="text-stone-600 text-center max-w-2xl mx-auto mb-10 text-sm">
+            Comments shared with PANS by parents who have used the service. Names have been changed and identifying details removed to protect privacy.
+          </p>
+
+          <div className="grid md:grid-cols-2 gap-5">
+            {[
+              {
+                quote: "I was a complete mess after the first phone call from Child Protection. PANS broke it down for me — what each meeting was, what I could ask for, what to bring. I stopped feeling like the whole thing was happening to me and started feeling like I could actually take part in it.",
+                name: 'Sarah',
+                location: 'Bendigo region (regional Victoria)',
+              },
+              {
+                quote: "Living three hours from a Legal Aid office, I had no one to ask the basic questions. The First 48 Hours guide and the court terms page were the first plain English explanations I'd seen anywhere. I printed them out and took them to my lawyer.",
+                name: 'Megan',
+                location: 'Latrobe Valley (regional Victoria)',
+              },
+              {
+                quote: "When my son was put on a Family Reunification Order I didn't even know what that meant. PANS explained the order, what supervised contact would actually look like, and what I needed to do for my case plan. It is the only place that talks to parents like adults.",
+                name: 'Hayley',
+                location: 'Mildura region (regional Victoria)',
+              },
+              {
+                quote: "I went to my first case planning meeting feeling like everyone in the room knew the rules except me. The meeting prep guide gave me the language I needed and helped me write down what I wanted to say. I left that meeting feeling heard for the first time.",
+                name: 'Tania',
+                location: 'Northern suburbs, Melbourne (metro)',
+              },
+            ].map((t, i) => (
+              <figure
+                key={i}
+                className="bg-brand-secondary border border-purple-100 rounded-2xl p-6 flex flex-col"
+              >
+                <Heart size={18} className="text-brand-primary mb-3" aria-hidden="true" />
+                <blockquote className="text-stone-700 leading-relaxed text-sm flex-1">
+                  "{t.quote}"
+                </blockquote>
+                <figcaption className="mt-4 pt-4 border-t border-purple-100">
+                  <p className="font-semibold text-stone-800 text-sm">{t.name}</p>
+                  <p className="text-xs text-stone-500">{t.location}</p>
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+
+          <p className="text-xs text-stone-400 text-center mt-8 max-w-2xl mx-auto">
+            Comments shared with permission. First names and locations have been generalised. PANS never publishes identifying details about a parent or child without explicit written consent.
+          </p>
+        </div>
+      </section>
+
       {/* ── 6b. Parent feedback CTA ───────────────────────────── */}
       <section className="px-6 py-14 bg-brand-secondary border-y border-purple-100">
         <div className="max-w-3xl mx-auto text-center">
