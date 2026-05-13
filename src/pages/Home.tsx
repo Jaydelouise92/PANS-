@@ -54,17 +54,35 @@ export default function Home() {
               Written by a Victorian parent with lived experience — not by AI
             </p>
             <p className="text-lg text-stone-700 leading-relaxed mb-3">
-              <strong>PANS Victoria</strong> is a free, independent, plain-language
-              information service for parents across Victoria, Australia who are
-              dealing with Child Protection — the Department of Families, Fairness
-              and Housing (DFFH, formerly DHHS) — or appearing in the{' '}
+              <strong>PANS Victoria</strong> is a free, independent advocacy and
+              information service for parents across Victoria, Australia —
+              including rural and regional communities — who are involved with
+              Child Protection, the Department of Families, Fairness and Housing
+              (DFFH), or the{' '}
               <Link to="/childrens-court" className="text-brand-primary underline">Children's Court of Victoria</Link>.
             </p>
+            <p className="text-lg text-stone-700 leading-relaxed mb-3">
+              We provide clear, practical support in plain language to help you
+              understand the Child Protection process, know your{' '}
+              <Link to="/parent-rights" className="text-brand-primary underline">rights</Link>,
+              prepare for meetings and court, respond to concerns, and make
+              informed decisions about what to do next.
+            </p>
+            <p className="text-lg text-stone-700 leading-relaxed mb-3">
+              Whether you are attending your first Child Protection meeting,
+              preparing for court, considering an appeal, or trying to
+              understand your options, PANS Victoria helps you take the next
+              step with greater confidence.
+            </p>
+            <p className="text-lg text-stone-700 leading-relaxed mb-3">
+              Our goal is to help parents become informed, self-reliant
+              advocates for themselves and their children.
+            </p>
             <p className="text-lg text-stone-700 leading-relaxed">
-              We help you understand the Child Protection process in Victoria,
-              know your <Link to="/parent-rights" className="text-brand-primary underline">rights as a parent</Link>,
-              prepare for meetings and court, and work out your next step — one
-              at a time.
+              PANS Victoria was created by a parent with lived experience of the
+              Child Protection system, offering support grounded in empathy,
+              understanding, and the belief that no parent should have to face
+              this process alone.
             </p>
             <div className="mt-6 flex gap-5 flex-wrap">
               <Link to="/about" className="text-brand-primary font-semibold inline-flex items-center gap-2 hover:gap-3 transition-all">
