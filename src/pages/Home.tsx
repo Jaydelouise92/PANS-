@@ -55,8 +55,8 @@ export default function Home() {
             </p>
             <p className="text-lg text-stone-700 leading-relaxed mb-3">
               <strong>PANS Victoria</strong> is a free, independent advocacy and
-              information service for parents across Victoria, Australia —
-              including rural and regional communities — who are involved with
+              information service for parents across Victoria, Australia,
+              including rural and regional communities, who are involved with
               Child Protection, the Department of Families, Fairness and Housing
               (DFFH), or the{' '}
               <Link to="/childrens-court" className="text-brand-primary underline">Children's Court of Victoria</Link>.
