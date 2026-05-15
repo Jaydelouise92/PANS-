@@ -21,7 +21,7 @@ const fadeIn = {
 };
 
 const services = [
-  { icon: <BookOpen size={22} />, title: 'Understand Child Protection', desc: 'Plain-language guides to the DFFH process — from notification to reunification.', to: '/system-explained' },
+  { icon: <BookOpen size={22} />, title: 'Understand Child Protection', desc: 'Plain-language guides to the DFFH process, from notification through to reunification.', to: '/system-explained' },
   { icon: <Shield size={22} />, title: 'Know Your Rights', desc: 'What you can ask for, what you can refuse, and what Child Protection must tell you.', to: '/parent-rights' },
   { icon: <MessageSquare size={22} />, title: 'Prepare for Meetings', desc: 'Make sure your voice is heard at case planning meetings and conferences.', to: '/how-it-works' },
   { icon: <Scale size={22} />, title: "Children's Court Support", desc: 'Hearing types, common orders, and a step-by-step day-of-court guide.', to: '/childrens-court' },
@@ -40,7 +40,7 @@ export default function Services() {
           <span className="text-xs font-bold uppercase tracking-widest text-brand-primary mb-4 block">Services</span>
           <h1 className="text-4xl md:text-5xl font-serif text-stone-900 mb-5 leading-tight">How PANS Victoria helps parents</h1>
           <p className="text-lg text-stone-700 leading-relaxed max-w-2xl mx-auto">
-            Free, independent advocacy and information across every stage of the Child Protection journey in Victoria — including rural and regional communities.
+            Free, independent advocacy and information across every stage of the Child Protection journey in Victoria, including rural and regional communities.
           </p>
         </motion.div>
       </section>

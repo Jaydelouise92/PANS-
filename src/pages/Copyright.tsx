@@ -29,7 +29,7 @@ export default function Copyright() {
               © {year} PANS Victoria — Parent Advocacy, Navigation &amp; Support.
               All written content, original illustrations, page layouts, guides,
               article text, the founder's story, and original video scenes
-              published on <strong>pansvic.online</strong> are the intellectual
+              published on <strong>pansvic.replit.app</strong> are the intellectual
               property of PANS Victoria and its founder. All rights reserved.
             </p>
           </div>
@@ -39,7 +39,7 @@ export default function Copyright() {
             <ul className="space-y-2 text-stone-700">
               <li>• Read, save, print and share PANS guides for your own personal use as a parent or supporter.</li>
               <li>• Share a link to any PANS page with another parent, lawyer, or community worker.</li>
-              <li>• Quote a short passage from a guide if you clearly credit "PANS Victoria — pansvic.online" and link back to the source page.</li>
+              <li>• Quote a short passage from a guide if you clearly credit "PANS Victoria — pansvic.replit.app" and link back to the source page.</li>
             </ul>
           </div>
 
@@ -64,7 +64,7 @@ export default function Copyright() {
               quote short excerpts where this would help parents. Please cite as:
               <em className="block mt-2 not-italic bg-brand-secondary border border-purple-100 rounded-xl p-4 text-sm">
                 PANS Victoria — Parent Advocacy, Navigation &amp; Support ({year}).
-                <em>[Page title]</em>. Retrieved from https://pansvic.online
+                <em>[Page title]</em>. Retrieved from https://pansvic.replit.app
               </em>
             </p>
           </div>

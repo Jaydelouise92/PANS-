@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /api/
 
-Sitemap: https://pansvic.online/sitemap.xml
+Sitemap: https://pansvic.replit.app/sitemap.xml

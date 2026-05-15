@@ -5,7 +5,7 @@ import { ArrowRight, AlertTriangle, Phone } from 'lucide-react';
 const TITLE = 'Understanding the Child Protection Process in Victoria — From First Contact to Case Planning';
 const DESCRIPTION =
   'A plain-language guide for parents on how Child Protection works in Victoria, from the first phone call by a DFFH worker through to investigation and case planning.';
-const URL = 'https://pansvic.online/articles/child-protection-process-victoria';
+const URL = 'https://pansvic.replit.app/articles/child-protection-process-victoria';
 
 export default function CPProcessFromFirstContact() {
   useEffect(() => {

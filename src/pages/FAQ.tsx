@@ -17,17 +17,17 @@ const faqs: { q: string; a: string; link?: { to: string; label: string } }[] = [
   },
   {
     q: 'Is the service free?',
-    a: 'Yes. Every guide and every page on this site is free to use. PANS Victoria is parent-led and unfunded — we will never ask you for payment to access information or support.',
+    a: 'Yes. Every guide and every page on this site is free to use. PANS Victoria is parent-led and unfunded, and we will never ask you for payment to access information or support.',
     link: { to: '/funding', label: 'How PANS is funded' },
   },
   {
     q: "Can you help with Children's Court?",
-    a: "Yes. We can help you understand hearing types, common court orders (such as Interim Accommodation Orders, Family Reunification Orders and Care by Secretary Orders), what to expect on the day, and how to prepare. PANS does not provide legal representation — for that, contact Victoria Legal Aid on 1300 792 387.",
+    a: "Yes. We can help you understand hearing types, common court orders (such as Interim Accommodation Orders, Family Reunification Orders and Care by Secretary Orders), what to expect on the day, and how to prepare. PANS does not provide legal representation. For that, please contact Victoria Legal Aid on 1300 792 387.",
     link: { to: '/childrens-court', label: "Children's Court guide" },
   },
   {
     q: 'Can you help with appeals and reviews?',
-    a: 'Yes. PANS Victoria can help you understand the internal review and appeal pathways available — including who to write to, what to include, and where to get free legal advice.',
+    a: 'Yes. PANS Victoria can help you understand the internal review and appeal pathways available, including who to write to, what to include, and where to get free legal advice.',
     link: { to: '/resources', label: 'See appeals and review resources' },
   },
   {
@@ -42,7 +42,7 @@ const faqs: { q: string; a: string; link?: { to: string; label: string } }[] = [
   },
   {
     q: 'What if I have a disability and need support to participate?',
-    a: 'Parents and carers with disabilities have specific rights under the Charter of Rights for Parents and Carers with Disabilities Involved with Child Protection — including the right to reasonable adjustments, accessible information and a support person at meetings and court. PANS Victoria can help you understand these rights and ask for what you need.',
+    a: 'Parents and carers with disabilities have specific rights under the Charter of Rights for Parents and Carers with Disabilities Involved with Child Protection. These include the right to reasonable adjustments, accessible information and a support person at meetings and court. PANS Victoria can help you understand these rights and ask for what you need.',
     link: { to: '/disability-rights', label: 'Learn about Disability Rights' },
   },
   {

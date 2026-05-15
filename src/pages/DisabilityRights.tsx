@@ -23,8 +23,8 @@ const fadeIn = {
 const rights = [
   { icon: <Users size={20} />, title: 'Participate, be heard, and be included', desc: 'Take part in decisions about your child and have your views genuinely considered.' },
   { icon: <Heart size={20} />, title: 'Be treated with dignity and respect', desc: 'Workers must communicate with you in a way that is respectful and non-judgmental.' },
-  { icon: <FileText size={20} />, title: 'Receive information in accessible formats', desc: 'Plain language, larger print, audio, Easy Read or interpreter support — whatever you need to understand what is happening.' },
-  { icon: <MessageSquare size={20} />, title: 'Have a support person at meetings and court', desc: 'You can bring a trusted person — family member, friend, advocate or worker — to any meeting or hearing.' },
+  { icon: <FileText size={20} />, title: 'Receive information in accessible formats', desc: 'Plain language, larger print, audio, Easy Read or interpreter support, whatever you need to understand what is happening.' },
+  { icon: <MessageSquare size={20} />, title: 'Have a support person at meetings and court', desc: 'You can bring a trusted person (family member, friend, advocate or worker) to any meeting or hearing.' },
   { icon: <Accessibility size={20} />, title: 'Request reasonable adjustments', desc: 'Ask for changes that help you participate fairly: shorter meetings, breaks, written summaries, quiet spaces, and more time to respond.' },
   { icon: <Shield size={20} />, title: 'Receive honest and transparent communication', desc: 'Workers should be clear about what is happening, what you are being asked to do, and why.' },
   { icon: <Scale size={20} />, title: 'Be treated fairly and without discrimination', desc: 'Disability must not be used as the reason a child is removed or kept from a parent.' },
@@ -44,7 +44,7 @@ export default function DisabilityRights() {
             Rights of Parents and Carers with Disabilities
           </h1>
           <p className="text-lg text-stone-700 leading-relaxed max-w-2xl mx-auto">
-            PANS Victoria recognises the <strong>Charter of Rights for Parents and Carers with Disabilities Involved with Child Protection</strong> in Victoria — and helps parents put those rights into practice.
+            PANS Victoria recognises the <strong>Charter of Rights for Parents and Carers with Disabilities Involved with Child Protection</strong> in Victoria, and helps parents put those rights into practice.
           </p>
         </motion.div>
       </section>

@@ -31,7 +31,7 @@ export default function Home() {
       {/* ── 1. Hero ─────────────────────────────────────────────── */}
       <section
         className="w-full pt-24 md:pt-28 pb-16 md:pb-24 px-6 bg-gradient-to-b from-[#F4EEFB] via-brand-secondary to-white"
-        aria-label="PANS Victoria — supportive welcome"
+        aria-label="PANS Victoria, a supportive welcome to parents"
       >
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-14 items-center">
           <motion.div {...fadeIn}>
@@ -44,7 +44,7 @@ export default function Home() {
             </h1>
             <p className="text-lg md:text-xl text-stone-700 leading-relaxed mb-8 max-w-xl">
               Free, independent advocacy and plain-language support for parents
-              across Victoria — including rural and regional communities.
+              across Victoria, including rural and regional communities. If you're scared or lost right now, you're not on your own. We're parents helping parents, one step at a time.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
@@ -62,7 +62,7 @@ export default function Home() {
             </div>
             <p className="mt-6 inline-flex items-center gap-2 text-xs font-medium text-brand-primary bg-white/70 border border-purple-100 rounded-full px-3 py-1">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-primary" />
-              Written by a Victorian parent with lived experience — not by AI
+              Written by a Victorian parent with lived experience, not by AI
             </p>
           </motion.div>
 
@@ -76,7 +76,7 @@ export default function Home() {
             <div className="absolute -inset-4 bg-brand-accent/30 rounded-[2rem] blur-2xl" aria-hidden="true" />
             <img
               src="/checklist-notebook.png"
-              alt="A parent quietly reviewing documents and notes at a kitchen table — soft, calm setting"
+              alt="A parent quietly reviewing documents and notes at a kitchen table, in a soft and calm setting"
               loading="eager"
               width="800"
               height="600"
@@ -126,7 +126,7 @@ export default function Home() {
           <div>
             <img
               src="/about-hero.png"
-              alt="A parent and child walking a calm path together — symbolising the supportive Child Protection navigation provided by PANS Victoria"
+              alt="A parent and child walking a calm path together, symbolising the supportive Child Protection navigation provided by PANS Victoria"
               loading="lazy"
               width="800"
               height="600"
@@ -157,7 +157,7 @@ export default function Home() {
               to="/system-explained"
               icon={<BookOpen size={22} />}
               title="Understand Child Protection"
-              description="Plain-language guides to the DFFH process — from the first notification to case closure or reunification."
+              description="Plain-language guides to the DFFH process, from the first notification all the way through to case closure or reunification."
             />
             <HelpCard
               to="/parent-rights"
@@ -187,7 +187,7 @@ export default function Home() {
               to="/start-here"
               icon={<Map size={22} />}
               title="Regional and Rural Support"
-              description="The same plain-language guidance no matter where in Victoria you live — built with regional parents in mind."
+              description="The same plain-language guidance, no matter where in Victoria you live. Built with regional parents in mind."
             />
             <HelpCard
               to="/parent-rights"
@@ -199,7 +199,7 @@ export default function Home() {
               to="/resources"
               icon={<Sparkles size={22} />}
               title="Plain-Language Resources"
-              description="Printable guides, checklists and articles written for parents under stress — no jargon."
+              description="Printable guides, checklists and articles written for parents under stress, with no jargon and no lectures."
             />
             <HelpCard
               to="/disability-rights"
@@ -228,7 +228,7 @@ export default function Home() {
               {
                 icon: <CheckCircle2 size={22} />,
                 title: 'Free and independent',
-                desc: 'Always free to use. Not government-funded, not affiliated with DFFH — always on the parent\u2019s side.',
+                desc: 'Always free to use. Not government-funded and not affiliated with DFFH. Always on the parent\u2019s side.',
               },
               {
                 icon: <Heart size={22} />,
@@ -361,7 +361,7 @@ export default function Home() {
       <section className="px-6 py-16">
         <motion.div {...fadeIn} className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-serif text-stone-900 mb-3 text-center">
-            Start here — first steps for parents
+            Start here: first steps for parents
           </h2>
           <p className="text-stone-600 text-center max-w-2xl mx-auto mb-10">
             If you're not sure where to begin, these three pages are the most important place to start.
@@ -371,7 +371,7 @@ export default function Home() {
             <StartCard
               to="/start-here"
               title="Find your stage"
-              description="Tell us where you are in the process — investigation, case plan, court, removal or reunification — and we'll show you the most relevant guides."
+              description="Tell us where you are in the process (investigation, case plan, court, removal or reunification) and we'll show you the most relevant guides."
             />
             <StartCard
               to="/first-48-hours"
@@ -403,7 +403,7 @@ export default function Home() {
             <GuideCard
               to="/system-explained"
               icon={<BookOpen size={20} />}
-              title="Child Protection Victoria — process explained"
+              title="Child Protection Victoria: the process explained"
               description="A plain-language overview of how the Child Protection (DFFH) system works in Victoria, from notification through to case closure or reunification."
             />
             <GuideCard
@@ -415,7 +415,7 @@ export default function Home() {
             <GuideCard
               to="/parent-rights"
               icon={<Scale size={20} />}
-              title="Parents' rights — Child Protection Victoria"
+              title="Parents' rights in Child Protection Victoria"
               description="What you can ask for, what you can refuse, and what Child Protection must tell you."
             />
             <GuideCard
@@ -479,7 +479,7 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-5">
             {[
               {
-                quote: "I was a complete mess after the first phone call from Child Protection. PANS broke it down for me — what each meeting was, what I could ask for, what to bring. I stopped feeling like the whole thing was happening to me and started feeling like I could actually take part in it.",
+                quote: "I was a complete mess after the first phone call from Child Protection. PANS broke it down for me, what each meeting was, what I could ask for, what to bring. I stopped feeling like the whole thing was happening to me and started feeling like I could actually take part in it.",
                 name: 'Sarah',
                 location: 'Bendigo region (regional Victoria)',
               },
@@ -545,17 +545,17 @@ export default function Home() {
             />
             <Faq
               question="Is the service free?"
-              answer="Yes. Every guide, every reply and every page on this site is free to use. PANS Victoria is parent-led and unfunded — we will never ask you for payment to access information or support."
+              answer="Yes. Every guide, every reply and every page on this site is free to use. PANS Victoria is parent-led and unfunded, and we will never ask you for payment to access information or support."
               link={{ to: '/funding', label: 'How PANS is funded' }}
             />
             <Faq
               question="Can you help with Children's Court?"
-              answer="Yes. We help you understand hearing types, common court orders, what to expect on the day, and how to prepare. PANS does not provide legal representation — for that, contact Victoria Legal Aid on 1300 792 387."
+              answer="Yes. We help you understand hearing types, common court orders, what to expect on the day, and how to prepare. PANS does not provide legal representation. For that, contact Victoria Legal Aid on 1300 792 387."
               link={{ to: '/childrens-court', label: "Children's Court guide" }}
             />
             <Faq
               question="Can you help with appeals and reviews?"
-              answer="Yes. We can help you understand the internal review and appeal pathways available — including who to write to, what to include, and where to get free legal advice."
+              answer="Yes. We can help you understand the internal review and appeal pathways available, including who to write to, what to include, and where to get free legal advice."
               link={{ to: '/resources', label: 'See appeals and review resources' }}
             />
             <Faq
@@ -570,7 +570,7 @@ export default function Home() {
             />
             <Faq
               question="What if I have a disability and need support to participate?"
-              answer="Parents and carers with disabilities have specific rights under the Charter — including the right to reasonable adjustments, accessible information and a support person at meetings and court. PANS Victoria can help you understand these rights and ask for what you need."
+              answer="Parents and carers with disabilities have specific rights under the Charter, including the right to reasonable adjustments, accessible information and a support person at meetings and court. PANS Victoria can help you understand these rights and ask for what you need."
               link={{ to: '/disability-rights', label: 'Learn about Disability Rights' }}
             />
             <Faq
@@ -593,7 +593,7 @@ export default function Home() {
             Take the next step with confidence.
           </h2>
           <p className="text-white/90 leading-relaxed max-w-xl mx-auto mb-8">
-            Whatever stage you're at — first phone call, case meeting, court date or appeal — PANS Victoria is here to help you understand it and move forward.
+            Whatever stage you're at, first phone call, case meeting, court date or appeal, PANS Victoria is here to walk through it with you.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link
@@ -669,7 +669,7 @@ export default function Home() {
                 name: 'Is the service free?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: 'Yes. Every guide and every page on this site is free to use. PANS Victoria is parent-led and unfunded — we will never ask you for payment to access information or support.',
+                  text: 'Yes. Every guide and every page on this site is free to use. PANS Victoria is parent-led and unfunded, and we will never ask you for payment to access information or support.',
                 },
               },
               {
@@ -677,7 +677,7 @@ export default function Home() {
                 name: 'Can PANS Victoria help with appeals?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: 'Yes. PANS Victoria can help you understand the internal review and appeal pathways available — including who to write to, what to include, and where to get free legal advice.',
+                  text: 'Yes. PANS Victoria can help you understand the internal review and appeal pathways available, including who to write to, what to include, and where to get free legal advice.',
                 },
               },
               {

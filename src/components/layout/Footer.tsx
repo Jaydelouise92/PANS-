@@ -104,7 +104,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row justify-between items-center gap-3">
             <div className="text-stone-400 text-xs leading-relaxed text-center md:text-left">
               <p>
-                © {new Date().getFullYear()} PANS Victoria — Parent Advocacy, Navigation &amp; Support. All rights reserved.
+                © {new Date().getFullYear()} PANS Victoria, Parent Advocacy, Navigation &amp; Support. All rights reserved.
               </p>
               <p className="mt-1 text-stone-400/80">
                 Original content, guides and illustrations may not be copied, republished, or used to train AI models without written permission. <Link to="/copyright" className="underline hover:text-brand-primary">Read full copyright notice</Link>.

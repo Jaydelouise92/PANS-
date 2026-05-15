@@ -24,7 +24,7 @@ export default function About() {
             <h2 className="text-3xl font-serif text-stone-900 mb-6">An independent service, built from lived experience</h2>
             <div className="space-y-4 text-stone-600 leading-relaxed">
               <p>
-                PANS — Parent Advocacy, Navigation &amp; Support — is an independent information and navigation support service for parents in Victoria involved with the Department of Families, Fairness and Housing (DFFH) or the Children's Court of Victoria.
+                PANS (Parent Advocacy, Navigation &amp; Support) is an independent information and navigation support service for parents in Victoria involved with the Department of Families, Fairness and Housing (DFFH) or the Children's Court of Victoria.
               </p>
               <p>
                 It was created by a parent who has personally been through this system and knows how overwhelming, confusing and isolating it can feel. The goal is simple: help parents understand what is happening, know their rights, and feel less alone.
@@ -43,7 +43,7 @@ export default function About() {
               { icon: <Heart size={20} />, title: 'Lived Experience', desc: 'Created by a parent who has navigated the system firsthand.' },
               { icon: <Scale size={20} />, title: 'Informed by Study', desc: 'The founder is studying criminology and criminal justice with a focus on families in child protection.' },
               { icon: <Shield size={20} />, title: 'Child Safety First', desc: 'PANS holds a valid Working With Children Check.' },
-              { icon: <Info size={20} />, title: 'Not Legal Advice', desc: 'PANS provides information and navigation support only — always seek legal advice from Victoria Legal Aid where possible.' },
+              { icon: <Info size={20} />, title: 'Not Legal Advice', desc: 'PANS provides information and navigation support only. Please always seek legal advice from Victoria Legal Aid where possible.' },
             ].map((item, i) => (
               <motion.div
                 key={i}
