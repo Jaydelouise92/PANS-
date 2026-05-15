@@ -15,6 +15,7 @@ import {
   Map,
   CheckCircle2,
   Sparkles,
+  Accessibility,
 } from 'lucide-react';
 
 const fadeIn = {
@@ -96,19 +97,18 @@ export default function Home() {
               Child Protection Victoria help and support for parents
             </h2>
             <p className="text-lg text-stone-700 leading-relaxed mb-3">
-              <strong>PANS Victoria</strong> is a free, independent advocacy and
-              information service for parents across Victoria, Australia,
-              including rural and regional communities, who are involved with
-              Child Protection, the Department of Families, Fairness and Housing
-              (DFFH), or the{' '}
+              <strong>PANS Victoria</strong> is a free, independent parental
+              advocacy and information service for parents across Victoria,
+              Australia who are involved with Child Protection, the Department
+              of Families, Fairness and Housing (DFFH), or the{' '}
               <Link to="/childrens-court" className="text-brand-primary underline">Children's Court of Victoria</Link>.
             </p>
             <p className="text-lg text-stone-700 leading-relaxed mb-3">
-              We provide clear, practical support in plain language to help you
-              understand the Child Protection process, know your{' '}
+              We provide practical, plain-language support to help parents
+              understand the Child Protection process, know their{' '}
               <Link to="/parent-rights" className="text-brand-primary underline">rights</Link>,
-              prepare for meetings and court, respond to concerns, and make
-              informed decisions about what to do next.
+              prepare for meetings and court, explore appeals and reviews, and
+              make informed decisions about what to do next.
             </p>
             <p className="text-lg text-stone-700 leading-relaxed">
               Our goal is to help parents become informed, self-reliant
@@ -160,6 +160,12 @@ export default function Home() {
               description="Plain-language guides to the DFFH process — from the first notification to case closure or reunification."
             />
             <HelpCard
+              to="/parent-rights"
+              icon={<Shield size={22} />}
+              title="Know Your Rights"
+              description="What you can ask for, what you can refuse, and what Child Protection must tell you."
+            />
+            <HelpCard
               to="/how-it-works"
               icon={<MessageSquare size={22} />}
               title="Prepare for Meetings"
@@ -185,9 +191,21 @@ export default function Home() {
             />
             <HelpCard
               to="/parent-rights"
-              icon={<Shield size={22} />}
-              title="Know Your Rights"
-              description="What you can ask for, what you can refuse, and what Child Protection must tell you."
+              icon={<Users size={22} />}
+              title="Parent Self-Advocacy"
+              description="Practical tools to help you speak up for yourself and your family with confidence."
+            />
+            <HelpCard
+              to="/resources"
+              icon={<Sparkles size={22} />}
+              title="Plain-Language Resources"
+              description="Printable guides, checklists and articles written for parents under stress — no jargon."
+            />
+            <HelpCard
+              to="/disability-rights"
+              icon={<Accessibility size={22} />}
+              title="Disability Rights & Reasonable Adjustments"
+              description="Help understanding the Charter and asking for the adjustments you need from Child Protection."
             />
           </div>
         </div>
@@ -205,27 +223,37 @@ export default function Home() {
             </h2>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
             {[
               {
+                icon: <CheckCircle2 size={22} />,
+                title: 'Free and independent',
+                desc: 'Always free to use. Not government-funded, not affiliated with DFFH — always on the parent\u2019s side.',
+              },
+              {
                 icon: <Heart size={22} />,
-                title: 'Lived experience',
+                title: 'Parent-led and lived experience',
                 desc: 'Created by a parent who has personally been through the Child Protection system in Victoria.',
               },
               {
                 icon: <Shield size={22} />,
-                title: 'Independent and parent-focused',
-                desc: 'Not government-funded. Not affiliated with DFFH. Always on the parent\u2019s side.',
+                title: 'Trauma-informed and respectful',
+                desc: 'Calm, non-judgmental support that respects how hard this process can be on families.',
               },
               {
                 icon: <BookOpen size={22} />,
-                title: 'Plain-language information',
-                desc: 'No jargon, no judgment. Written so you can read it at the worst moment of your week and still understand it.',
+                title: 'Practical, plain-language guidance',
+                desc: 'No jargon. Written so you can read it at the worst moment of your week and still understand it.',
               },
               {
-                icon: <CheckCircle2 size={22} />,
-                title: 'Always free',
-                desc: 'Every guide, every reply, every page is free to use. We will never ask you for payment.',
+                icon: <Map size={22} />,
+                title: 'Support across all of Victoria',
+                desc: 'Online guides built with rural and regional parents in mind, not just metropolitan Melbourne.',
+              },
+              {
+                icon: <Sparkles size={22} />,
+                title: 'Focused on empowering parents',
+                desc: 'Everything we do is designed to help you become a more informed, self-reliant advocate for your family.',
               },
             ].map((item, i) => (
               <motion.div
@@ -245,6 +273,88 @@ export default function Home() {
             ))}
           </div>
         </div>
+      </section>
+
+      {/* ── 4b. Know Your Rights ───────────────────────────────── */}
+      <section className="px-6 py-20 bg-brand-secondary">
+        <motion.div {...fadeIn} className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 items-center">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-3">
+              Know your rights
+            </p>
+            <h2 className="text-3xl md:text-4xl font-serif text-stone-900 mb-5 leading-tight">
+              You have the right to be treated fairly and to be heard.
+            </h2>
+            <p className="text-lg text-stone-700 leading-relaxed mb-4">
+              Parents involved with Child Protection have the right to be
+              treated fairly, to be heard, to receive clear information, and to
+              have meaningful opportunities to participate in decisions
+              affecting their children.
+            </p>
+            <p className="text-lg text-stone-700 leading-relaxed mb-6">
+              PANS Victoria explains your rights in plain language and helps
+              you understand how to raise concerns, request reviews, and
+              advocate effectively.
+            </p>
+            <Link
+              to="/parent-rights"
+              className="inline-flex items-center gap-2 bg-brand-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-brand-primary/90 transition shadow-lg shadow-brand-primary/20"
+            >
+              Read the Rights Guide <ArrowRight size={16} />
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-3">
+            {[
+              'Right to be treated fairly and respectfully',
+              'Right to be heard and to participate in decisions',
+              'Right to clear information in plain language',
+              'Right to a lawyer through Victoria Legal Aid',
+              'Right to attend case meetings and see most reports',
+              'Right to disagree and ask for a review',
+            ].map((r) => (
+              <div key={r} className="bg-white border border-purple-100 rounded-xl px-5 py-3 flex items-center gap-3 shadow-sm">
+                <CheckCircle2 size={18} className="text-brand-primary shrink-0" aria-hidden="true" />
+                <span className="text-stone-800 text-sm font-medium">{r}</span>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ── 4c. Disability Rights teaser ───────────────────────── */}
+      <section className="px-6 py-20 bg-white border-y border-stone-200">
+        <motion.div {...fadeIn} className="max-w-5xl mx-auto bg-gradient-to-br from-brand-soft to-white border border-purple-100 rounded-3xl p-8 md:p-12 shadow-sm">
+          <div className="grid md:grid-cols-3 gap-8 items-start">
+            <div className="md:col-span-1">
+              <div className="w-14 h-14 rounded-2xl bg-white text-brand-primary flex items-center justify-center mb-4 border border-purple-100 shadow-sm">
+                <Accessibility size={26} />
+              </div>
+              <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-2">
+                Disability Rights
+              </p>
+              <h2 className="text-2xl md:text-3xl font-serif text-stone-900 leading-tight">
+                Rights of Parents and Carers with Disabilities
+              </h2>
+            </div>
+            <div className="md:col-span-2">
+              <p className="text-stone-700 leading-relaxed mb-4">
+                PANS Victoria recognises the <strong>Charter of Rights for Parents and Carers with Disabilities Involved with Child Protection</strong> in Victoria.
+              </p>
+              <p className="text-stone-700 leading-relaxed mb-5">
+                Parents and carers with disabilities have the right to participate, be heard and be included; to be treated with dignity and respect; to receive information in accessible formats; to have a support person at meetings and court; to request reasonable adjustments; to receive honest and transparent communication; to be treated fairly and without discrimination; and to make complaints without fear of reprisal.
+              </p>
+              <p className="text-stone-700 leading-relaxed mb-6">
+                PANS Victoria can help parents understand these rights, request adjustments, and advocate for fair treatment.
+              </p>
+              <Link
+                to="/disability-rights"
+                className="inline-flex items-center gap-2 bg-brand-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-brand-primary/90 transition shadow-lg shadow-brand-primary/20"
+              >
+                Learn About Disability Rights <ArrowRight size={16} />
+              </Link>
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       {/* ── 5. Start Here ──────────────────────────────────────── */}
@@ -350,6 +460,22 @@ export default function Home() {
             </p>
           </motion.div>
 
+          {/* Short impact quotes */}
+          <div className="grid md:grid-cols-3 gap-4 mb-8">
+            {[
+              'For the first time, I understood what was happening and what I could do next.',
+              'I finally felt heard and better prepared for court.',
+              'PANS Victoria helped me feel less alone.',
+            ].map((q) => (
+              <blockquote
+                key={q}
+                className="bg-white border border-purple-100 rounded-2xl p-6 text-stone-800 font-serif text-lg italic leading-snug shadow-sm"
+              >
+                "{q}"
+              </blockquote>
+            ))}
+          </div>
+
           <div className="grid md:grid-cols-2 gap-5">
             {[
               {
@@ -423,19 +549,29 @@ export default function Home() {
               link={{ to: '/funding', label: 'How PANS is funded' }}
             />
             <Faq
-              question="Can you help with appeals?"
-              answer="Yes. We can help you understand the internal review and appeal pathways available — including who to write to, what to include, and where to get free legal advice. PANS does not provide legal representation, so we always encourage you to also contact Victoria Legal Aid on 1300 792 387."
+              question="Can you help with Children's Court?"
+              answer="Yes. We help you understand hearing types, common court orders, what to expect on the day, and how to prepare. PANS does not provide legal representation — for that, contact Victoria Legal Aid on 1300 792 387."
+              link={{ to: '/childrens-court', label: "Children's Court guide" }}
+            />
+            <Faq
+              question="Can you help with appeals and reviews?"
+              answer="Yes. We can help you understand the internal review and appeal pathways available — including who to write to, what to include, and where to get free legal advice."
               link={{ to: '/resources', label: 'See appeals and review resources' }}
             />
             <Faq
               question="Do you support regional Victoria?"
-              answer="Absolutely. PANS Victoria was built with rural and regional parents in mind, where face-to-face support is harder to access. Every guide is online and printable, and we focus on the questions parents in regional and rural communities tell us they need answered."
+              answer="Absolutely. PANS Victoria was built with rural and regional parents in mind. Every guide is online and printable, and we focus on the questions parents in regional and rural communities tell us they need answered."
               link={{ to: '/contact', label: 'Contact PANS' }}
             />
             <Faq
-              question="What are my rights as a parent in a Child Protection case?"
-              answer="You have the right to a lawyer (free through Victoria Legal Aid), to be told what concerns Child Protection has, to attend case meetings, to see most reports about you, and to disagree at court."
-              link={{ to: '/parent-rights', label: 'Read the parents\u2019 rights guide' }}
+              question="Are you independent from Child Protection and DFFH?"
+              answer="Yes. PANS Victoria is fully independent. We are not government-funded, not run by DFFH, and have no formal connection to Child Protection. We are a parent-led service that exists to support parents."
+              link={{ to: '/about', label: 'About PANS' }}
+            />
+            <Faq
+              question="What if I have a disability and need support to participate?"
+              answer="Parents and carers with disabilities have specific rights under the Charter — including the right to reasonable adjustments, accessible information and a support person at meetings and court. PANS Victoria can help you understand these rights and ask for what you need."
+              link={{ to: '/disability-rights', label: 'Learn about Disability Rights' }}
             />
             <Faq
               question="Is PANS Victoria a law firm?"

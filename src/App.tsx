@@ -33,6 +33,9 @@ import CPProcessFromFirstContact from './pages/articles/CPProcessFromFirstContac
 import Privacy from './pages/Privacy';
 import ParentFeedback from './pages/ParentFeedback';
 import Copyright from './pages/Copyright';
+import DisabilityRights from './pages/DisabilityRights';
+import Services from './pages/Services';
+import FAQ from './pages/FAQ';
 import CookieBanner from './components/CookieBanner';
 
 function ScrollToTop() {
@@ -75,6 +78,9 @@ function AppLayout() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/parent-feedback" element={<ParentFeedback />} />
           <Route path="/copyright" element={<Copyright />} />
+          <Route path="/disability-rights" element={<DisabilityRights />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/faq" element={<FAQ />} />
           <Route path="/video" element={<Video />} />
           <Route path="*" element={<Home />} />
         </Routes>

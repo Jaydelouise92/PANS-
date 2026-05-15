@@ -10,18 +10,21 @@ type NavItem =
 const navLinks: NavItem[] = [
   { label: 'Home', path: '/' },
   { label: 'About', path: '/about' },
+  { label: 'Services', path: '/services' },
   {
-    label: 'Guides',
+    label: 'Resources',
     children: [
+      { label: 'All support resources', path: '/resources' },
       { label: 'Child Protection process', path: '/system-explained' },
       { label: "Children's Court guide", path: '/childrens-court' },
       { label: 'Parents\u2019 rights', path: '/parent-rights' },
+      { label: 'Disability Rights', path: '/disability-rights' },
       { label: 'Supervised contact', path: '/supervised-contact' },
       { label: 'Self-represented parents', path: '/self-represented' },
       { label: 'Emotional impact of removal', path: '/emotional-impact' },
     ],
   },
-  { label: 'Support resources', path: '/resources' },
+  { label: 'FAQ', path: '/faq' },
   { label: 'Contact', path: '/contact' },
 ];
 
