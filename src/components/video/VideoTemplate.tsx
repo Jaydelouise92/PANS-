@@ -48,9 +48,11 @@ export default function VideoTemplate() {
         }}
         transition={{ duration: 2 }}
       >
-        <img 
-          src={`${import.meta.env.BASE_URL}watercolour-pathway.png`} 
+        <img
+          src={`${import.meta.env.BASE_URL}watercolour-pathway.png`}
           alt=""
+          aria-hidden="true"
+          role="presentation"
           className="w-full h-full object-cover"
         />
       </motion.div>
@@ -62,9 +64,11 @@ export default function VideoTemplate() {
         }}
         transition={{ duration: 2 }}
       >
-        <img 
-          src={`${import.meta.env.BASE_URL}soft-light-beam.png`} 
+        <img
+          src={`${import.meta.env.BASE_URL}soft-light-beam.png`}
           alt=""
+          aria-hidden="true"
+          role="presentation"
           className="w-full h-full object-cover"
         />
       </motion.div>
