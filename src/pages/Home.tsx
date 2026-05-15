@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import {
   ArrowRight,
   Clock,
@@ -10,49 +11,90 @@ import {
   AlertTriangle,
   Users,
   FileText,
+  MessageSquare,
+  Map,
+  CheckCircle2,
+  Sparkles,
 } from 'lucide-react';
-import VideoTemplate from '../components/video/VideoTemplate';
+
+const fadeIn = {
+  initial: { opacity: 0, y: 16 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.2 },
+  transition: { duration: 0.55, ease: 'easeOut' as const },
+};
 
 export default function Home() {
   return (
     <div className="bg-brand-secondary">
-      {/* ── 1. Hero video ───────────────────────────────────────── */}
-      <section className="w-full pt-16 bg-[#F9F8FF]" aria-label="PANS Victoria introduction">
-        <div className="relative w-full aspect-video max-h-[85vh] mx-auto">
-          <VideoTemplate />
-        </div>
-        <div className="px-6 pt-6 pb-8">
-          <div className="max-w-4xl mx-auto flex flex-wrap justify-center gap-3">
-            <Link
-              to="/start-here"
-              className="bg-brand-primary text-white px-7 py-3.5 rounded-full font-semibold hover:bg-brand-primary/90 transition inline-flex items-center gap-2 shadow-lg shadow-brand-primary/20"
-            >
-              Start Here <ArrowRight size={18} />
-            </Link>
-            <Link
-              to="/contact"
-              className="bg-white border border-brand-primary text-brand-primary px-7 py-3.5 rounded-full font-semibold hover:bg-brand-secondary transition inline-flex items-center gap-2"
-            >
-              Contact PANS
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 2. What is PANS — H1 + intro paragraph ─────────────── */}
-      <section className="px-6 py-16 md:py-20 bg-white border-b border-stone-200">
+      {/* ── 1. Hero ─────────────────────────────────────────────── */}
+      <section
+        className="w-full pt-24 md:pt-28 pb-16 md:pb-24 px-6 bg-gradient-to-b from-[#F4EEFB] via-brand-secondary to-white"
+        aria-label="PANS Victoria — supportive welcome"
+      >
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-14 items-center">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-4">
-              PANS Victoria
+          <motion.div {...fadeIn}>
+            <p className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-brand-primary bg-white border border-purple-100 rounded-full px-3 py-1 mb-6 shadow-sm">
+              <Sparkles size={14} aria-hidden="true" />
+              Free · Independent · Parent-led
             </p>
-            <h1 className="text-3xl md:text-4xl font-serif text-stone-900 mb-3 leading-tight">
-              Child Protection Victoria help and support for parents
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-stone-900 leading-[1.1] mb-5">
+              You do not have to face Child Protection alone.
             </h1>
-            <p className="inline-flex items-center gap-2 text-xs font-medium text-brand-primary bg-brand-secondary border border-purple-100 rounded-full px-3 py-1 mb-5">
+            <p className="text-lg md:text-xl text-stone-700 leading-relaxed mb-8 max-w-xl">
+              Free, independent advocacy and plain-language support for parents
+              across Victoria — including rural and regional communities.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                to="/contact"
+                className="bg-brand-primary text-white px-7 py-4 rounded-full font-semibold hover:bg-brand-primary/90 transition inline-flex items-center gap-2 shadow-lg shadow-brand-primary/25"
+              >
+                Get Support <ArrowRight size={18} />
+              </Link>
+              <Link
+                to="/parent-rights"
+                className="bg-white border border-brand-primary text-brand-primary px-7 py-4 rounded-full font-semibold hover:bg-brand-soft transition inline-flex items-center gap-2"
+              >
+                Know Your Rights
+              </Link>
+            </div>
+            <p className="mt-6 inline-flex items-center gap-2 text-xs font-medium text-brand-primary bg-white/70 border border-purple-100 rounded-full px-3 py-1">
               <span className="w-1.5 h-1.5 rounded-full bg-brand-primary" />
               Written by a Victorian parent with lived experience — not by AI
             </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+            className="relative"
+          >
+            <div className="absolute -inset-4 bg-brand-accent/30 rounded-[2rem] blur-2xl" aria-hidden="true" />
+            <img
+              src="/checklist-notebook.png"
+              alt="A parent quietly reviewing documents and notes at a kitchen table — soft, calm setting"
+              loading="eager"
+              width="800"
+              height="600"
+              className="relative w-full rounded-[2rem] shadow-xl object-cover aspect-[4/3] border border-white"
+            />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── 2. What is PANS — H2 + intro paragraph ─────────────── */}
+      <section className="px-6 py-16 md:py-20 bg-white border-y border-stone-200">
+        <motion.div {...fadeIn} className="max-w-6xl mx-auto grid md:grid-cols-2 gap-10 md:gap-14 items-center">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-4">
+              About PANS Victoria
+            </p>
+            <h2 className="text-3xl md:text-4xl font-serif text-stone-900 mb-5 leading-tight">
+              Child Protection Victoria help and support for parents
+            </h2>
             <p className="text-lg text-stone-700 leading-relaxed mb-3">
               <strong>PANS Victoria</strong> is a free, independent advocacy and
               information service for parents across Victoria, Australia,
@@ -68,27 +110,15 @@ export default function Home() {
               prepare for meetings and court, respond to concerns, and make
               informed decisions about what to do next.
             </p>
-            <p className="text-lg text-stone-700 leading-relaxed mb-3">
-              Whether you are attending your first Child Protection meeting,
-              preparing for court, considering an appeal, or trying to
-              understand your options, PANS Victoria helps you take the next
-              step with greater confidence.
-            </p>
-            <p className="text-lg text-stone-700 leading-relaxed mb-3">
+            <p className="text-lg text-stone-700 leading-relaxed">
               Our goal is to help parents become informed, self-reliant
               advocates for themselves and their children.
-            </p>
-            <p className="text-lg text-stone-700 leading-relaxed">
-              PANS Victoria was created by a parent with lived experience of the
-              Child Protection system, offering support grounded in empathy,
-              understanding, and the belief that no parent should have to face
-              this process alone.
             </p>
             <div className="mt-6 flex gap-5 flex-wrap">
               <Link to="/about" className="text-brand-primary font-semibold inline-flex items-center gap-2 hover:gap-3 transition-all">
                 About PANS <ArrowRight size={16} />
               </Link>
-              <Link to="/founder" className="text-stone-500 font-medium inline-flex items-center gap-2 hover:text-brand-primary transition-colors">
+              <Link to="/founder" className="text-stone-600 font-medium inline-flex items-center gap-2 hover:text-brand-primary transition-colors">
                 Meet the Founder <ArrowRight size={16} />
               </Link>
             </div>
@@ -103,52 +133,128 @@ export default function Home() {
               className="w-full rounded-3xl shadow-md object-cover max-h-96"
             />
           </div>
+        </motion.div>
+      </section>
+
+      {/* ── 3. How We Help ─────────────────────────────────────── */}
+      <section className="px-6 py-20 bg-brand-secondary">
+        <div className="max-w-6xl mx-auto">
+          <motion.div {...fadeIn} className="text-center max-w-2xl mx-auto mb-12">
+            <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-3">
+              How we help
+            </p>
+            <h2 className="text-3xl md:text-4xl font-serif text-stone-900 mb-4">
+              Practical support at every step
+            </h2>
+            <p className="text-stone-600 leading-relaxed">
+              Whether it's your first phone call from Child Protection or your
+              tenth court date, we meet you where you are.
+            </p>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <HelpCard
+              to="/system-explained"
+              icon={<BookOpen size={22} />}
+              title="Understand Child Protection"
+              description="Plain-language guides to the DFFH process — from the first notification to case closure or reunification."
+            />
+            <HelpCard
+              to="/how-it-works"
+              icon={<MessageSquare size={22} />}
+              title="Prepare for Meetings"
+              description="Know what to bring, what to ask, and how to make sure your voice is heard at case planning meetings."
+            />
+            <HelpCard
+              to="/childrens-court"
+              icon={<Scale size={22} />}
+              title="Children's Court Support"
+              description="Hearing types, common orders and a step-by-step day-of-court guide for parents in Victoria."
+            />
+            <HelpCard
+              to="/resources"
+              icon={<FileText size={22} />}
+              title="Appeals and Reviews"
+              description="Information on internal reviews, complaints and appeal pathways when you disagree with a decision."
+            />
+            <HelpCard
+              to="/start-here"
+              icon={<Map size={22} />}
+              title="Regional and Rural Support"
+              description="The same plain-language guidance no matter where in Victoria you live — built with regional parents in mind."
+            />
+            <HelpCard
+              to="/parent-rights"
+              icon={<Shield size={22} />}
+              title="Know Your Rights"
+              description="What you can ask for, what you can refuse, and what Child Protection must tell you."
+            />
+          </div>
         </div>
       </section>
 
-      {/* ── 3. What this platform helps with ──────────────────── */}
-      <section className="bg-white border-b border-stone-200 px-6 py-16">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-serif text-stone-900 mb-3 text-center">
-            How PANS Victoria helps parents
-          </h2>
-          <p className="text-stone-600 text-center max-w-2xl mx-auto mb-10">
-            Clear, written information you can read at your own pace. No jargon, no judgment.
-          </p>
+      {/* ── 4. Why Parents Trust PANS Victoria ─────────────────── */}
+      <section className="px-6 py-20 bg-white border-y border-stone-200">
+        <div className="max-w-6xl mx-auto">
+          <motion.div {...fadeIn} className="text-center max-w-2xl mx-auto mb-12">
+            <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-3">
+              Why parents trust us
+            </p>
+            <h2 className="text-3xl md:text-4xl font-serif text-stone-900">
+              Built by a parent, for parents
+            </h2>
+          </motion.div>
 
-          <ul className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
-              { text: 'Understanding the DFFH Child Protection process in Victoria', to: '/system-explained' },
-              { text: 'Knowing your rights as a parent', to: '/parent-rights' },
-              { text: 'Preparing for case meetings, case plans and court', to: '/how-it-works' },
-              { text: 'Mental health support and crisis lines', to: '/mental-health' },
-              { text: 'What to do in the first 48 hours after Child Protection contact', to: '/first-48-hours' },
-              { text: "Children's Court Victoria guide and what to expect", to: '/childrens-court' },
-              { text: 'How supervised contact works in Victoria', to: '/supervised-contact' },
-              { text: 'Working towards reunification — getting your children back', to: '/start-here' },
-            ].map((item) => (
-              <li
-                key={item.text}
-                className="bg-brand-secondary border border-purple-100 rounded-xl p-4 flex gap-3 items-start"
+              {
+                icon: <Heart size={22} />,
+                title: 'Lived experience',
+                desc: 'Created by a parent who has personally been through the Child Protection system in Victoria.',
+              },
+              {
+                icon: <Shield size={22} />,
+                title: 'Independent and parent-focused',
+                desc: 'Not government-funded. Not affiliated with DFFH. Always on the parent\u2019s side.',
+              },
+              {
+                icon: <BookOpen size={22} />,
+                title: 'Plain-language information',
+                desc: 'No jargon, no judgment. Written so you can read it at the worst moment of your week and still understand it.',
+              },
+              {
+                icon: <CheckCircle2 size={22} />,
+                title: 'Always free',
+                desc: 'Every guide, every reply, every page is free to use. We will never ask you for payment.',
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={item.title}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                className="bg-brand-secondary border border-purple-100 rounded-2xl p-6 hover:shadow-md transition"
               >
-                <span className="text-brand-primary font-bold mt-0.5">•</span>
-                <Link to={item.to} className="text-stone-700 leading-relaxed hover:text-brand-primary">
-                  {item.text}
-                </Link>
-              </li>
+                <div className="w-12 h-12 rounded-xl bg-white text-brand-primary flex items-center justify-center mb-4 border border-purple-100 shadow-sm">
+                  {item.icon}
+                </div>
+                <h3 className="font-semibold text-stone-900 mb-2">{item.title}</h3>
+                <p className="text-stone-600 text-sm leading-relaxed">{item.desc}</p>
+              </motion.div>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
-      {/* ── 4. Start Here ──────────────────────────────────────── */}
+      {/* ── 5. Start Here ──────────────────────────────────────── */}
       <section className="px-6 py-16">
-        <div className="max-w-4xl mx-auto">
+        <motion.div {...fadeIn} className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-serif text-stone-900 mb-3 text-center">
             Start here — first steps for parents
           </h2>
           <p className="text-stone-600 text-center max-w-2xl mx-auto mb-10">
-            If you are not sure where to begin, these three pages are the most important place to start.
+            If you're not sure where to begin, these three pages are the most important place to start.
           </p>
 
           <div className="space-y-4">
@@ -170,12 +276,12 @@ export default function Home() {
               icon={<Scale size={20} />}
             />
           </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* ── 5. Key guides ──────────────────────────────────────── */}
+      {/* ── 6. Key guides ──────────────────────────────────────── */}
       <section className="bg-white border-y border-stone-200 px-6 py-16">
-        <div className="max-w-5xl mx-auto">
+        <motion.div {...fadeIn} className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-serif text-stone-900 mb-3 text-center">
             Key guides for parents in Victoria
           </h2>
@@ -206,7 +312,7 @@ export default function Home() {
               to="/supervised-contact"
               icon={<Users size={20} />}
               title="Supervised contact in Victoria"
-              description="How supervised visits work, who is in the room, and what helps them go well — a step on the path to unsupervised contact."
+              description="How supervised visits work, who is in the room, and what helps them go well."
             />
             <GuideCard
               to="/self-represented"
@@ -226,91 +332,23 @@ export default function Home() {
               View all support resources <ArrowRight size={16} />
             </Link>
           </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* ── 5b. Featured article ──────────────────────────────── */}
-      <section className="px-6 py-14">
-        <div className="max-w-3xl mx-auto">
-          <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-3 text-center">
-            Featured article
-          </p>
-          <Link
-            to="/articles/child-protection-process-victoria"
-            className="block bg-white border border-purple-100 rounded-2xl p-6 md:p-8 hover:border-brand-primary/40 hover:shadow-md transition"
-          >
-            <h2 className="text-2xl md:text-3xl font-serif text-stone-900 mb-3 leading-tight">
-              Understanding the Child Protection process in Victoria
-            </h2>
-            <p className="text-stone-700 leading-relaxed mb-4">
-              From the first phone call to your first case planning meeting —
-              what usually happens, what the words mean, and where you can stop
-              and breathe. Written for parents, in plain English.
-            </p>
-            <span className="inline-flex items-center gap-2 text-brand-primary font-semibold">
-              Read the full article <ArrowRight size={16} />
-            </span>
-          </Link>
-        </div>
-      </section>
-
-      {/* ── 6. Common questions (FAQ for SEO + parent help) ──── */}
-      <section className="px-6 py-16">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-serif text-stone-900 mb-3 text-center">
-            Common questions from parents
-          </h2>
-          <p className="text-stone-600 text-center max-w-2xl mx-auto mb-10">
-            Short answers to the questions parents ask most. Each one links to a fuller guide.
-          </p>
-
-          <div className="space-y-4">
-            <Faq
-              question="What is Child Protection in Victoria?"
-              answer="In Victoria, Child Protection sits within the Department of Families, Fairness and Housing (DFFH, formerly known as DHHS). Workers investigate concerns about a child's safety, develop a case plan with the family, and apply to the Children's Court when needed."
-              link={{ to: '/system-explained', label: 'Read the full DFFH process guide' }}
-            />
-            <Faq
-              question="How do I get my children back in Victoria?"
-              answer="Reunification usually means working closely with your case worker, meeting the goals in your case plan, attending all contact visits, and showing the changes you have made. A lawyer through Victoria Legal Aid can help you understand exactly what is required."
-              link={{ to: '/start-here', label: 'Start here — find your stage' }}
-            />
-            <Faq
-              question="What happens at the Children's Court of Victoria?"
-              answer="The Children's Court Victoria hears child protection matters such as Interim Accommodation Orders, Family Reunification Orders and Care by Secretary Orders. Hearings are usually short and focus on the safety and best interests of the child."
-              link={{ to: '/childrens-court', label: "Read the Children's Court guide" }}
-            />
-            <Faq
-              question="How does supervised contact work in Victoria?"
-              answer="Supervised contact is a visit between you and your child watched by a worker. Visits usually run one to two hours at a DFFH office, family centre or neutral location. Over time, contact often moves to unsupervised."
-              link={{ to: '/supervised-contact', label: 'Read the supervised contact guide' }}
-            />
-            <Faq
-              question="What are my rights as a parent in a Child Protection case?"
-              answer="You have the right to a lawyer (free through Victoria Legal Aid), to be told what concerns Child Protection has, to attend case meetings, to see most reports about you, and to disagree at court."
-              link={{ to: '/parent-rights', label: 'Read the parents\u2019 rights guide' }}
-            />
-            <Faq
-              question="Is PANS Victoria a law firm?"
-              answer="No. PANS provides general information and navigation support only. We are not lawyers and we do not give legal advice. For legal advice, contact Victoria Legal Aid on 1300 792 387."
-              link={{ to: '/about', label: 'About PANS Victoria' }}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ── 6a. Parent voices ─────────────────────────────────── */}
-      <section className="px-6 py-16 bg-white border-t border-stone-200">
+      {/* ── 7. Testimonials ────────────────────────────────────── */}
+      <section className="px-6 py-20 bg-brand-secondary">
         <div className="max-w-5xl mx-auto">
-          <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-3 text-center">
-            What parents are saying
-          </p>
-          <h2 className="text-3xl font-serif text-stone-900 mb-3 text-center">
-            From parents across Victoria
-          </h2>
-          <p className="text-stone-600 text-center max-w-2xl mx-auto mb-10 text-sm">
-            Comments shared with PANS by parents who have used the service. Names have been changed and identifying details removed to protect privacy.
-          </p>
+          <motion.div {...fadeIn} className="text-center max-w-2xl mx-auto mb-10">
+            <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-3">
+              What parents are saying
+            </p>
+            <h2 className="text-3xl md:text-4xl font-serif text-stone-900 mb-3">
+              From parents across Victoria
+            </h2>
+            <p className="text-stone-600 leading-relaxed text-sm">
+              Comments shared with PANS by parents who have used the service. Names changed and identifying details removed to protect privacy.
+            </p>
+          </motion.div>
 
           <div className="grid md:grid-cols-2 gap-5">
             {[
@@ -335,9 +373,13 @@ export default function Home() {
                 location: 'Northern suburbs, Melbourne (metro)',
               },
             ].map((t, i) => (
-              <figure
+              <motion.figure
                 key={i}
-                className="bg-brand-secondary border border-purple-100 rounded-2xl p-6 flex flex-col"
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                className="bg-white border border-purple-100 rounded-2xl p-6 flex flex-col shadow-sm hover:shadow-md transition"
               >
                 <Heart size={18} className="text-brand-primary mb-3" aria-hidden="true" />
                 <blockquote className="text-stone-700 leading-relaxed text-sm flex-1">
@@ -347,41 +389,95 @@ export default function Home() {
                   <p className="font-semibold text-stone-800 text-sm">{t.name}</p>
                   <p className="text-xs text-stone-500">{t.location}</p>
                 </figcaption>
-              </figure>
+              </motion.figure>
             ))}
           </div>
 
-          <p className="text-xs text-stone-400 text-center mt-8 max-w-2xl mx-auto">
+          <p className="text-xs text-stone-500 text-center mt-8 max-w-2xl mx-auto">
             Comments shared with permission. First names and locations have been generalised. PANS never publishes identifying details about a parent or child without explicit written consent.
           </p>
         </div>
       </section>
 
-      {/* ── 6b. Parent feedback CTA ───────────────────────────── */}
-      <section className="px-6 py-14 bg-brand-secondary border-y border-purple-100">
-        <div className="max-w-3xl mx-auto text-center">
-          <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-3">
-            Parent Feedback
-          </p>
-          <h2 className="text-3xl font-serif text-stone-900 mb-3">
-            Tell us how PANS is going
-          </h2>
-          <p className="text-stone-600 leading-relaxed max-w-xl mx-auto mb-6">
-            Every piece of feedback from a parent shapes what gets added next.
-            Share what helped, what was confusing, or what you wish was here —
-            anonymously if you'd prefer.
-          </p>
-          <Link
-            to="/parent-feedback"
-            className="inline-flex items-center gap-2 bg-brand-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-brand-primary/90 transition shadow-lg shadow-brand-primary/20"
-          >
-            Share your feedback <ArrowRight size={16} />
-          </Link>
-        </div>
+      {/* ── 8. FAQ ─────────────────────────────────────────────── */}
+      <section className="px-6 py-20 bg-white border-y border-stone-200">
+        <motion.div {...fadeIn} className="max-w-3xl mx-auto">
+          <div className="text-center mb-10">
+            <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-3">
+              Frequently asked
+            </p>
+            <h2 className="text-3xl md:text-4xl font-serif text-stone-900">
+              Common questions from parents
+            </h2>
+          </div>
+
+          <div className="space-y-4">
+            <Faq
+              question="What does PANS Victoria do?"
+              answer="PANS Victoria is a free, independent advocacy and navigation service for parents involved with Child Protection (DFFH) or the Children's Court of Victoria. We help you understand the process, know your rights, prepare for meetings and court, and work out your next step in plain language."
+              link={{ to: '/about', label: 'About PANS Victoria' }}
+            />
+            <Faq
+              question="Is the service free?"
+              answer="Yes. Every guide, every reply and every page on this site is free to use. PANS Victoria is parent-led and unfunded — we will never ask you for payment to access information or support."
+              link={{ to: '/funding', label: 'How PANS is funded' }}
+            />
+            <Faq
+              question="Can you help with appeals?"
+              answer="Yes. We can help you understand the internal review and appeal pathways available — including who to write to, what to include, and where to get free legal advice. PANS does not provide legal representation, so we always encourage you to also contact Victoria Legal Aid on 1300 792 387."
+              link={{ to: '/resources', label: 'See appeals and review resources' }}
+            />
+            <Faq
+              question="Do you support regional Victoria?"
+              answer="Absolutely. PANS Victoria was built with rural and regional parents in mind, where face-to-face support is harder to access. Every guide is online and printable, and we focus on the questions parents in regional and rural communities tell us they need answered."
+              link={{ to: '/contact', label: 'Contact PANS' }}
+            />
+            <Faq
+              question="What are my rights as a parent in a Child Protection case?"
+              answer="You have the right to a lawyer (free through Victoria Legal Aid), to be told what concerns Child Protection has, to attend case meetings, to see most reports about you, and to disagree at court."
+              link={{ to: '/parent-rights', label: 'Read the parents\u2019 rights guide' }}
+            />
+            <Faq
+              question="Is PANS Victoria a law firm?"
+              answer="No. PANS provides general information and navigation support only. We are not lawyers and we do not give legal advice. For legal advice, contact Victoria Legal Aid on 1300 792 387."
+              link={{ to: '/about', label: 'About PANS Victoria' }}
+            />
+          </div>
+        </motion.div>
       </section>
 
-      {/* ── 7. Crisis support ──────────────────────────────────── */}
-      <section className="px-6 py-14 bg-white border-t border-stone-200">
+      {/* ── 9. Final CTA ───────────────────────────────────────── */}
+      <section className="px-6 py-20">
+        <motion.div
+          {...fadeIn}
+          className="max-w-4xl mx-auto bg-gradient-to-br from-brand-primary to-[#5f5078] text-white rounded-3xl p-10 md:p-14 text-center shadow-xl"
+        >
+          <Sparkles size={28} className="mx-auto mb-4 opacity-80" aria-hidden="true" />
+          <h2 className="text-3xl md:text-4xl font-serif mb-4">
+            Take the next step with confidence.
+          </h2>
+          <p className="text-white/90 leading-relaxed max-w-xl mx-auto mb-8">
+            Whatever stage you're at — first phone call, case meeting, court date or appeal — PANS Victoria is here to help you understand it and move forward.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link
+              to="/contact"
+              className="bg-white text-brand-primary px-8 py-4 rounded-full font-bold hover:bg-brand-soft transition inline-flex items-center gap-2 shadow-lg"
+            >
+              Contact PANS Victoria <ArrowRight size={18} />
+            </Link>
+            <Link
+              to="/parent-feedback"
+              className="border border-white/60 text-white px-8 py-4 rounded-full font-semibold hover:bg-white/10 transition inline-flex items-center gap-2"
+            >
+              Share your feedback
+            </Link>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ── 10. Crisis support ─────────────────────────────────── */}
+      <section className="px-6 pb-14 bg-white border-t border-stone-200 pt-14">
         <div className="max-w-3xl mx-auto bg-brand-secondary border border-purple-100 rounded-2xl p-6 md:p-8 text-center">
           <Phone size={24} className="text-brand-primary mx-auto mb-3" />
           <h2 className="text-2xl font-serif text-stone-900 mb-2">
@@ -402,7 +498,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── 8. Disclaimer ──────────────────────────────────────── */}
+      {/* ── 11. Disclaimer ─────────────────────────────────────── */}
       <section className="px-6 pb-16 pt-10">
         <div className="max-w-3xl mx-auto bg-amber-50 border border-amber-200 rounded-xl p-5 flex gap-3 items-start">
           <AlertTriangle size={20} className="text-amber-600 shrink-0 mt-0.5" aria-hidden="true" />
@@ -426,34 +522,34 @@ export default function Home() {
             mainEntity: [
               {
                 '@type': 'Question',
-                name: 'What is Child Protection in Victoria?',
+                name: 'What does PANS Victoria do?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: "In Victoria, Child Protection sits within the Department of Families, Fairness and Housing (DFFH, formerly DHHS). Workers investigate concerns about a child's safety, develop a case plan with the family, and apply to the Children's Court when needed.",
+                  text: "PANS Victoria is a free, independent advocacy and navigation service for parents involved with Child Protection (DFFH) or the Children's Court of Victoria. We help you understand the process, know your rights, prepare for meetings and court, and work out your next step in plain language.",
                 },
               },
               {
                 '@type': 'Question',
-                name: 'How do I get my children back in Victoria?',
+                name: 'Is the service free?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: 'Reunification usually means working closely with your case worker, meeting the goals in your case plan, attending all contact visits, and showing the changes you have made. A lawyer through Victoria Legal Aid can help you understand exactly what is required.',
+                  text: 'Yes. Every guide and every page on this site is free to use. PANS Victoria is parent-led and unfunded — we will never ask you for payment to access information or support.',
                 },
               },
               {
                 '@type': 'Question',
-                name: "What happens at the Children's Court of Victoria?",
+                name: 'Can PANS Victoria help with appeals?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: 'The Children\u2019s Court Victoria hears child protection matters such as Interim Accommodation Orders, Family Reunification Orders and Care by Secretary Orders. Hearings are usually short and focus on the safety and best interests of the child.',
+                  text: 'Yes. PANS Victoria can help you understand the internal review and appeal pathways available — including who to write to, what to include, and where to get free legal advice.',
                 },
               },
               {
                 '@type': 'Question',
-                name: 'How does supervised contact work in Victoria?',
+                name: 'Does PANS Victoria support regional Victoria?',
                 acceptedAnswer: {
                   '@type': 'Answer',
-                  text: 'Supervised contact is a visit between you and your child watched by a worker. Visits usually run one to two hours at a DFFH office, family centre or neutral location. Over time, contact often moves to unsupervised.',
+                  text: 'Yes. PANS Victoria was built with rural and regional parents in mind. Every guide is online and printable, and we focus on the questions parents in regional Victoria tell us they need answered.',
                 },
               },
               {
@@ -481,6 +577,37 @@ export default function Home() {
 }
 
 // ── Reusable card components ──────────────────────────────────
+function HelpCard({
+  to,
+  icon,
+  title,
+  description,
+}: {
+  to: string;
+  icon: React.ReactNode;
+  title: string;
+  description: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className="group block bg-white border border-purple-100 rounded-2xl p-6 hover:border-brand-primary/40 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+    >
+      <div className="w-12 h-12 rounded-xl bg-brand-soft text-brand-primary flex items-center justify-center mb-4 group-hover:bg-brand-primary group-hover:text-white transition">
+        {icon}
+      </div>
+      <h3 className="font-semibold text-stone-900 mb-2 flex items-center gap-2">
+        {title}
+        <ArrowRight
+          size={16}
+          className="text-brand-primary opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
+        />
+      </h3>
+      <p className="text-stone-600 text-sm leading-relaxed">{description}</p>
+    </Link>
+  );
+}
+
 function StartCard({
   to,
   title,
@@ -499,7 +626,7 @@ function StartCard({
     >
       <div className="flex gap-4 items-start">
         {icon && (
-          <div className="w-10 h-10 rounded-lg bg-brand-secondary text-brand-primary flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-lg bg-brand-soft text-brand-primary flex items-center justify-center shrink-0">
             {icon}
           </div>
         )}
@@ -532,7 +659,7 @@ function GuideCard({
   return (
     <Link
       to={to}
-      className="block bg-brand-secondary border border-purple-100 rounded-xl p-5 hover:border-brand-primary/40 hover:bg-white transition"
+      className="block bg-brand-secondary border border-purple-100 rounded-xl p-5 hover:border-brand-primary/40 hover:bg-white hover:shadow-sm transition"
     >
       <div className="w-10 h-10 rounded-lg bg-white text-brand-primary flex items-center justify-center mb-3 border border-purple-100">
         {icon}
