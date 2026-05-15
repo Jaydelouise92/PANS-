@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
+import VideoTemplate from '../components/video/VideoTemplate';
 import {
   ArrowRight,
   Clock,
@@ -83,6 +84,29 @@ export default function Home() {
               className="relative w-full rounded-[2rem] shadow-xl object-cover aspect-[4/3] border border-white"
             />
           </motion.div>
+        </div>
+      </section>
+
+      {/* ── 1b. Welcome video (always shown) ─────────────────────── */}
+      <section
+        className="w-full px-4 md:px-6 py-12 md:py-16 bg-white border-y border-stone-200"
+        aria-label="A short welcome video from PANS Victoria"
+      >
+        <div className="max-w-5xl mx-auto text-center mb-6">
+          <p className="text-sm font-semibold uppercase tracking-widest text-brand-primary mb-2">
+            A message for parents
+          </p>
+          <h2 className="text-3xl md:text-4xl font-serif text-stone-900 leading-tight">
+            Watch our short welcome
+          </h2>
+          <p className="text-stone-600 mt-3 max-w-2xl mx-auto leading-relaxed">
+            A two-minute introduction to PANS Victoria, from one parent to another.
+          </p>
+        </div>
+        <div className="max-w-5xl mx-auto">
+          <div className="relative w-full aspect-video rounded-3xl overflow-hidden shadow-xl border border-purple-100 bg-black">
+            <VideoTemplate />
+          </div>
         </div>
       </section>
 
