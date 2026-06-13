@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://jaydelouise92.github.io/PANS-/sitemap.xml
