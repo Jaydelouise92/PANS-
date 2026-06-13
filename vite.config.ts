@@ -5,6 +5,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(({mode}) => {
   return {
+    base: process.env.GITHUB_PAGES === 'true' ? '/PANS-/' : '/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {
