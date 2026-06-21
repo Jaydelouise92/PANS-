@@ -46,10 +46,10 @@ const checkStoryLimit = makeRateLimiter(3, 10 * 60 * 1000);
 const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
 
 // Use the actual TCP socket address as the rate-limit key.
-// Unlike req.ip / X-Forwarded-For, req.socket.remoteAddress cannot be
-// manipulated by an attacker via request headers — the OS owns that value.
+// Use req.ip which respects 'trust proxy' (line 124) to get the real client IP
+// when behind the production proxy, rather than the proxy's IP.
 function getRateLimitKey(req: express.Request): string {
-  return req.socket.remoteAddress || "unknown";
+  return req.ip || req.socket.remoteAddress || "unknown";
 }
 
 const GMAIL_USER = "ourvoicemattersaus@gmail.com";
@@ -134,6 +134,15 @@ async function startServer() {
     if (!Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: "Messages are required." });
     }
+    // Security: Limit history length and individual message size to prevent resource exhaustion
+    if (messages.length > 20) {
+      return res.status(400).json({ error: "Conversation history too long." });
+    }
+    for (const m of messages) {
+      if (typeof m?.text !== "string" || m.text.length > 5000) {
+        return res.status(400).json({ error: "Message too long or invalid." });
+      }
+    }
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       const model = thinkingMode ? "gemini-2.5-pro" : "gemini-2.5-flash";
@@ -159,6 +168,9 @@ async function startServer() {
       return res.status(503).json({ error: "TTS not configured." });
     }
     const { text } = req.body;
+    if (typeof text !== "string" || text.length === 0 || text.length > 1000) {
+      return res.status(400).json({ error: "Invalid text input for TTS (max 1000 characters)." });
+    }
     try {
       const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
       const ttsParams: GenerateContentParameters = {
