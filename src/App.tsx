@@ -36,6 +36,7 @@ import Copyright from './pages/Copyright';
 import DisabilityRights from './pages/DisabilityRights';
 import Services from './pages/Services';
 import FAQ from './pages/FAQ';
+import Dashboard from './pages/Dashboard';
 import CookieBanner from './components/CookieBanner';
 
 function ScrollToTop() {
@@ -82,6 +83,7 @@ function AppLayout() {
           <Route path="/services" element={<Services />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/video" element={<Video />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </main>
