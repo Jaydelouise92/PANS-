@@ -359,20 +359,34 @@ const ChatWidget = () => {
                   onClick={() => setIsThinkingMode(!isThinkingMode)}
                   className={`p-1.5 rounded-lg transition-colors text-xs flex items-center gap-1 ${isThinkingMode ? 'bg-white text-brand-primary font-bold' : 'bg-white/20 text-white'}`}
                   title={isThinkingMode ? 'Deep thinking on — using Pro model' : 'Fast mode — click for deep analysis'}
+                  aria-label={isThinkingMode ? 'Switch to fast mode' : 'Switch to deep thinking mode'}
                 >
                   {isThinkingMode ? <Brain size={14} /> : <Zap size={14} />}
                 </button>
-                <button onClick={() => setShowReportModal(true)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors" title="Report an issue">
+                <button
+                  onClick={() => setShowReportModal(true)}
+                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                  title="Report an issue"
+                  aria-label="Report an issue"
+                >
                   <AlertCircle size={14} />
                 </button>
-                <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                  aria-label="Close chat"
+                >
                   <X size={16} />
                 </button>
               </div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-stone-50">
+            <div
+              className="flex-1 overflow-y-auto p-4 space-y-3 bg-stone-50"
+              role="log"
+              aria-live="polite"
+            >
               {messages.map((m, i) => (
                 <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
                   {m.role === 'assistant' && (
@@ -392,13 +406,19 @@ const ChatWidget = () => {
                     </div>
                     {m.role === 'assistant' && (
                       <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => speakText(m.text)} className="p-1 text-stone-400 hover:text-brand-primary transition-colors" title="Read aloud">
+                        <button
+                          onClick={() => speakText(m.text)}
+                          className="p-1 text-stone-400 hover:text-brand-primary transition-colors"
+                          title="Read aloud"
+                          aria-label="Read message aloud"
+                        >
                           <Volume2 size={12} />
                         </button>
                         <button
                           onClick={() => handleFeedback(i, 'positive')}
                           className={`p-1 transition-colors ${feedbackStatus[i] === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
                           title="Helpful"
+                          aria-label="Mark as helpful"
                         >
                           <ThumbsUp size={12} />
                         </button>
@@ -406,6 +426,7 @@ const ChatWidget = () => {
                           onClick={() => handleFeedback(i, 'negative')}
                           className={`p-1 transition-colors ${feedbackStatus[i] === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
                           title="Not helpful"
+                          aria-label="Mark as not helpful"
                         >
                           <ThumbsDown size={12} />
                         </button>
@@ -453,7 +474,9 @@ const ChatWidget = () => {
             {/* Input */}
             <div className="p-3 border-t border-stone-100 bg-white shrink-0">
               <div className="flex gap-2">
+                <label htmlFor="chat-input" className="sr-only">Ask a question</label>
                 <input
+                  id="chat-input"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage(input)}
@@ -464,6 +487,7 @@ const ChatWidget = () => {
                   onClick={() => sendMessage(input)}
                   disabled={!input.trim() || isLoading}
                   className="bg-brand-primary text-white p-2.5 rounded-full hover:bg-brand-primary/90 transition-all disabled:opacity-40 shrink-0"
+                  aria-label="Send message"
                 >
                   <Send size={16} />
                 </button>
@@ -488,6 +512,7 @@ const ChatWidget = () => {
                 onChange={(e) => setReportText(e.target.value)}
                 className="w-full p-4 rounded-2xl border border-stone-200 outline-none focus:border-brand-primary mb-4 h-28 text-sm resize-none"
                 placeholder="e.g. The assistant gave incorrect information about…"
+                aria-label="Describe the issue"
               />
               <div className="flex gap-3">
                 <button onClick={() => setShowReportModal(false)} className="flex-1 py-3 rounded-xl border border-stone-200 font-bold text-stone-600 hover:bg-stone-50 transition-colors text-sm">
@@ -510,6 +535,8 @@ const ChatWidget = () => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="bg-brand-primary text-white px-5 py-3.5 rounded-full shadow-lg hover:bg-brand-primary/90 transition-all flex items-center gap-2 shadow-brand-primary/30"
+        aria-label={isOpen ? 'Close chat' : 'Open chat with PANS Assistant'}
+        aria-expanded={isOpen}
       >
         <MessageCircle size={20} />
         <span className="font-bold text-sm hidden md:inline">Chat with PANS</span>
