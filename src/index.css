@@ -55,6 +55,10 @@
   }
 }
 
+.skip-link {
+  @apply absolute left-4 top-0 -translate-y-full focus:translate-y-4 z-[100] bg-brand-primary text-white px-4 py-2 rounded-lg font-bold transition-all shadow-lg outline-none ring-offset-2 focus:ring-2 focus:ring-brand-primary;
+}
+
 /* ── Print styles ── */
 @media print {
   /* Hide navigation, footer, CTAs, chat */
