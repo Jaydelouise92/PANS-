@@ -359,13 +359,23 @@ const ChatWidget = () => {
                   onClick={() => setIsThinkingMode(!isThinkingMode)}
                   className={`p-1.5 rounded-lg transition-colors text-xs flex items-center gap-1 ${isThinkingMode ? 'bg-white text-brand-primary font-bold' : 'bg-white/20 text-white'}`}
                   title={isThinkingMode ? 'Deep thinking on — using Pro model' : 'Fast mode — click for deep analysis'}
+                  aria-label={isThinkingMode ? 'Deep thinking mode on' : 'Fast mode'}
                 >
                   {isThinkingMode ? <Brain size={14} /> : <Zap size={14} />}
                 </button>
-                <button onClick={() => setShowReportModal(true)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors" title="Report an issue">
+                <button
+                  onClick={() => setShowReportModal(true)}
+                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                  title="Report an issue"
+                  aria-label="Report an issue"
+                >
                   <AlertCircle size={14} />
                 </button>
-                <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                  aria-label="Close assistant"
+                >
                   <X size={16} />
                 </button>
               </div>
@@ -392,13 +402,19 @@ const ChatWidget = () => {
                     </div>
                     {m.role === 'assistant' && (
                       <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => speakText(m.text)} className="p-1 text-stone-400 hover:text-brand-primary transition-colors" title="Read aloud">
+                        <button
+                          onClick={() => speakText(m.text)}
+                          className="p-1 text-stone-400 hover:text-brand-primary transition-colors"
+                          title="Read aloud"
+                          aria-label="Read aloud"
+                        >
                           <Volume2 size={12} />
                         </button>
                         <button
                           onClick={() => handleFeedback(i, 'positive')}
                           className={`p-1 transition-colors ${feedbackStatus[i] === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
                           title="Helpful"
+                          aria-label="Helpful"
                         >
                           <ThumbsUp size={12} />
                         </button>
@@ -406,6 +422,7 @@ const ChatWidget = () => {
                           onClick={() => handleFeedback(i, 'negative')}
                           className={`p-1 transition-colors ${feedbackStatus[i] === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
                           title="Not helpful"
+                          aria-label="Not helpful"
                         >
                           <ThumbsDown size={12} />
                         </button>
@@ -464,6 +481,7 @@ const ChatWidget = () => {
                   onClick={() => sendMessage(input)}
                   disabled={!input.trim() || isLoading}
                   className="bg-brand-primary text-white p-2.5 rounded-full hover:bg-brand-primary/90 transition-all disabled:opacity-40 shrink-0"
+                  aria-label="Send message"
                 >
                   <Send size={16} />
                 </button>
@@ -510,6 +528,7 @@ const ChatWidget = () => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="bg-brand-primary text-white px-5 py-3.5 rounded-full shadow-lg hover:bg-brand-primary/90 transition-all flex items-center gap-2 shadow-brand-primary/30"
+        aria-label="Open chat assistant"
       >
         <MessageCircle size={20} />
         <span className="font-bold text-sm hidden md:inline">Chat with PANS</span>
