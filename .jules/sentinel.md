@@ -7,3 +7,8 @@
 **Vulnerability:** Lack of input validation on AI chat and TTS endpoints allowed for unbounded message history and payload sizes.
 **Learning:** AI endpoints are particularly vulnerable to DoS due to processing costs and token limits. Attackers can flood these endpoints with large payloads to exhaust memory or API quotas.
 **Prevention:** Implement strict message count and character length limits on all endpoints that interact with external AI APIs or perform resource-intensive tasks.
+
+## 2025-05-22 - [AI API Quota Exhaustion]
+**Vulnerability:** Public AI endpoints (`/api/chat`, `/api/tts`) lacked rate limiting, making them vulnerable to automated abuse and cost exploitation.
+**Learning:** Resource-intensive endpoints using external paid APIs (like Gemini) require defense-in-depth: both input validation (size/length) and request-based rate limiting.
+**Prevention:** Always apply specific rate limiters to any endpoint that consumes external API quotas or high CPU/Memory, using `req.ip` for accurate tracking behind proxies.
