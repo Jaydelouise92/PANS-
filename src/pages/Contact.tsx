@@ -89,12 +89,12 @@ export default function Contact() {
   };
 
   const Field = ({ id, label, required, error }: { id: string; label: string; required?: boolean; error?: string }) => (
-    <label className="block space-y-1.5">
+    <label htmlFor={id} className="block space-y-1.5">
       <span className="text-xs font-bold text-stone-600 uppercase tracking-wider">
         {label} {required && <span className="text-brand-primary">*</span>}
       </span>
       {error && touched[id] && (
-        <span className="text-red-500 text-xs ml-2">{error}</span>
+        <span className="text-red-500 text-xs ml-2" role="alert">{error}</span>
       )}
     </label>
   );
@@ -229,6 +229,7 @@ export default function Contact() {
                   <div className="space-y-1.5">
                     <Field id="firstName" label="First Name" required error={errors.firstName} />
                     <input
+                      id="firstName"
                       type="text"
                       placeholder="Jane"
                       value={form.firstName}
@@ -236,11 +237,14 @@ export default function Contact() {
                       onBlur={() => touch('firstName')}
                       className={inputClass('firstName')}
                       autoComplete="given-name"
+                      aria-required="true"
+                      aria-invalid={!!(touched.firstName && errors.firstName)}
                     />
                   </div>
                   <div className="space-y-1.5">
                     <Field id="lastName" label="Last Name" required error={errors.lastName} />
                     <input
+                      id="lastName"
                       type="text"
                       placeholder="Smith"
                       value={form.lastName}
@@ -248,6 +252,8 @@ export default function Contact() {
                       onBlur={() => touch('lastName')}
                       className={inputClass('lastName')}
                       autoComplete="family-name"
+                      aria-required="true"
+                      aria-invalid={!!(touched.lastName && errors.lastName)}
                     />
                   </div>
                 </div>
@@ -256,6 +262,7 @@ export default function Contact() {
                 <div className="space-y-1.5">
                   <Field id="email" label="Email Address" required error={errors.email} />
                   <input
+                    id="email"
                     type="email"
                     placeholder="jane@example.com"
                     value={form.email}
@@ -263,13 +270,16 @@ export default function Contact() {
                     onBlur={() => touch('email')}
                     className={inputClass('email')}
                     autoComplete="email"
+                    aria-required="true"
+                    aria-invalid={!!(touched.email && errors.email)}
                   />
                 </div>
 
                 {/* Subject */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-stone-600 uppercase tracking-wider block">Subject</label>
+                  <label htmlFor="subject" className="text-xs font-bold text-stone-600 uppercase tracking-wider block">Subject</label>
                   <input
+                    id="subject"
                     type="text"
                     placeholder="e.g. Preparing for a court hearing"
                     value={form.subject}
@@ -280,8 +290,9 @@ export default function Contact() {
 
                 {/* Support type */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-stone-600 uppercase tracking-wider block">What do you need help with?</label>
+                  <label htmlFor="supportType" className="text-xs font-bold text-stone-600 uppercase tracking-wider block">What do you need help with?</label>
                   <select
+                    id="supportType"
                     value={form.supportType}
                     onChange={(e) => set('supportType', e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-purple-200 bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none text-sm transition-all"
@@ -296,12 +307,15 @@ export default function Contact() {
                 <div className="space-y-1.5">
                   <Field id="message" label="Your Message" required error={errors.message} />
                   <textarea
+                    id="message"
                     rows={6}
                     placeholder="Tell us a bit about your situation and what you need help with. You don't need to share everything — just what feels right."
                     value={form.message}
                     onChange={(e) => set('message', e.target.value)}
                     onBlur={() => touch('message')}
                     className={`${inputClass('message')} resize-none`}
+                    aria-required="true"
+                    aria-invalid={!!(touched.message && errors.message)}
                   />
                   <p className="text-xs text-stone-400 text-right">{form.message.length} / 5000</p>
                 </div>

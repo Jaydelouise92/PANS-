@@ -56,8 +56,11 @@ function LoadingFallback() {
 function AppLayout() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       <Navbar />
-      <main className="flex-1 flex flex-col">
+      <main id="main-content" className="flex-1 flex flex-col">
         <Suspense fallback={<LoadingFallback />}>
           <Routes>
             <Route path="/" element={<Home />} />

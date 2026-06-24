@@ -359,13 +359,24 @@ const ChatWidget = () => {
                   onClick={() => setIsThinkingMode(!isThinkingMode)}
                   className={`p-1.5 rounded-lg transition-colors text-xs flex items-center gap-1 ${isThinkingMode ? 'bg-white text-brand-primary font-bold' : 'bg-white/20 text-white'}`}
                   title={isThinkingMode ? 'Deep thinking on — using Pro model' : 'Fast mode — click for deep analysis'}
+                  aria-label={isThinkingMode ? 'Turn off deep thinking mode' : 'Turn on deep thinking mode'}
+                  aria-pressed={isThinkingMode}
                 >
                   {isThinkingMode ? <Brain size={14} /> : <Zap size={14} />}
                 </button>
-                <button onClick={() => setShowReportModal(true)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors" title="Report an issue">
+                <button
+                  onClick={() => setShowReportModal(true)}
+                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                  title="Report an issue"
+                  aria-label="Report an issue with the assistant"
+                >
                   <AlertCircle size={14} />
                 </button>
-                <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                  aria-label="Close chat"
+                >
                   <X size={16} />
                 </button>
               </div>
