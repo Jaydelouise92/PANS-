@@ -86,6 +86,7 @@ export default function Navbar() {
                   aria-haspopup="menu"
                   aria-expanded={dropdownOpen}
                   onClick={() => setDropdownOpen((v) => !v)}
+                  aria-current={link.children.some((c) => isActive(c.path)) ? 'page' : undefined}
                   className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                     link.children.some((c) => isActive(c.path))
                       ? 'text-brand-primary bg-purple-50 font-semibold'
@@ -110,6 +111,7 @@ export default function Navbar() {
                           key={child.path}
                           to={child.path}
                           role="menuitem"
+                          aria-current={isActive(child.path) ? 'page' : undefined}
                           className={`block px-4 py-2.5 text-sm transition-colors hover:bg-purple-50 hover:text-brand-primary ${
                             isActive(child.path)
                               ? 'text-brand-primary font-semibold'
@@ -127,6 +129,7 @@ export default function Navbar() {
               <Link
                 key={link.path}
                 to={link.path}
+                aria-current={isActive(link.path) ? 'page' : undefined}
                 className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                   isActive(link.path)
                     ? 'text-brand-primary bg-purple-50 font-semibold'
@@ -168,6 +171,7 @@ export default function Navbar() {
                   <Link
                     key={child.path}
                     to={child.path}
+                    aria-current={isActive(child.path) ? 'page' : undefined}
                     className={`block px-4 py-2 text-sm rounded-lg transition-colors ${
                       isActive(child.path)
                         ? 'text-brand-primary bg-purple-50 font-semibold'
@@ -182,6 +186,7 @@ export default function Navbar() {
               <Link
                 key={link.path}
                 to={link.path}
+                aria-current={isActive(link.path) ? 'page' : undefined}
                 className={`block px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
                   isActive(link.path)
                     ? 'text-brand-primary bg-purple-50 font-semibold'
