@@ -44,6 +44,10 @@ const checkFeedbackLimit = makeRateLimiter(10, 10 * 60 * 1000);
 const checkStoryLimit = makeRateLimiter(3, 10 * 60 * 1000);
 // Parent feedback: 3 per 10 minutes (form-style, lower expected volume)
 const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
+// Chat: 10 per 10 minutes (prevent AI cost exploitation)
+const checkChatLimit = makeRateLimiter(10, 10 * 60 * 1000);
+// TTS: 10 per 10 minutes (prevent AI cost exploitation)
+const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
 
 // Use the actual TCP socket address as the rate-limit key.
 // Use req.ip which respects 'trust proxy' (line 124) to get the real client IP
@@ -130,6 +134,9 @@ async function startServer() {
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "AI chat is not configured. Please contact PANS directly via the contact form." });
     }
+    if (!checkChatLimit(getRateLimitKey(req))) {
+      return res.status(429).json({ error: "Too many chat messages. Please wait a few minutes." });
+    }
     const { messages, thinkingMode } = req.body;
     if (!Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: "Messages are required." });
@@ -166,6 +173,9 @@ async function startServer() {
   app.post("/api/tts", async (req, res) => {
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "TTS not configured." });
+    }
+    if (!checkTtsLimit(getRateLimitKey(req))) {
+      return res.status(429).json({ error: "Too many requests. Please wait a few minutes." });
     }
     const { text } = req.body;
     if (typeof text !== "string" || text.length === 0 || text.length > 1000) {
