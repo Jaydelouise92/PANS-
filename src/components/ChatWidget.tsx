@@ -57,7 +57,7 @@ You are part of PANS Victoria — an independent, unfunded advocacy and navigati
 1. A report is made to Child Protection (by a mandated reporter, another professional, family member, or member of the public).
 2. Child Protection assesses whether to investigate. Not all reports result in investigation.
 3. If investigated: a Child Protection worker contacts the family, usually by visiting the home.
-4. An assessment is completed — this is called a "Child Protection Investigation."
+4. An assessment is completed — this is called "Child Protection Investigation."
 5. Outcomes can be: no further action, referral to services, protective intervention order, or court application.
 
 ### The Investigation Stage
@@ -199,6 +199,95 @@ const SUGGESTIONS = [
 
 type Message = { role: 'user' | 'assistant'; text: string };
 
+// ⚡ Bolt: Hoist utility outside of component and memoize sub-components to prevent unnecessary re-renders.
+const renderText = (text: string) => {
+  const lines = text.split('\n');
+  return lines.map((line, i) => {
+    if (line.startsWith('**') && line.endsWith('**')) {
+      return <p key={i} className="font-bold mt-2">{line.slice(2, -2)}</p>;
+    }
+    if (line.startsWith('- ') || line.startsWith('• ')) {
+      return (
+        <div key={i} className="flex gap-2 mt-1">
+          <span className="shrink-0 mt-0.5 text-brand-primary">·</span>
+          <span>{line.slice(2)}</span>
+        </div>
+      );
+    }
+    if (line.trim() === '') return <div key={i} className="h-2" />;
+    // Bold inline **text**
+    const parts = line.split(/\*\*(.*?)\*\*/g);
+    return (
+      <p key={i} className="mt-0.5">
+        {parts.map((part, j) => j % 2 === 1 ? <strong key={j}>{part}</strong> : part)}
+      </p>
+    );
+  });
+};
+
+const MessageItem = React.memo(({
+  message,
+  index,
+  feedbackStatus,
+  onSpeak,
+  onFeedback
+}: {
+  message: Message;
+  index: number;
+  feedbackStatus?: 'positive' | 'negative' | null;
+  onSpeak: (text: string) => void;
+  onFeedback: (index: number, rating: 'positive' | 'negative') => void;
+}) => (
+  <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
+    {message.role === 'assistant' && (
+      <div className="w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center shrink-0 mt-1">
+        <Bot size={13} className="text-white" />
+      </div>
+    )}
+    <div className={`group relative max-w-[85%] ${message.role === 'user' ? '' : 'flex-1'}`}>
+      <div
+        className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+          message.role === 'user'
+            ? 'bg-brand-primary text-white rounded-br-sm'
+            : 'bg-white text-stone-800 border border-stone-200 rounded-bl-sm shadow-sm'
+        }`}
+      >
+        {message.role === 'assistant' ? renderText(message.text) : message.text}
+      </div>
+      {message.role === 'assistant' && (
+        <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            onClick={() => onSpeak(message.text)}
+            className="p-1 text-stone-400 hover:text-brand-primary transition-colors"
+            title="Read aloud"
+            aria-label="Read aloud"
+          >
+            <Volume2 size={12} />
+          </button>
+          <button
+            onClick={() => onFeedback(index, 'positive')}
+            className={`p-1 transition-colors ${feedbackStatus === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
+            title="Helpful"
+            aria-label="Mark as helpful"
+            aria-pressed={feedbackStatus === 'positive'}
+          >
+            <ThumbsUp size={12} />
+          </button>
+          <button
+            onClick={() => onFeedback(index, 'negative')}
+            className={`p-1 transition-colors ${feedbackStatus === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
+            title="Not helpful"
+            aria-label="Mark as not helpful"
+            aria-pressed={feedbackStatus === 'negative'}
+          >
+            <ThumbsDown size={12} />
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+));
+
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -221,7 +310,7 @@ const ChatWidget = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
 
-  const speakText = async (text: string) => {
+  const speakText = React.useCallback(async (text: string) => {
     try {
       const res = await fetch('/api/tts', {
         method: 'POST',
@@ -248,7 +337,7 @@ const ChatWidget = () => {
     } catch (error) {
       console.error("TTS Error:", error);
     }
-  };
+  }, []);
 
   const sendMessage = async (text: string) => {
     if (!text.trim()) return;
@@ -280,7 +369,7 @@ const ChatWidget = () => {
     }
   };
 
-  const handleFeedback = async (index: number, rating: 'positive' | 'negative') => {
+  const handleFeedback = React.useCallback(async (index: number, rating: 'positive' | 'negative') => {
     setFeedbackStatus((prev) => ({ ...prev, [index]: rating }));
     try {
       await fetch('/api/feedback', {
@@ -289,7 +378,7 @@ const ChatWidget = () => {
         body: JSON.stringify({ rating, context: { message: messages[index].text, history: messages.slice(0, index + 1) } }),
       });
     } catch {}
-  };
+  }, [messages]);
 
   const handleReport = async () => {
     if (!reportText.trim()) return;
@@ -305,32 +394,6 @@ const ChatWidget = () => {
     } catch {} finally {
       setIsReporting(false);
     }
-  };
-
-  // Render message text with basic markdown-like formatting
-  const renderText = (text: string) => {
-    const lines = text.split('\n');
-    return lines.map((line, i) => {
-      if (line.startsWith('**') && line.endsWith('**')) {
-        return <p key={i} className="font-bold mt-2">{line.slice(2, -2)}</p>;
-      }
-      if (line.startsWith('- ') || line.startsWith('• ')) {
-        return (
-          <div key={i} className="flex gap-2 mt-1">
-            <span className="shrink-0 mt-0.5 text-brand-primary">·</span>
-            <span>{line.slice(2)}</span>
-          </div>
-        );
-      }
-      if (line.trim() === '') return <div key={i} className="h-2" />;
-      // Bold inline **text**
-      const parts = line.split(/\*\*(.*?)\*\*/g);
-      return (
-        <p key={i} className="mt-0.5">
-          {parts.map((part, j) => j % 2 === 1 ? <strong key={j}>{part}</strong> : part)}
-        </p>
-      );
-    });
   };
 
   return (
@@ -359,60 +422,40 @@ const ChatWidget = () => {
                   onClick={() => setIsThinkingMode(!isThinkingMode)}
                   className={`p-1.5 rounded-lg transition-colors text-xs flex items-center gap-1 ${isThinkingMode ? 'bg-white text-brand-primary font-bold' : 'bg-white/20 text-white'}`}
                   title={isThinkingMode ? 'Deep thinking on — using Pro model' : 'Fast mode — click for deep analysis'}
+                  aria-label={isThinkingMode ? 'Thinking mode enabled' : 'Thinking mode disabled'}
+                  aria-pressed={isThinkingMode}
                 >
                   {isThinkingMode ? <Brain size={14} /> : <Zap size={14} />}
                 </button>
-                <button onClick={() => setShowReportModal(true)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors" title="Report an issue">
+                <button
+                  onClick={() => setShowReportModal(true)}
+                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                  title="Report an issue"
+                  aria-label="Report an issue"
+                >
                   <AlertCircle size={14} />
                 </button>
-                <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                  aria-label="Close chat"
+                >
                   <X size={16} />
                 </button>
               </div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-stone-50">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-stone-50" role="log" aria-live="polite">
               {messages.map((m, i) => (
-                <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
-                  {m.role === 'assistant' && (
-                    <div className="w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center shrink-0 mt-1">
-                      <Bot size={13} className="text-white" />
-                    </div>
-                  )}
-                  <div className={`group relative max-w-[85%] ${m.role === 'user' ? '' : 'flex-1'}`}>
-                    <div
-                      className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                        m.role === 'user'
-                          ? 'bg-brand-primary text-white rounded-br-sm'
-                          : 'bg-white text-stone-800 border border-stone-200 rounded-bl-sm shadow-sm'
-                      }`}
-                    >
-                      {m.role === 'assistant' ? renderText(m.text) : m.text}
-                    </div>
-                    {m.role === 'assistant' && (
-                      <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => speakText(m.text)} className="p-1 text-stone-400 hover:text-brand-primary transition-colors" title="Read aloud">
-                          <Volume2 size={12} />
-                        </button>
-                        <button
-                          onClick={() => handleFeedback(i, 'positive')}
-                          className={`p-1 transition-colors ${feedbackStatus[i] === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
-                          title="Helpful"
-                        >
-                          <ThumbsUp size={12} />
-                        </button>
-                        <button
-                          onClick={() => handleFeedback(i, 'negative')}
-                          className={`p-1 transition-colors ${feedbackStatus[i] === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
-                          title="Not helpful"
-                        >
-                          <ThumbsDown size={12} />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <MessageItem
+                  key={i}
+                  index={i}
+                  message={m}
+                  feedbackStatus={feedbackStatus[i]}
+                  onSpeak={speakText}
+                  onFeedback={handleFeedback}
+                />
               ))}
 
               {isLoading && (
@@ -464,6 +507,7 @@ const ChatWidget = () => {
                   onClick={() => sendMessage(input)}
                   disabled={!input.trim() || isLoading}
                   className="bg-brand-primary text-white p-2.5 rounded-full hover:bg-brand-primary/90 transition-all disabled:opacity-40 shrink-0"
+                  aria-label="Send message"
                 >
                   <Send size={16} />
                 </button>
