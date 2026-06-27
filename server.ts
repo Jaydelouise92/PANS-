@@ -44,6 +44,10 @@ const checkFeedbackLimit = makeRateLimiter(10, 10 * 60 * 1000);
 const checkStoryLimit = makeRateLimiter(3, 10 * 60 * 1000);
 // Parent feedback: 3 per 10 minutes (form-style, lower expected volume)
 const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
+// Chat: 10 per 10 minutes (AI-backed, cost and resource intensive)
+const checkChatLimit = makeRateLimiter(10, 10 * 60 * 1000);
+// TTS: 10 per 10 minutes (AI-backed, cost and resource intensive)
+const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
 
 // Use the actual TCP socket address as the rate-limit key.
 // Use req.ip which respects 'trust proxy' (line 124) to get the real client IP
@@ -69,8 +73,8 @@ function isEmailConfigured() {
 }
 
 function sanitize(str: string): string {
-  return String(str || "").replace(/[<>&"]/g, (c) =>
-    ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c] || c)
+  return String(str || "").replace(/[<>&"']/g, (c) =>
+    ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[c] || c)
   );
 }
 
@@ -127,6 +131,9 @@ async function startServer() {
 
   // ── /api/chat ──────────────────────────────────────────────
   app.post("/api/chat", async (req, res) => {
+    if (!checkChatLimit(getRateLimitKey(req))) {
+      return res.status(429).json({ error: "Too many chat requests. Please wait a few minutes and try again." });
+    }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "AI chat is not configured. Please contact PANS directly via the contact form." });
     }
@@ -164,6 +171,9 @@ async function startServer() {
 
   // ── /api/tts ───────────────────────────────────────────────
   app.post("/api/tts", async (req, res) => {
+    if (!checkTtsLimit(getRateLimitKey(req))) {
+      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
+    }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "TTS not configured." });
     }
