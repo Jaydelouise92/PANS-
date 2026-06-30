@@ -357,22 +357,37 @@ const ChatWidget = () => {
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => setIsThinkingMode(!isThinkingMode)}
+                  aria-label="Toggle deep thinking mode"
+                  aria-pressed={isThinkingMode}
                   className={`p-1.5 rounded-lg transition-colors text-xs flex items-center gap-1 ${isThinkingMode ? 'bg-white text-brand-primary font-bold' : 'bg-white/20 text-white'}`}
                   title={isThinkingMode ? 'Deep thinking on — using Pro model' : 'Fast mode — click for deep analysis'}
                 >
                   {isThinkingMode ? <Brain size={14} /> : <Zap size={14} />}
                 </button>
-                <button onClick={() => setShowReportModal(true)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors" title="Report an issue">
+                <button
+                  onClick={() => setShowReportModal(true)}
+                  aria-label="Report an issue"
+                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                  title="Report an issue"
+                >
                   <AlertCircle size={14} />
                 </button>
-                <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  aria-label="Close chat"
+                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                >
                   <X size={16} />
                 </button>
               </div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-stone-50">
+            <div
+              className="flex-1 overflow-y-auto p-4 space-y-3 bg-stone-50"
+              role="log"
+              aria-live="polite"
+            >
               {messages.map((m, i) => (
                 <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
                   {m.role === 'assistant' && (
@@ -392,11 +407,17 @@ const ChatWidget = () => {
                     </div>
                     {m.role === 'assistant' && (
                       <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => speakText(m.text)} className="p-1 text-stone-400 hover:text-brand-primary transition-colors" title="Read aloud">
+                        <button
+                          onClick={() => speakText(m.text)}
+                          aria-label="Read aloud"
+                          className="p-1 text-stone-400 hover:text-brand-primary transition-colors"
+                          title="Read aloud"
+                        >
                           <Volume2 size={12} />
                         </button>
                         <button
                           onClick={() => handleFeedback(i, 'positive')}
+                          aria-label="Mark as helpful"
                           className={`p-1 transition-colors ${feedbackStatus[i] === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
                           title="Helpful"
                         >
@@ -404,6 +425,7 @@ const ChatWidget = () => {
                         </button>
                         <button
                           onClick={() => handleFeedback(i, 'negative')}
+                          aria-label="Mark as not helpful"
                           className={`p-1 transition-colors ${feedbackStatus[i] === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
                           title="Not helpful"
                         >
@@ -457,15 +479,21 @@ const ChatWidget = () => {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage(input)}
+                  aria-label="Type your message"
                   className="flex-1 px-4 py-2.5 rounded-full border border-stone-200 outline-none focus:border-brand-primary text-sm transition-colors bg-stone-50"
                   placeholder="Ask about the system, orders, rights…"
                 />
                 <button
                   onClick={() => sendMessage(input)}
                   disabled={!input.trim() || isLoading}
-                  className="bg-brand-primary text-white p-2.5 rounded-full hover:bg-brand-primary/90 transition-all disabled:opacity-40 shrink-0"
+                  aria-label="Send message"
+                  className="bg-brand-primary text-white p-2.5 rounded-full hover:bg-brand-primary/90 transition-all disabled:opacity-40 shrink-0 min-w-[40px] flex items-center justify-center"
                 >
-                  <Send size={16} />
+                  {isLoading ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <Send size={16} />
+                  )}
                 </button>
               </div>
               <p className="text-[10px] text-stone-400 text-center mt-2">
@@ -509,6 +537,8 @@ const ChatWidget = () => {
       {/* Toggle button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label="Chat with PANS"
+        aria-expanded={isOpen}
         className="bg-brand-primary text-white px-5 py-3.5 rounded-full shadow-lg hover:bg-brand-primary/90 transition-all flex items-center gap-2 shadow-brand-primary/30"
       >
         <MessageCircle size={20} />
