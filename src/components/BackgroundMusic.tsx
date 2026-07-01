@@ -8,7 +8,6 @@ const DEFAULT_VOLUME = 0.18;
 export default function BackgroundMusic() {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
-  // ⚡ Bolt Optimization: Removed unused 'ready' state and its event listener to reduce unnecessary re-renders.
   const [showHint, setShowHint] = useState(true);
   const [volume, setVolume] = useState(DEFAULT_VOLUME);
   const [showVolume, setShowVolume] = useState(false);
