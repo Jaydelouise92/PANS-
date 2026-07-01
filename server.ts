@@ -83,6 +83,10 @@ const checkFeedbackLimit = makeRateLimiter(10, 10 * 60 * 1000);
 const checkStoryLimit = makeRateLimiter(3, 10 * 60 * 1000);
 // Parent feedback: 3 per 10 minutes (form-style, lower expected volume)
 const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
+// AI Chat: 10 per 10 minutes
+const checkChatLimit = makeRateLimiter(10, 10 * 60 * 1000);
+// TTS: 10 per 10 minutes
+const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
 
 // Use the actual TCP socket address as the rate-limit key.
 // Use req.ip which respects 'trust proxy' (line 124) to get the real client IP
@@ -108,8 +112,8 @@ function isEmailConfigured() {
 }
 
 function sanitize(str: string): string {
-  return String(str || "").replace(/[<>&"]/g, (c) =>
-    ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c] || c)
+  return String(str || "").replace(/[<>&"']/g, (c) =>
+    ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[c] || c)
   );
 }
 
@@ -161,6 +165,7 @@ async function startServer() {
   const PORT = process.env.PORT || 5000;
 
   app.set("trust proxy", 1);
+  app.disable("x-powered-by");
 
   app.use(cors());
   app.use(express.json({ limit: "128kb" }));
@@ -169,6 +174,9 @@ async function startServer() {
   app.post("/api/chat", async (req, res) => {
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "AI chat is not configured. Please contact PANS directly via the contact form." });
+    }
+    if (!checkChatLimit(getRateLimitKey(req))) {
+      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { messages, thinkingMode } = req.body;
     if (!Array.isArray(messages) || messages.length === 0) {
@@ -206,6 +214,9 @@ async function startServer() {
   app.post("/api/tts", async (req, res) => {
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "TTS not configured." });
+    }
+    if (!checkTtsLimit(getRateLimitKey(req))) {
+      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { text } = req.body;
     if (typeof text !== "string" || text.length === 0 || text.length > 1000) {
