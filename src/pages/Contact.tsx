@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { MessageCircle, Clock, AlertTriangle, CheckCircle2, Mail, Shield, Phone } from 'lucide-react';
+import { getApiUrl } from '../lib/api';
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
 
@@ -57,7 +58,7 @@ export default function Contact() {
     setErrorMsg('');
 
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch(getApiUrl('/api/contact'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
