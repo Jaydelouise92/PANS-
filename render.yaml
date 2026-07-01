@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: pans-backend
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: npx tsx server.ts
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: ADMIN_EMAIL
+        value: ourvoicemattersaus@gmail.com
+      - key: DASHBOARD_PASSWORD
+        sync: false
+      # Note: Free plan on Render has ephemeral storage.
+      # The SQLite database will be reset on every redeploy.
+      # For persistent storage, a paid plan or external DB is needed.
+      - key: DATABASE_PATH
+        value: ./pans.db

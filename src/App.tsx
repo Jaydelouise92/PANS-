@@ -58,7 +58,7 @@ function AppLayout() {
     <div className="min-h-screen flex flex-col bg-white">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] bg-brand-primary text-white px-4 py-2 rounded-lg font-bold shadow-lg outline-none"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] bg-brand-primary text-white px-4 py-2 rounded-lg shadow-lg font-bold transition-all"
       >
         Skip to main content
       </a>
