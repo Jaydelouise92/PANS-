@@ -1,49 +1,10 @@
 import express from "express";
+import { createServer as createViteServer } from "vite";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
-import cors from "cors";
-import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel, Modality, type Part, type GenerateContentParameters } from "@google/genai";
 
 dotenv.config();
-
-const dbPath = process.env.DATABASE_PATH || "pans.db";
-const db = new Database(dbPath);
-
-// Initialize database
-db.exec(`
-  CREATE TABLE IF NOT EXISTS contacts (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT,
-    email TEXT,
-    subject TEXT,
-    supportType TEXT,
-    message TEXT,
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS feedback (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    rating TEXT,
-    message TEXT,
-    helpful TEXT,
-    name TEXT,
-    email TEXT,
-    context TEXT,
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS stories (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT,
-    author TEXT,
-    content TEXT,
-    stage TEXT,
-    situation TEXT,
-    urgency TEXT,
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-`);
 
 // ─────────────────────────────────────────────────────────
 // ADMIN EMAIL CONFIGURATION
@@ -83,10 +44,6 @@ const checkFeedbackLimit = makeRateLimiter(10, 10 * 60 * 1000);
 const checkStoryLimit = makeRateLimiter(3, 10 * 60 * 1000);
 // Parent feedback: 3 per 10 minutes (form-style, lower expected volume)
 const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
-// AI Chat: 10 per 10 minutes
-const checkChatLimit = makeRateLimiter(10, 10 * 60 * 1000);
-// TTS: 10 per 10 minutes
-const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
 
 // Use the actual TCP socket address as the rate-limit key.
 // Use req.ip which respects 'trust proxy' (line 124) to get the real client IP
@@ -112,8 +69,8 @@ function isEmailConfigured() {
 }
 
 function sanitize(str: string): string {
-  return String(str || "").replace(/[<>&"']/g, (c) =>
-    ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[c] || c)
+  return String(str || "").replace(/[<>&"]/g, (c) =>
+    ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;" }[c] || c)
   );
 }
 
@@ -162,24 +119,16 @@ Respond helpfully, warmly, and in plain language. Always remind of relevant serv
 
 async function startServer() {
   const app = express();
-  const PORT = process.env.PORT || 5000;
+  const PORT = 5000;
 
   app.set("trust proxy", 1);
-  app.disable("x-powered-by");
 
-  app.use(cors());
   app.use(express.json({ limit: "128kb" }));
 
   // ── /api/chat ──────────────────────────────────────────────
   app.post("/api/chat", async (req, res) => {
-    if (!checkChatLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
-    }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "AI chat is not configured. Please contact PANS directly via the contact form." });
-    }
-    if (!checkChatLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { messages, thinkingMode } = req.body;
     if (!Array.isArray(messages) || messages.length === 0) {
@@ -215,14 +164,8 @@ async function startServer() {
 
   // ── /api/tts ───────────────────────────────────────────────
   app.post("/api/tts", async (req, res) => {
-    if (!checkTtsLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
-    }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "TTS not configured." });
-    }
-    if (!checkTtsLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { text } = req.body;
     if (typeof text !== "string" || text.length === 0 || text.length > 1000) {
@@ -348,24 +291,18 @@ async function startServer() {
       return res.status(400).json({ error: "Message is too long (max 5000 characters)." });
     }
 
+    if (!isEmailConfigured()) {
+      console.log("Contact form submission (email not configured):", { name, email, subject });
+      return res.status(500).json({
+        error: "Email is not yet configured. Please add EMAIL_PASS to Secrets.",
+      });
+    }
+
     const safeSubject = sanitize(subject || supportType || "General enquiry");
     const safeName = sanitize(name);
     const safeEmail = sanitize(email);
     const safeMessage = sanitize(message).replace(/\n/g, "<br>");
     const safeType = sanitize(supportType || "Not specified");
-
-    // Save to database
-    try {
-      const stmt = db.prepare('INSERT INTO contacts (name, email, subject, supportType, message) VALUES (?, ?, ?, ?, ?)');
-      stmt.run(name, email, safeSubject, supportType, message);
-    } catch (e) {
-      console.error("Database error (contact):", e);
-    }
-
-    if (!isEmailConfigured()) {
-      console.log("Contact form submission (email not configured):", { name, email, subject });
-      return res.json({ success: true });
-    }
 
     const htmlBody = `
 <!DOCTYPE html>
@@ -428,14 +365,6 @@ async function startServer() {
       return res.status(400).json({ error: "Feedback message is too long." });
     }
 
-    // Save to database
-    try {
-      const stmt = db.prepare('INSERT INTO feedback (rating, message, context) VALUES (?, ?, ?)');
-      stmt.run(rating, message || '', JSON.stringify(context));
-    } catch (e) {
-      console.error("Database error (feedback):", e);
-    }
-
     if (!isEmailConfigured()) {
       console.log("Feedback received (email not configured):", rating);
       return res.json({ success: true });
@@ -478,14 +407,6 @@ async function startServer() {
     }
     if (!stage || typeof stage !== "string") {
       return res.status(400).json({ error: "Stage is required." });
-    }
-
-    // Save to database
-    try {
-      const stmt = db.prepare('INSERT INTO stories (title, author, content, stage, situation, urgency) VALUES (?, ?, ?, ?, ?, ?)');
-      stmt.run(title, author || 'Anonymous', content, stage, situation || '', urgency || '');
-    } catch (e) {
-      console.error("Database error (story):", e);
     }
 
     if (!isEmailConfigured()) {
@@ -553,14 +474,6 @@ async function startServer() {
       return res.status(400).json({ error: "Invalid consent value." });
     }
 
-    // Save to database
-    try {
-      const stmt = db.prepare('INSERT INTO feedback (rating, message, helpful, name, email, context) VALUES (?, ?, ?, ?, ?, ?)');
-      stmt.run(rating || '', message, helpful || '', name || 'Anonymous', email || '', JSON.stringify({ consentToShare }));
-    } catch (e) {
-      console.error("Database error (parent-feedback):", e);
-    }
-
     if (!isEmailConfigured()) {
       console.log("Parent feedback received (email not configured)");
       return res.json({ success: true });
@@ -611,25 +524,8 @@ async function startServer() {
     }
   });
 
-  // ── /api/dashboard ────────────────────────────────────────
-  app.get("/api/dashboard", (req, res) => {
-    const authHeader = req.headers.authorization;
-    const password = process.env.DASHBOARD_PASSWORD || "pans-admin-2025";
-
-    if (authHeader !== `Bearer ${password}`) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    const contacts = db.prepare('SELECT * FROM contacts ORDER BY createdAt DESC').all();
-    const feedbacks = db.prepare('SELECT * FROM feedback ORDER BY createdAt DESC').all();
-    const stories = db.prepare('SELECT * FROM stories ORDER BY createdAt DESC').all();
-
-    res.json({ contacts, feedbacks, stories });
-  });
-
   // ── Vite / static ─────────────────────────────────────────
   if (process.env.NODE_ENV !== "production") {
-    const { createServer: createViteServer } = await import("vite");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
@@ -637,15 +533,10 @@ async function startServer() {
     app.use(vite.middlewares);
   } else {
     app.use(express.static("dist"));
-    // Handle SPA for production
-    app.get("*", (req, res, next) => {
-      if (req.path.startsWith("/api")) return next();
-      res.sendFile("index.html", { root: "dist" });
-    });
   }
 
-  app.listen(Number(PORT), "0.0.0.0", () => {
-    console.log(`Server running on port ${PORT}`);
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on http://localhost:${PORT}`);
     console.log(`Admin email: ${ADMIN_EMAIL}`);
     console.log(`Email configured: ${isEmailConfigured()}`);
   });
