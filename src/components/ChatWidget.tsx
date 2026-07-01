@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Bot, Volume2, Brain, Zap, ThumbsUp, ThumbsDown, AlertCircle, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { getApiUrl } from '../lib/api';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // SYSTEM INSTRUCTION — deep knowledge of Victorian child protection + PANS
@@ -223,7 +224,7 @@ const ChatWidget = () => {
 
   const speakText = async (text: string) => {
     try {
-      const res = await fetch('/api/tts', {
+      const res = await fetch(getApiUrl('/api/tts'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text }),
@@ -261,7 +262,7 @@ const ChatWidget = () => {
     setIsLoading(true);
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch(getApiUrl('/api/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: updatedMessages, thinkingMode: isThinkingMode }),
@@ -283,7 +284,7 @@ const ChatWidget = () => {
   const handleFeedback = async (index: number, rating: 'positive' | 'negative') => {
     setFeedbackStatus((prev) => ({ ...prev, [index]: rating }));
     try {
-      await fetch('/api/feedback', {
+      await fetch(getApiUrl('/api/feedback'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rating, context: { message: messages[index].text, history: messages.slice(0, index + 1) } }),
@@ -295,7 +296,7 @@ const ChatWidget = () => {
     if (!reportText.trim()) return;
     setIsReporting(true);
     try {
-      await fetch('/api/feedback', {
+      await fetch(getApiUrl('/api/feedback'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rating: 'issue_report', message: reportText, context: { history: messages } }),
