@@ -1,6 +1,8 @@
+import { getApiUrl } from '../lib/api';
+
 export async function generateHeroImage(): Promise<string> {
   try {
-    const res = await fetch('/api/image', {
+    const res = await fetch(getApiUrl('/api/image'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'hero' }),
@@ -17,7 +19,7 @@ export async function generateHeroImage(): Promise<string> {
 
 export async function generateFounderImage(): Promise<string> {
   try {
-    const res = await fetch('/api/image', {
+    const res = await fetch(getApiUrl('/api/image'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type: 'founder' }),

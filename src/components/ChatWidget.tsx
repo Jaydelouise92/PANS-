@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, Send, Bot, Volume2, Brain, Zap, ThumbsUp, ThumbsDown, AlertCircle, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { getApiUrl } from '../lib/api';
 
 
 // Suggested starter questions
@@ -121,7 +122,7 @@ const ChatWidget = () => {
 
   const speakText = React.useCallback(async (text: string) => {
     try {
-      const res = await fetch('/api/tts', {
+      const res = await fetch(getApiUrl('/api/tts'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text }),
@@ -159,7 +160,7 @@ const ChatWidget = () => {
     setIsLoading(true);
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch(getApiUrl('/api/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: updatedMessages, thinkingMode: isThinkingMode }),
@@ -186,7 +187,7 @@ const ChatWidget = () => {
   const handleFeedback = React.useCallback(async (index: number, rating: 'positive' | 'negative') => {
     setFeedbackStatus((prev) => ({ ...prev, [index]: rating }));
     try {
-      await fetch('/api/feedback', {
+      await fetch(getApiUrl('/api/feedback'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -204,7 +205,7 @@ const ChatWidget = () => {
     if (!reportText.trim()) return;
     setIsReporting(true);
     try {
-      await fetch('/api/feedback', {
+      await fetch(getApiUrl('/api/feedback'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rating: 'issue_report', message: reportText, context: { history: messages } }),
@@ -240,31 +241,83 @@ const ChatWidget = () => {
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => setIsThinkingMode(!isThinkingMode)}
+                  aria-label={isThinkingMode ? 'Disable deep thinking mode' : 'Enable deep thinking mode'}
                   className={`p-1.5 rounded-lg transition-colors text-xs flex items-center gap-1 ${isThinkingMode ? 'bg-white text-brand-primary font-bold' : 'bg-white/20 text-white'}`}
                   title={isThinkingMode ? 'Deep thinking on — using Pro model' : 'Fast mode — click for deep analysis'}
                 >
                   {isThinkingMode ? <Brain size={14} /> : <Zap size={14} />}
                 </button>
-                <button onClick={() => setShowReportModal(true)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors" title="Report an issue">
+                <button
+                  onClick={() => setShowReportModal(true)}
+                  aria-label="Report an issue with the assistant"
+                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                  title="Report an issue"
+                >
                   <AlertCircle size={14} />
                 </button>
-                <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  aria-label="Close chat window"
+                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                >
                   <X size={16} />
                 </button>
               </div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-stone-50">
+            <div
+              className="flex-1 overflow-y-auto p-4 space-y-3 bg-stone-50"
+              role="log"
+              aria-live="polite"
+            >
               {messages.map((m, i) => (
-                <MessageItem
-                  key={i}
-                  message={m}
-                  index={i}
-                  feedbackStatus={feedbackStatus[i]}
-                  onSpeak={speakText}
-                  onFeedback={handleFeedback}
-                />
+                <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
+                  {m.role === 'assistant' && (
+                    <div className="w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center shrink-0 mt-1">
+                      <Bot size={13} className="text-white" />
+                    </div>
+                  )}
+                  <div className={`group relative max-w-[85%] ${m.role === 'user' ? '' : 'flex-1'}`}>
+                    <div
+                      className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                        m.role === 'user'
+                          ? 'bg-brand-primary text-white rounded-br-sm'
+                          : 'bg-white text-stone-800 border border-stone-200 rounded-bl-sm shadow-sm'
+                      }`}
+                    >
+                      {m.role === 'assistant' ? renderText(m.text) : m.text}
+                    </div>
+                    {m.role === 'assistant' && (
+                      <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => speakText(m.text)}
+                          aria-label="Read message aloud"
+                          className="p-1 text-stone-400 hover:text-brand-primary transition-colors"
+                          title="Read aloud"
+                        >
+                          <Volume2 size={12} />
+                        </button>
+                        <button
+                          onClick={() => handleFeedback(i, 'positive')}
+                          aria-label="Mark as helpful"
+                          className={`p-1 transition-colors ${feedbackStatus[i] === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
+                          title="Helpful"
+                        >
+                          <ThumbsUp size={12} />
+                        </button>
+                        <button
+                          onClick={() => handleFeedback(i, 'negative')}
+                          aria-label="Mark as not helpful"
+                          className={`p-1 transition-colors ${feedbackStatus[i] === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
+                          title="Not helpful"
+                        >
+                          <ThumbsDown size={12} />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               ))}
 
               {isLoading && (
@@ -309,12 +362,14 @@ const ChatWidget = () => {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage(input)}
+                  aria-label="Message assistant"
                   className="flex-1 px-4 py-2.5 rounded-full border border-stone-200 outline-none focus:border-brand-primary text-sm transition-colors bg-stone-50"
                   placeholder="Ask about the system, orders, rights…"
                 />
                 <button
                   onClick={() => sendMessage(input)}
                   disabled={!input.trim() || isLoading}
+                  aria-label="Send message"
                   className="bg-brand-primary text-white p-2.5 rounded-full hover:bg-brand-primary/90 transition-all disabled:opacity-40 shrink-0"
                 >
                   <Send size={16} />
@@ -361,6 +416,7 @@ const ChatWidget = () => {
       {/* Toggle button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-label={isOpen ? 'Close PANS Assistant' : 'Open PANS Assistant'}
         className="bg-brand-primary text-white px-5 py-3.5 rounded-full shadow-lg hover:bg-brand-primary/90 transition-all flex items-center gap-2 shadow-brand-primary/30"
       >
         <MessageCircle size={20} />
