@@ -56,8 +56,14 @@ function LoadingFallback() {
 function AppLayout() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] bg-brand-primary text-white px-4 py-2 rounded-lg shadow-lg font-bold transition-all"
+      >
+        Skip to main content
+      </a>
       <Navbar />
-      <main className="flex-1 flex flex-col">
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col outline-none">
         <Suspense fallback={<LoadingFallback />}>
           <Routes>
             <Route path="/" element={<Home />} />
