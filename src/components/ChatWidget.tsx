@@ -372,7 +372,11 @@ const ChatWidget = () => {
                   aria-label="Send message"
                   className="bg-brand-primary text-white p-2.5 rounded-full hover:bg-brand-primary/90 transition-all disabled:opacity-40 shrink-0"
                 >
-                  <Send size={16} />
+                  {isLoading ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <Send size={16} />
+                  )}
                 </button>
               </div>
               <p className="text-[10px] text-stone-400 text-center mt-2">
