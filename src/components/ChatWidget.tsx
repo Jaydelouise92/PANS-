@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageCircle, X, Send, Bot, Volume2, Brain, Zap, ThumbsUp, ThumbsDown, AlertCircle, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { getApiUrl } from '../lib/api';
@@ -115,6 +115,11 @@ const ChatWidget = () => {
   const [isReporting, setIsReporting] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef(messages);
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -186,6 +191,8 @@ const ChatWidget = () => {
 
   const handleFeedback = React.useCallback(async (index: number, rating: 'positive' | 'negative') => {
     setFeedbackStatus((prev) => ({ ...prev, [index]: rating }));
+    const msg = messagesRef.current[index];
+    const history = messagesRef.current.slice(0, index + 1);
     try {
       await fetch(getApiUrl('/api/feedback'), {
         method: 'POST',
@@ -371,6 +378,7 @@ const ChatWidget = () => {
                   disabled={!input.trim() || isLoading}
                   aria-label="Send message"
                   className="bg-brand-primary text-white p-2.5 rounded-full hover:bg-brand-primary/90 transition-all disabled:opacity-40 shrink-0"
+                  aria-label="Send message"
                 >
                   {isLoading ? (
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -422,6 +430,8 @@ const ChatWidget = () => {
         onClick={() => setIsOpen(!isOpen)}
         aria-label={isOpen ? 'Close PANS Assistant' : 'Open PANS Assistant'}
         className="bg-brand-primary text-white px-5 py-3.5 rounded-full shadow-lg hover:bg-brand-primary/90 transition-all flex items-center gap-2 shadow-brand-primary/30"
+        aria-label={isOpen ? "Close chat" : "Chat with PANS"}
+        aria-expanded={isOpen}
       >
         <MessageCircle size={20} />
         <span className="font-bold text-sm hidden md:inline">Chat with PANS</span>
