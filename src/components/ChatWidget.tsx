@@ -1,8 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageCircle, X, Send, Bot, Volume2, Brain, Zap, ThumbsUp, ThumbsDown, AlertCircle, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { getApiUrl } from '../lib/api';
-
 
 // Suggested starter questions
 const SUGGESTIONS = [
@@ -16,7 +14,7 @@ const SUGGESTIONS = [
 
 type Message = { role: 'user' | 'assistant'; text: string };
 
-// Render message text with basic markdown-like formatting - hoisted to avoid recreation
+// Render message text with basic markdown-like formatting
 const renderText = (text: string) => {
   const lines = text.split('\n');
   return lines.map((line, i) => {
@@ -43,60 +41,60 @@ const renderText = (text: string) => {
 };
 
 const MessageItem = React.memo(({
-  message,
-  index,
-  feedbackStatus,
+  m,
+  i,
   onSpeak,
-  onFeedback
+  onFeedback,
+  status
 }: {
-  message: Message;
-  index: number;
-  feedbackStatus: 'positive' | 'negative' | null | undefined;
+  m: Message;
+  i: number;
   onSpeak: (text: string) => void;
   onFeedback: (index: number, rating: 'positive' | 'negative') => void;
-}) => {
-  return (
-    <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
-      {message.role === 'assistant' && (
-        <div className="w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center shrink-0 mt-1">
-          <Bot size={13} className="text-white" />
+  status: 'positive' | 'negative' | null | undefined;
+}) => (
+  <div className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
+    {m.role === 'assistant' && (
+      <div className="w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center shrink-0 mt-1">
+        <Bot size={13} className="text-white" />
+      </div>
+    )}
+    <div className={`group relative max-w-[85%] ${m.role === 'user' ? '' : 'flex-1'}`}>
+      <div
+        className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+          m.role === 'user'
+            ? 'bg-brand-primary text-white rounded-br-sm'
+            : 'bg-white text-stone-800 border border-stone-200 rounded-bl-sm shadow-sm'
+        }`}
+      >
+        {m.role === 'assistant' ? renderText(m.text) : m.text}
+      </div>
+      {m.role === 'assistant' && (
+        <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button onClick={() => onSpeak(m.text)} className="p-1 text-stone-400 hover:text-brand-primary transition-colors" title="Read aloud">
+            <Volume2 size={12} />
+          </button>
+          <button
+            onClick={() => onFeedback(i, 'positive')}
+                          className={`p-1 transition-colors ${status === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
+            title="Helpful"
+                          aria-pressed={status === 'positive'}
+          >
+            <ThumbsUp size={12} />
+          </button>
+          <button
+            onClick={() => onFeedback(i, 'negative')}
+                          className={`p-1 transition-colors ${status === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
+            title="Not helpful"
+                          aria-pressed={status === 'negative'}
+          >
+            <ThumbsDown size={12} />
+          </button>
         </div>
       )}
-      <div className={`group relative max-w-[85%] ${message.role === 'user' ? '' : 'flex-1'}`}>
-        <div
-          className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-            message.role === 'user'
-              ? 'bg-brand-primary text-white rounded-br-sm'
-              : 'bg-white text-stone-800 border border-stone-200 rounded-bl-sm shadow-sm'
-          }`}
-        >
-          {message.role === 'assistant' ? renderText(message.text) : message.text}
-        </div>
-        {message.role === 'assistant' && (
-          <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <button onClick={() => onSpeak(message.text)} className="p-1 text-stone-400 hover:text-brand-primary transition-colors" title="Read aloud">
-              <Volume2 size={12} />
-            </button>
-            <button
-              onClick={() => onFeedback(index, 'positive')}
-              className={`p-1 transition-colors ${feedbackStatus === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
-              title="Helpful"
-            >
-              <ThumbsUp size={12} />
-            </button>
-            <button
-              onClick={() => onFeedback(index, 'negative')}
-              className={`p-1 transition-colors ${feedbackStatus === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
-              title="Not helpful"
-            >
-              <ThumbsDown size={12} />
-            </button>
-          </div>
-        )}
-      </div>
     </div>
-  );
-});
+  </div>
+));
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -125,9 +123,9 @@ const ChatWidget = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
 
-  const speakText = React.useCallback(async (text: string) => {
+  const speakText = useCallback(async (text: string) => {
     try {
-      const res = await fetch(getApiUrl('/api/tts'), {
+      const res = await fetch('/api/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text }),
@@ -165,7 +163,7 @@ const ChatWidget = () => {
     setIsLoading(true);
 
     try {
-      const res = await fetch(getApiUrl('/api/chat'), {
+      const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: updatedMessages, thinkingMode: isThinkingMode }),
@@ -184,26 +182,15 @@ const ChatWidget = () => {
     }
   };
 
-  const messagesRef = useRef(messages);
-  useEffect(() => {
-    messagesRef.current = messages;
-  }, [messages]);
-
-  const handleFeedback = React.useCallback(async (index: number, rating: 'positive' | 'negative') => {
+  const handleFeedback = useCallback(async (index: number, rating: 'positive' | 'negative') => {
     setFeedbackStatus((prev) => ({ ...prev, [index]: rating }));
     const msg = messagesRef.current[index];
     const history = messagesRef.current.slice(0, index + 1);
     try {
-      await fetch(getApiUrl('/api/feedback'), {
+      await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          rating,
-          context: {
-            message: messagesRef.current[index].text,
-            history: messagesRef.current.slice(0, index + 1)
-          }
-        }),
+        body: JSON.stringify({ rating, context: { message: msg.text, history } }),
       });
     } catch {}
   }, []);
@@ -212,7 +199,7 @@ const ChatWidget = () => {
     if (!reportText.trim()) return;
     setIsReporting(true);
     try {
-      await fetch(getApiUrl('/api/feedback'), {
+      await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rating: 'issue_report', message: reportText, context: { history: messages } }),
@@ -248,83 +235,31 @@ const ChatWidget = () => {
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => setIsThinkingMode(!isThinkingMode)}
-                  aria-label={isThinkingMode ? 'Disable deep thinking mode' : 'Enable deep thinking mode'}
                   className={`p-1.5 rounded-lg transition-colors text-xs flex items-center gap-1 ${isThinkingMode ? 'bg-white text-brand-primary font-bold' : 'bg-white/20 text-white'}`}
                   title={isThinkingMode ? 'Deep thinking on — using Pro model' : 'Fast mode — click for deep analysis'}
                 >
                   {isThinkingMode ? <Brain size={14} /> : <Zap size={14} />}
                 </button>
-                <button
-                  onClick={() => setShowReportModal(true)}
-                  aria-label="Report an issue with the assistant"
-                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
-                  title="Report an issue"
-                >
+                <button onClick={() => setShowReportModal(true)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors" title="Report an issue">
                   <AlertCircle size={14} />
                 </button>
-                <button
-                  onClick={() => setIsOpen(false)}
-                  aria-label="Close chat window"
-                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
-                >
+                <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors">
                   <X size={16} />
                 </button>
               </div>
             </div>
 
             {/* Messages */}
-            <div
-              className="flex-1 overflow-y-auto p-4 space-y-3 bg-stone-50"
-              role="log"
-              aria-live="polite"
-            >
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-stone-50" role="log" aria-live="polite">
               {messages.map((m, i) => (
-                <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
-                  {m.role === 'assistant' && (
-                    <div className="w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center shrink-0 mt-1">
-                      <Bot size={13} className="text-white" />
-                    </div>
-                  )}
-                  <div className={`group relative max-w-[85%] ${m.role === 'user' ? '' : 'flex-1'}`}>
-                    <div
-                      className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                        m.role === 'user'
-                          ? 'bg-brand-primary text-white rounded-br-sm'
-                          : 'bg-white text-stone-800 border border-stone-200 rounded-bl-sm shadow-sm'
-                      }`}
-                    >
-                      {m.role === 'assistant' ? renderText(m.text) : m.text}
-                    </div>
-                    {m.role === 'assistant' && (
-                      <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => speakText(m.text)}
-                          aria-label="Read message aloud"
-                          className="p-1 text-stone-400 hover:text-brand-primary transition-colors"
-                          title="Read aloud"
-                        >
-                          <Volume2 size={12} />
-                        </button>
-                        <button
-                          onClick={() => handleFeedback(i, 'positive')}
-                          aria-label="Mark as helpful"
-                          className={`p-1 transition-colors ${feedbackStatus[i] === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
-                          title="Helpful"
-                        >
-                          <ThumbsUp size={12} />
-                        </button>
-                        <button
-                          onClick={() => handleFeedback(i, 'negative')}
-                          aria-label="Mark as not helpful"
-                          className={`p-1 transition-colors ${feedbackStatus[i] === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
-                          title="Not helpful"
-                        >
-                          <ThumbsDown size={12} />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <MessageItem
+                  key={i}
+                  m={m}
+                  i={i}
+                  onSpeak={speakText}
+                  onFeedback={handleFeedback}
+                  status={feedbackStatus[i]}
+                />
               ))}
 
               {isLoading && (
@@ -369,22 +304,16 @@ const ChatWidget = () => {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage(input)}
-                  aria-label="Message assistant"
                   className="flex-1 px-4 py-2.5 rounded-full border border-stone-200 outline-none focus:border-brand-primary text-sm transition-colors bg-stone-50"
                   placeholder="Ask about the system, orders, rights…"
                 />
                 <button
                   onClick={() => sendMessage(input)}
                   disabled={!input.trim() || isLoading}
-                  aria-label="Send message"
                   className="bg-brand-primary text-white p-2.5 rounded-full hover:bg-brand-primary/90 transition-all disabled:opacity-40 shrink-0"
                   aria-label="Send message"
                 >
-                  {isLoading ? (
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  ) : (
-                    <Send size={16} />
-                  )}
+                  <Send size={16} />
                 </button>
               </div>
               <p className="text-[10px] text-stone-400 text-center mt-2">
@@ -428,7 +357,6 @@ const ChatWidget = () => {
       {/* Toggle button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        aria-label={isOpen ? 'Close PANS Assistant' : 'Open PANS Assistant'}
         className="bg-brand-primary text-white px-5 py-3.5 rounded-full shadow-lg hover:bg-brand-primary/90 transition-all flex items-center gap-2 shadow-brand-primary/30"
         aria-label={isOpen ? "Close chat" : "Chat with PANS"}
         aria-expanded={isOpen}
