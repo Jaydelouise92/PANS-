@@ -114,13 +114,15 @@ export default function Dashboard() {
           <h1 className="text-2xl font-serif text-center mb-6">PANS Dashboard Access</h1>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="text-xs font-bold text-stone-600 uppercase tracking-wider block mb-2">Password</label>
+              <label htmlFor="dashboard-password" className="text-xs font-bold text-stone-600 uppercase tracking-wider block mb-2">Password</label>
               <input
+                id="dashboard-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-purple-200 focus:border-brand-primary outline-none"
                 placeholder="Enter dashboard password"
+                required
               />
             </div>
             {loginError && <p className="text-red-500 text-xs">{loginError}</p>}
@@ -257,8 +259,10 @@ export default function Dashboard() {
             <div className="p-6 border-b border-stone-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <h3 className="font-serif text-xl">Message Inbox</h3>
               <div className="relative">
-                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" />
+                <label htmlFor="search-messages" className="sr-only">Search messages</label>
+                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" aria-hidden="true" />
                 <input
+                  id="search-messages"
                   type="text"
                   placeholder="Search messages..."
                   className="pl-10 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm outline-none focus:border-brand-primary w-full md:w-64"
