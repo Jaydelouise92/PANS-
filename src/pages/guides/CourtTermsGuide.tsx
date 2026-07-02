@@ -85,8 +85,10 @@ export default function CourtTermsGuide() {
 
         {/* Search */}
         <div className="relative no-print">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" />
+          <label htmlFor="term-search" className="sr-only">Search court terms</label>
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" aria-hidden="true" />
           <input
+            id="term-search"
             type="text"
             placeholder="Search terms…"
             value={search}
