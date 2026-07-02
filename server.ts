@@ -51,7 +51,7 @@ db.exec(`
 // ADMIN_EMAIL secret in the Replit Secrets panel.
 // If ADMIN_EMAIL is not set, messages go to the fallback below.
 // ─────────────────────────────────────────────────────────
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "ourvoicemattersaus@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
 // ── Rate limiting ──────────────────────────────────────────
 // Each mail-sending endpoint has its own independent bucket so that
@@ -95,7 +95,7 @@ function getRateLimitKey(req: express.Request): string {
   return req.ip || req.socket.remoteAddress || "unknown";
 }
 
-const GMAIL_USER = "ourvoicemattersaus@gmail.com";
+const GMAIL_USER = process.env.EMAIL_USER || process.env.GMAIL_USER;
 
 function getTransporter() {
   const pass = (process.env.EMAIL_PASS || "").replace(/\s/g, "");
@@ -108,7 +108,7 @@ function getTransporter() {
 }
 
 function isEmailConfigured() {
-  return !!(process.env.EMAIL_PASS);
+  return !!(process.env.EMAIL_PASS && ADMIN_EMAIL && GMAIL_USER);
 }
 
 function sanitize(str: string): string {
@@ -614,9 +614,9 @@ async function startServer() {
   // ── /api/dashboard ────────────────────────────────────────
   app.get("/api/dashboard", (req, res) => {
     const authHeader = req.headers.authorization;
-    const password = process.env.DASHBOARD_PASSWORD || "pans-admin-2025";
+    const password = process.env.DASHBOARD_PASSWORD;
 
-    if (authHeader !== `Bearer ${password}`) {
+    if (!password || authHeader !== `Bearer ${password}`) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
@@ -646,8 +646,9 @@ async function startServer() {
 
   app.listen(Number(PORT), "0.0.0.0", () => {
     console.log(`Server running on port ${PORT}`);
-    console.log(`Admin email: ${ADMIN_EMAIL}`);
+    console.log(`Admin email: ${ADMIN_EMAIL || "Not configured"}`);
     console.log(`Email configured: ${isEmailConfigured()}`);
+    console.log(`Dashboard password configured: ${!!process.env.DASHBOARD_PASSWORD}`);
   });
 }
 
