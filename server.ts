@@ -1,6 +1,7 @@
 import express from "express";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+import crypto from "crypto";
 import cors from "cors";
 import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel, Modality, type Part, type GenerateContentParameters } from "@google/genai";
@@ -49,9 +50,8 @@ db.exec(`
 // ADMIN EMAIL CONFIGURATION
 // To change the receiving email address, update the
 // ADMIN_EMAIL secret in the Replit Secrets panel.
-// If ADMIN_EMAIL is not set, messages go to the fallback below.
 // ─────────────────────────────────────────────────────────
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "ourvoicemattersaus@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "";
 
 // ── Rate limiting ──────────────────────────────────────────
 // Each mail-sending endpoint has its own independent bucket so that
@@ -87,6 +87,18 @@ const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
 const checkChatLimit = makeRateLimiter(10, 10 * 60 * 1000);
 // TTS: 10 per 10 minutes
 const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
+// Dashboard: 3 attempts per 10 minutes (sensitive auth endpoint)
+const checkDashboardLimit = makeRateLimiter(3, 10 * 60 * 1000);
+
+// Security: Prevent timing attacks on secret comparisons
+function timingSafeCompare(a: string, b: string): boolean {
+  if (!a || !b || a.length !== b.length) {
+    // If lengths differ, still do a dummy comparison to stay consistent
+    crypto.timingSafeEqual(Buffer.from(a || ""), Buffer.from(a || ""));
+    return false;
+  }
+  return crypto.timingSafeEqual(Buffer.from(a), Buffer.from(b));
+}
 
 // Use the actual TCP socket address as the rate-limit key.
 // Use req.ip which respects 'trust proxy' (line 124) to get the real client IP
@@ -95,20 +107,19 @@ function getRateLimitKey(req: express.Request): string {
   return req.ip || req.socket.remoteAddress || "unknown";
 }
 
-const GMAIL_USER = "ourvoicemattersaus@gmail.com";
-
 function getTransporter() {
+  const user = process.env.EMAIL_USER;
   const pass = (process.env.EMAIL_PASS || "").replace(/\s/g, "");
   return nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
     secure: true,
-    auth: { user: GMAIL_USER, pass },
+    auth: { user, pass },
   });
 }
 
 function isEmailConfigured() {
-  return !!(process.env.EMAIL_PASS);
+  return !!(process.env.EMAIL_PASS && process.env.EMAIL_USER && ADMIN_EMAIL);
 }
 
 function sanitize(str: string): string {
@@ -398,7 +409,7 @@ async function startServer() {
     try {
       const transporter = getTransporter();
       await transporter.sendMail({
-        from: `"PANS Contact Form" <${GMAIL_USER}>`,
+        from: `"PANS Contact Form" <${process.env.EMAIL_USER}>`,
         to: ADMIN_EMAIL,
         replyTo: email,
         subject: `[PANS Contact] ${subject || safeType} — from ${safeName}`,
@@ -447,7 +458,7 @@ async function startServer() {
     try {
       const transporter = getTransporter();
       await transporter.sendMail({
-        from: `"PANS Feedback" <${GMAIL_USER}>`,
+        from: `"PANS Feedback" <${process.env.EMAIL_USER}>`,
         to: ADMIN_EMAIL,
         subject: `[PANS Feedback] ${rating === "positive" ? "Positive" : rating === "negative" ? "Negative" : "Issue Report"} — AI assistant`,
         text: `Rating: ${safeRating}\nMessage: ${safeMessage}\n\nContext:\n${JSON.stringify(context, null, 2)}`,
@@ -503,7 +514,7 @@ async function startServer() {
     try {
       const transporter = getTransporter();
       await transporter.sendMail({
-        from: `"PANS Story Submission" <${GMAIL_USER}>`,
+        from: `"PANS Story Submission" <${process.env.EMAIL_USER}>`,
         to: ADMIN_EMAIL,
         subject: `[PANS Story] ${safeTitle} — ${safeStage}`,
         text: `Title: ${safeTitle}\nAuthor: ${safeAuthor}\nStage: ${safeStage}\nSituation: ${safeSituation}\nUrgency: ${safeUrgency}\n\nStory:\n${safeContent}`,
@@ -597,7 +608,7 @@ async function startServer() {
     try {
       const transporter = getTransporter();
       await transporter.sendMail({
-        from: `"PANS Parent Feedback" <${GMAIL_USER}>`,
+        from: `"PANS Parent Feedback" <${process.env.EMAIL_USER}>`,
         to: ADMIN_EMAIL,
         replyTo: typeof email === "string" && email ? email : undefined,
         subject: `[PANS Feedback] From ${safeName} — rating ${safeRating}/5`,
@@ -613,10 +624,20 @@ async function startServer() {
 
   // ── /api/dashboard ────────────────────────────────────────
   app.get("/api/dashboard", (req, res) => {
-    const authHeader = req.headers.authorization;
-    const password = process.env.DASHBOARD_PASSWORD || "pans-admin-2025";
+    if (!checkDashboardLimit(getRateLimitKey(req))) {
+      return res.status(429).json({ error: "Too many attempts. Please try again later." });
+    }
 
-    if (authHeader !== `Bearer ${password}`) {
+    const authHeader = req.headers.authorization || "";
+    const password = process.env.DASHBOARD_PASSWORD;
+
+    // Fail secure: If password is not set, deny all access
+    if (!password || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const providedToken = authHeader.substring(7);
+    if (!timingSafeCompare(providedToken, password)) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
@@ -646,8 +667,7 @@ async function startServer() {
 
   app.listen(Number(PORT), "0.0.0.0", () => {
     console.log(`Server running on port ${PORT}`);
-    console.log(`Admin email: ${ADMIN_EMAIL}`);
-    console.log(`Email configured: ${isEmailConfigured()}`);
+    console.log(`Email configuration active: ${isEmailConfigured()}`);
   });
 }
 
