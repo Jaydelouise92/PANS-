@@ -29,7 +29,9 @@ export default function MentalHealth() {
       <section className="py-6 px-6 bg-red-50 border-b border-red-200">
         <div className="max-w-5xl mx-auto flex gap-3 items-start">
           <AlertTriangle size={18} className="text-red-600 shrink-0 mt-0.5" />
-          <p className="text-sm text-red-800"><strong>In crisis right now?</strong> Call <strong>Lifeline on 13 11 14</strong> (24/7) or <strong>000</strong> if you are in immediate danger. You do not have to face this alone.</p>
+          <p className="text-sm text-red-800">
+            <strong>In crisis right now?</strong> Call <strong>Lifeline on <a href="tel:131114" className="underline hover:text-red-600 transition-colors" aria-label="Call Lifeline at 13 11 14">13 11 14</a></strong> (24/7) or <strong><a href="tel:000" className="underline hover:text-red-600 transition-colors" aria-label="Call Emergency Services at 000">000</a></strong> if you are in immediate danger. You do not have to face this alone.
+          </p>
         </div>
       </section>
 
@@ -45,7 +47,11 @@ export default function MentalHealth() {
                 </div>
                 <div>
                   <h3 className="font-bold text-stone-800 mb-0.5">{line.name}</h3>
-                  <p className="text-2xl font-bold text-brand-primary mb-1">{line.number}</p>
+                  <p className="text-2xl font-bold text-brand-primary mb-1">
+                    <a href={`tel:${line.number.replace(/\s/g, '')}`} className="hover:underline transition-all" aria-label={`Call ${line.name} at ${line.number}`}>
+                      {line.number}
+                    </a>
+                  </p>
                   <p className="text-stone-500 text-xs">{line.desc}</p>
                 </div>
               </motion.div>

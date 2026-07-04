@@ -152,7 +152,7 @@ export default function Contact() {
         <div className="max-w-5xl mx-auto flex gap-3 items-start">
           <AlertTriangle size={18} className="text-amber-600 shrink-0 mt-0.5" />
           <p className="text-sm text-amber-800">
-            <strong>Please note:</strong> PANS does not provide legal advice or emergency assistance. If you are in crisis, call <strong>Lifeline on 13 11 14</strong>. For legal advice, contact <strong>Victoria Legal Aid on 1300 792 387</strong>.
+            <strong>Please note:</strong> PANS does not provide legal advice or emergency assistance. If you are in crisis, call <strong>Lifeline on <a href="tel:131114" className="underline hover:text-amber-900 transition-colors" aria-label="Call Lifeline at 13 11 14">13 11 14</a></strong>. For legal advice, contact <strong>Victoria Legal Aid on <a href="tel:1300792387" className="underline hover:text-amber-900 transition-colors" aria-label="Call Victoria Legal Aid at 1300 792 387">1300 792 387</a></strong>.
           </p>
         </div>
       </section>
@@ -205,10 +205,10 @@ export default function Contact() {
             <div className="bg-white border border-purple-100 rounded-2xl p-6">
               <h3 className="font-bold text-stone-800 mb-3 text-sm flex items-center gap-2"><Phone size={14} className="text-brand-primary" /> Emergency contacts</h3>
               <div className="space-y-2 text-xs text-stone-600">
-                <p><strong>Lifeline:</strong> 13 11 14 (24/7 crisis support)</p>
-                <p><strong>Victoria Legal Aid:</strong> 1300 792 387</p>
-                <p><strong>Child Protection (DFFH):</strong> 13 12 78</p>
-                <p><strong>Emergency:</strong> 000</p>
+                <p><strong>Lifeline:</strong> <a href="tel:131114" className="hover:text-brand-primary hover:underline transition-colors" aria-label="Call Lifeline at 13 11 14">13 11 14</a> (24/7 crisis support)</p>
+                <p><strong>Victoria Legal Aid:</strong> <a href="tel:1300792387" className="hover:text-brand-primary hover:underline transition-colors" aria-label="Call Victoria Legal Aid at 1300 792 387">1300 792 387</a></p>
+                <p><strong>Child Protection (DFFH):</strong> <a href="tel:131278" className="hover:text-brand-primary hover:underline transition-colors" aria-label="Call Child Protection at 13 12 78">13 12 78</a></p>
+                <p><strong>Emergency:</strong> <a href="tel:000" className="hover:text-brand-primary hover:underline transition-colors" aria-label="Call Emergency Services at 000">000</a></p>
               </div>
             </div>
           </div>
