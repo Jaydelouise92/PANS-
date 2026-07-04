@@ -76,7 +76,13 @@ export default function Footer() {
               ].map((c, i) => (
                 <li key={i} className="flex flex-col">
                   <span className="text-xs text-stone-500">{c.name} <span className="text-stone-400">({c.note})</span></span>
-                  <span className="font-bold text-brand-primary text-sm">{c.number}</span>
+                  <a
+                    href={`tel:${c.number.replace(/\s/g, '')}`}
+                    className="font-bold text-brand-primary text-sm hover:underline transition-all"
+                    aria-label={`Call ${c.name} at ${c.number}`}
+                  >
+                    {c.number}
+                  </a>
                 </li>
               ))}
             </ul>
@@ -96,7 +102,7 @@ export default function Footer() {
                   PANS does not provide legal advice, legal representation, or emergency services.
                 </p>
                 <p className="text-xs text-amber-700">
-                  If you are in immediate danger or crisis, contact emergency services on <strong>000</strong> or Lifeline on <strong>13 11 14</strong>.
+                  If you are in immediate danger or crisis, contact emergency services on <strong><a href="tel:000" className="underline hover:text-amber-900 transition-colors" aria-label="Call Emergency Services at 000">000</a></strong> or Lifeline on <strong><a href="tel:131114" className="underline hover:text-amber-900 transition-colors" aria-label="Call Lifeline at 13 11 14">13 11 14</a></strong>.
                 </p>
               </div>
             </div>
