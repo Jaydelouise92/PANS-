@@ -186,8 +186,6 @@ const ChatWidget = () => {
 
   const handleFeedback = React.useCallback(async (index: number, rating: 'positive' | 'negative') => {
     setFeedbackStatus((prev) => ({ ...prev, [index]: rating }));
-    const msg = messagesRef.current[index];
-    const history = messagesRef.current.slice(0, index + 1);
     try {
       await fetch(getApiUrl('/api/feedback'), {
         method: 'POST',
@@ -274,52 +272,14 @@ const ChatWidget = () => {
               aria-live="polite"
             >
               {messages.map((m, i) => (
-                <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
-                  {m.role === 'assistant' && (
-                    <div className="w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center shrink-0 mt-1">
-                      <Bot size={13} className="text-white" />
-                    </div>
-                  )}
-                  <div className={`group relative max-w-[85%] ${m.role === 'user' ? '' : 'flex-1'}`}>
-                    <div
-                      className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                        m.role === 'user'
-                          ? 'bg-brand-primary text-white rounded-br-sm'
-                          : 'bg-white text-stone-800 border border-stone-200 rounded-bl-sm shadow-sm'
-                      }`}
-                    >
-                      {m.role === 'assistant' ? renderText(m.text) : m.text}
-                    </div>
-                    {m.role === 'assistant' && (
-                      <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => speakText(m.text)}
-                          aria-label="Read message aloud"
-                          className="p-1 text-stone-400 hover:text-brand-primary transition-colors"
-                          title="Read aloud"
-                        >
-                          <Volume2 size={12} />
-                        </button>
-                        <button
-                          onClick={() => handleFeedback(i, 'positive')}
-                          aria-label="Mark as helpful"
-                          className={`p-1 transition-colors ${feedbackStatus[i] === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
-                          title="Helpful"
-                        >
-                          <ThumbsUp size={12} />
-                        </button>
-                        <button
-                          onClick={() => handleFeedback(i, 'negative')}
-                          aria-label="Mark as not helpful"
-                          className={`p-1 transition-colors ${feedbackStatus[i] === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
-                          title="Not helpful"
-                        >
-                          <ThumbsDown size={12} />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <MessageItem
+                  key={i}
+                  message={m}
+                  index={i}
+                  feedbackStatus={feedbackStatus[i]}
+                  onSpeak={speakText}
+                  onFeedback={handleFeedback}
+                />
               ))}
 
               {isLoading && (
@@ -422,8 +382,8 @@ const ChatWidget = () => {
       {/* Toggle button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        aria-label={isOpen ? 'Close PANS Assistant' : 'Open PANS Assistant'}
         className="bg-brand-primary text-white px-5 py-3.5 rounded-full shadow-lg hover:bg-brand-primary/90 transition-all flex items-center gap-2 shadow-brand-primary/30"
+        aria-label={isOpen ? "Close chat" : "Chat with PANS"}
         aria-expanded={isOpen}
       >
         <MessageCircle size={20} />

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AlertTriangle, ArrowLeft, Search } from 'lucide-react';
 import PrintButton from '../../components/PrintButton';
@@ -40,14 +40,11 @@ const terms = [
 export default function CourtTermsGuide() {
   const [search, setSearch] = useState('');
 
-  const filtered = useMemo(() => {
-    const query = search.toLowerCase();
-    return terms.filter(
-      (t) =>
-        t.term.toLowerCase().includes(query) ||
-        t.definition.toLowerCase().includes(query)
-    );
-  }, [search]);
+  const filtered = terms.filter(
+    (t) =>
+      t.term.toLowerCase().includes(search.toLowerCase()) ||
+      t.definition.toLowerCase().includes(search.toLowerCase())
+  );
 
   return (
     <div className="pt-16 print:pt-0">
