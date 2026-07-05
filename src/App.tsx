@@ -2,9 +2,9 @@ import React, { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
-import ChatWidget from './components/ChatWidget';
-import BackgroundMusic from './components/BackgroundMusic';
 
+const ChatWidget = lazy(() => import('./components/ChatWidget'));
+const BackgroundMusic = lazy(() => import('./components/BackgroundMusic'));
 const Home = lazy(() => import('./pages/Home'));
 const StartHere = lazy(() => import('./pages/StartHere'));
 const About = lazy(() => import('./pages/About'));
@@ -35,7 +35,7 @@ const Copyright = lazy(() => import('./pages/Copyright'));
 const DisabilityRights = lazy(() => import('./pages/DisabilityRights'));
 const Services = lazy(() => import('./pages/Services'));
 const FAQ = lazy(() => import('./pages/FAQ'));
-import CookieBanner from './components/CookieBanner';
+const CookieBanner = lazy(() => import('./components/CookieBanner'));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -101,9 +101,11 @@ function AppLayout() {
         </Suspense>
       </main>
       <Footer />
-      <ChatWidget />
-      <BackgroundMusic />
-      <CookieBanner />
+      <Suspense fallback={null}>
+        <ChatWidget />
+        <BackgroundMusic />
+        <CookieBanner />
+      </Suspense>
     </div>
   );
 }
