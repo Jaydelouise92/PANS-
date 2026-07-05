@@ -1,4 +1,5 @@
 import express from "express";
+import crypto from "node:crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -51,7 +52,7 @@ db.exec(`
 // ADMIN_EMAIL secret in the Replit Secrets panel.
 // If ADMIN_EMAIL is not set, messages go to the fallback below.
 // ─────────────────────────────────────────────────────────
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "ourvoicemattersaus@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
 // ── Rate limiting ──────────────────────────────────────────
 // Each mail-sending endpoint has its own independent bucket so that
@@ -87,6 +88,8 @@ const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
 const checkChatLimit = makeRateLimiter(10, 10 * 60 * 1000);
 // TTS: 10 per 10 minutes
 const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
+// Dashboard: 3 per 10 minutes
+const checkDashboardLimit = makeRateLimiter(3, 10 * 60 * 1000);
 
 // Use the actual TCP socket address as the rate-limit key.
 // Use req.ip which respects 'trust proxy' (line 124) to get the real client IP
@@ -108,13 +111,28 @@ function getTransporter() {
 }
 
 function isEmailConfigured() {
-  return !!(process.env.EMAIL_PASS);
+  return !!(process.env.EMAIL_PASS && ADMIN_EMAIL);
 }
 
 function sanitize(str: string): string {
   return String(str || "").replace(/[<>&"']/g, (c) =>
     ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[c] || c)
   );
+}
+
+/**
+ * Compares two strings in constant time to prevent timing attacks.
+ * Hashes inputs with SHA-256 first to allow comparison of strings with different lengths.
+ */
+function timingSafeCompare(userInput: string, secret: string): boolean {
+  if (!userInput || !secret) return false;
+  const userHash = crypto.createHash("sha256").update(userInput).digest();
+  const secretHash = crypto.createHash("sha256").update(secret).digest();
+  try {
+    return crypto.timingSafeEqual(userHash, secretHash);
+  } catch (e) {
+    return false;
+  }
 }
 
 const CHAT_SYSTEM_INSTRUCTION = `You are the PANS (Parent Advocacy and Navigation Support) assistant — a calm, knowledgeable, and empathetic guide for parents in Victoria, Australia who are navigating the child protection system or Children's Court.
@@ -178,9 +196,6 @@ async function startServer() {
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "AI chat is not configured. Please contact PANS directly via the contact form." });
     }
-    if (!checkChatLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
-    }
     const { messages, thinkingMode } = req.body;
     if (!Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: "Messages are required." });
@@ -220,9 +235,6 @@ async function startServer() {
     }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "TTS not configured." });
-    }
-    if (!checkTtsLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { text } = req.body;
     if (typeof text !== "string" || text.length === 0 || text.length > 1000) {
@@ -613,10 +625,15 @@ async function startServer() {
 
   // ── /api/dashboard ────────────────────────────────────────
   app.get("/api/dashboard", (req, res) => {
-    const authHeader = req.headers.authorization;
-    const password = process.env.DASHBOARD_PASSWORD || "pans-admin-2025";
+    if (!checkDashboardLimit(getRateLimitKey(req))) {
+      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
+    }
 
-    if (authHeader !== `Bearer ${password}`) {
+    const authHeader = req.headers.authorization || "";
+    const password = process.env.DASHBOARD_PASSWORD;
+
+    // Must have DASHBOARD_PASSWORD set and use timing-safe comparison
+    if (!password || !authHeader.startsWith("Bearer ") || !timingSafeCompare(authHeader.split(" ")[1], password)) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
