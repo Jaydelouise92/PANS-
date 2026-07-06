@@ -76,7 +76,9 @@ export default function Footer() {
               ].map((c, i) => (
                 <li key={i} className="flex flex-col">
                   <span className="text-xs text-stone-500">{c.name} <span className="text-stone-400">({c.note})</span></span>
-                  <span className="font-bold text-brand-primary text-sm">{c.number}</span>
+                  <a href={`tel:${c.number.replace(/\s/g, '')}`} className="font-bold text-brand-primary text-sm hover:underline w-fit">
+                    {c.number}
+                  </a>
                 </li>
               ))}
             </ul>
@@ -96,7 +98,7 @@ export default function Footer() {
                   PANS does not provide legal advice, legal representation, or emergency services.
                 </p>
                 <p className="text-xs text-amber-700">
-                  If you are in immediate danger or crisis, contact emergency services on <strong>000</strong> or Lifeline on <strong>13 11 14</strong>.
+                  If you are in immediate danger or crisis, contact emergency services on <a href="tel:000" className="font-bold underline decoration-amber-300 hover:text-amber-900 transition-colors">000</a> or Lifeline on <a href="tel:131114" className="font-bold underline decoration-amber-300 hover:text-amber-900 transition-colors">13 11 14</a>.
                 </p>
               </div>
             </div>
