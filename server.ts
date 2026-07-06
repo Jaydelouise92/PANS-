@@ -2,6 +2,7 @@ import express from "express";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
+import crypto from "crypto";
 import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel, Modality, type Part, type GenerateContentParameters } from "@google/genai";
 
@@ -49,9 +50,8 @@ db.exec(`
 // ADMIN EMAIL CONFIGURATION
 // To change the receiving email address, update the
 // ADMIN_EMAIL secret in the Replit Secrets panel.
-// If ADMIN_EMAIL is not set, messages go to the fallback below.
 // ─────────────────────────────────────────────────────────
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "ourvoicemattersaus@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
 // ── Rate limiting ──────────────────────────────────────────
 // Each mail-sending endpoint has its own independent bucket so that
@@ -87,6 +87,8 @@ const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
 const checkChatLimit = makeRateLimiter(10, 10 * 60 * 1000);
 // TTS: 10 per 10 minutes
 const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
+// Dashboard: 3 attempts per 10 minutes
+const checkDashboardLimit = makeRateLimiter(3, 10 * 60 * 1000);
 
 // Use the actual TCP socket address as the rate-limit key.
 // Use req.ip which respects 'trust proxy' (line 124) to get the real client IP
@@ -95,7 +97,7 @@ function getRateLimitKey(req: express.Request): string {
   return req.ip || req.socket.remoteAddress || "unknown";
 }
 
-const GMAIL_USER = "ourvoicemattersaus@gmail.com";
+const GMAIL_USER = process.env.EMAIL_USER;
 
 function getTransporter() {
   const pass = (process.env.EMAIL_PASS || "").replace(/\s/g, "");
@@ -108,7 +110,19 @@ function getTransporter() {
 }
 
 function isEmailConfigured() {
-  return !!(process.env.EMAIL_PASS);
+  return !!(process.env.EMAIL_PASS && process.env.EMAIL_USER && process.env.ADMIN_EMAIL);
+}
+
+/**
+ * Constant-time comparison to prevent timing attacks.
+ * Hashes both strings with SHA-256 before comparing.
+ */
+function timingSafeCompare(a: string, b: string): boolean {
+  if (typeof a !== "string" || typeof b !== "string") return false;
+  const aHash = crypto.createHash("sha256").update(a).digest();
+  const bHash = crypto.createHash("sha256").update(b).digest();
+  if (aHash.length !== bHash.length) return false;
+  return crypto.timingSafeEqual(aHash, bHash);
 }
 
 function sanitize(str: string): string {
@@ -613,10 +627,14 @@ async function startServer() {
 
   // ── /api/dashboard ────────────────────────────────────────
   app.get("/api/dashboard", (req, res) => {
-    const authHeader = req.headers.authorization;
-    const password = process.env.DASHBOARD_PASSWORD || "pans-admin-2025";
+    if (!checkDashboardLimit(getRateLimitKey(req))) {
+      return res.status(429).json({ error: "Too many attempts. Please try again later." });
+    }
 
-    if (authHeader !== `Bearer ${password}`) {
+    const authHeader = req.headers.authorization || "";
+    const password = process.env.DASHBOARD_PASSWORD;
+
+    if (!password || !authHeader.startsWith("Bearer ") || !timingSafeCompare(authHeader.split(" ")[1], password)) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
