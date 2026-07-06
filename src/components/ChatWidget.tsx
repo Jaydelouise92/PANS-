@@ -115,11 +115,6 @@ const ChatWidget = () => {
   const [isReporting, setIsReporting] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const messagesRef = useRef(messages);
-
-  useEffect(() => {
-    messagesRef.current = messages;
-  }, [messages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -249,6 +244,7 @@ const ChatWidget = () => {
                 <button
                   onClick={() => setIsThinkingMode(!isThinkingMode)}
                   aria-label={isThinkingMode ? 'Disable deep thinking mode' : 'Enable deep thinking mode'}
+                  aria-pressed={isThinkingMode}
                   className={`p-1.5 rounded-lg transition-colors text-xs flex items-center gap-1 ${isThinkingMode ? 'bg-white text-brand-primary font-bold' : 'bg-white/20 text-white'}`}
                   title={isThinkingMode ? 'Deep thinking on — using Pro model' : 'Fast mode — click for deep analysis'}
                 >
@@ -378,7 +374,6 @@ const ChatWidget = () => {
                   disabled={!input.trim() || isLoading}
                   aria-label="Send message"
                   className="bg-brand-primary text-white p-2.5 rounded-full hover:bg-brand-primary/90 transition-all disabled:opacity-40 shrink-0"
-                  aria-label="Send message"
                 >
                   {isLoading ? (
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -428,9 +423,8 @@ const ChatWidget = () => {
       {/* Toggle button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        aria-label={isOpen ? 'Close PANS Assistant' : 'Open PANS Assistant'}
         className="bg-brand-primary text-white px-5 py-3.5 rounded-full shadow-lg hover:bg-brand-primary/90 transition-all flex items-center gap-2 shadow-brand-primary/30"
-        aria-label={isOpen ? "Close chat" : "Chat with PANS"}
+        aria-label={isOpen ? "Close chat with PANS assistant" : "Chat with PANS assistant"}
         aria-expanded={isOpen}
       >
         <MessageCircle size={20} />
