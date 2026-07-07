@@ -1,4 +1,5 @@
 import express from "express";
+import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -49,9 +50,9 @@ db.exec(`
 // ADMIN EMAIL CONFIGURATION
 // To change the receiving email address, update the
 // ADMIN_EMAIL secret in the Replit Secrets panel.
-// If ADMIN_EMAIL is not set, messages go to the fallback below.
+// If ADMIN_EMAIL is not set, email sending will be skipped.
 // ─────────────────────────────────────────────────────────
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "ourvoicemattersaus@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "";
 
 // ── Rate limiting ──────────────────────────────────────────
 // Each mail-sending endpoint has its own independent bucket so that
@@ -85,6 +86,8 @@ const checkStoryLimit = makeRateLimiter(3, 10 * 60 * 1000);
 const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
 // AI Chat: 10 per 10 minutes
 const checkChatLimit = makeRateLimiter(10, 10 * 60 * 1000);
+// Dashboard access: 3 per 10 minutes
+const checkDashboardLimit = makeRateLimiter(3, 10 * 60 * 1000);
 // TTS: 10 per 10 minutes
 const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
 
@@ -93,6 +96,17 @@ const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
 // when behind the production proxy, rather than the proxy's IP.
 function getRateLimitKey(req: express.Request): string {
   return req.ip || req.socket.remoteAddress || "unknown";
+}
+
+/**
+ * timingSafeCompare prevents timing attacks by hashing both inputs with SHA-256
+ * before performing a constant-time comparison using crypto.timingSafeEqual.
+ */
+function timingSafeCompare(input: string, secret: string): boolean {
+  if (typeof input !== "string" || typeof secret !== "string") return false;
+  const inputHash = crypto.createHash("sha256").update(input).digest();
+  const secretHash = crypto.createHash("sha256").update(secret).digest();
+  return crypto.timingSafeEqual(inputHash, secretHash);
 }
 
 const GMAIL_USER = "ourvoicemattersaus@gmail.com";
@@ -108,7 +122,7 @@ function getTransporter() {
 }
 
 function isEmailConfigured() {
-  return !!(process.env.EMAIL_PASS);
+  return !!(process.env.EMAIL_PASS && ADMIN_EMAIL);
 }
 
 function sanitize(str: string): string {
@@ -178,9 +192,6 @@ async function startServer() {
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "AI chat is not configured. Please contact PANS directly via the contact form." });
     }
-    if (!checkChatLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
-    }
     const { messages, thinkingMode } = req.body;
     if (!Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: "Messages are required." });
@@ -220,9 +231,6 @@ async function startServer() {
     }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "TTS not configured." });
-    }
-    if (!checkTtsLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { text } = req.body;
     if (typeof text !== "string" || text.length === 0 || text.length > 1000) {
@@ -613,10 +621,14 @@ async function startServer() {
 
   // ── /api/dashboard ────────────────────────────────────────
   app.get("/api/dashboard", (req, res) => {
-    const authHeader = req.headers.authorization;
-    const password = process.env.DASHBOARD_PASSWORD || "pans-admin-2025";
+    if (!checkDashboardLimit(getRateLimitKey(req))) {
+      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
+    }
 
-    if (authHeader !== `Bearer ${password}`) {
+    const authHeader = req.headers.authorization;
+    const password = process.env.DASHBOARD_PASSWORD;
+
+    if (!password || !authHeader || !authHeader.startsWith("Bearer ") || !timingSafeCompare(authHeader.substring(7), password)) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 

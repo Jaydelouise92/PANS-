@@ -12,3 +12,8 @@
 **Vulnerability:** Information disclosure via headers, potential XSS in attribute-based contexts, and lack of rate limiting on costly AI endpoints.
 **Learning:** Hardening should be multi-layered. Disabling 'X-Powered-By' is a simple but effective fingerprinting prevention. Sanitization must include single quotes to handle common HTML attribute injection.
 **Prevention:** Use a standard security check-list for every new Express project: disable identifying headers, use strict rate limiting on all public POST routes, and ensure the sanitization logic covers all HTML-sensitive characters (<, >, &, ", ').
+
+## 2026-07-07 - [Timing-Safe Auth and Rate Limit Integrity]
+**Vulnerability:** The dashboard authentication used simple string comparison, which is vulnerable to timing attacks. Additionally, AI endpoints had redundant rate limiter calls that double-counted user requests.
+**Learning:** Constant-time comparison is essential for secret verification. Using `crypto.timingSafeEqual` on SHA-256 hashes allows secure comparison of variable-length strings. Rate limiters with side effects must be called exactly once per request flow to maintain accurate tracking.
+**Prevention:** Always use `timingSafeCompare` helpers for authentication. Audit request handlers to ensure rate limiters are checked at the start of the flow and not repeated after internal configuration checks.
