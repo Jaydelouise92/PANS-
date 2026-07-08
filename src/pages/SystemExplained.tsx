@@ -40,7 +40,7 @@ export default function SystemExplained() {
       <section className="py-6 px-6 bg-amber-50 border-b border-amber-200">
         <div className="max-w-5xl mx-auto flex gap-3 items-start">
           <AlertTriangle size={18} className="text-amber-600 shrink-0 mt-0.5" />
-          <p className="text-sm text-amber-800">This is general information about how the system works. Every family's situation is different. For advice specific to your case, contact Victoria Legal Aid on <strong>1300 792 387</strong>.</p>
+          <p className="text-sm text-amber-800">This is general information about how the system works. Every family's situation is different. For advice specific to your case, contact <a href="tel:1300792387" className="font-bold hover:underline">Victoria Legal Aid on 1300 792 387</a>.</p>
         </div>
       </section>
 

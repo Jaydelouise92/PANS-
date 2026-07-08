@@ -37,7 +37,7 @@ export default function ChildrensCourt() {
       <section className="py-6 px-6 bg-amber-50 border-b border-amber-200">
         <div className="max-w-5xl mx-auto flex gap-3 items-start">
           <AlertTriangle size={18} className="text-amber-600 shrink-0 mt-0.5" />
-          <p className="text-sm text-amber-800"><strong>You should have a lawyer at court.</strong> Contact Victoria Legal Aid on <strong>1300 792 387</strong> as early as possible. If your first court date is coming up, call them immediately — even on the day.</p>
+          <p className="text-sm text-amber-800"><strong>You should have a lawyer at court.</strong> Contact <a href="tel:1300792387" className="font-bold hover:underline">Victoria Legal Aid on 1300 792 387</a> as early as possible. If your first court date is coming up, call them immediately — even on the day.</p>
         </div>
       </section>
 

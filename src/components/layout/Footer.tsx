@@ -76,7 +76,12 @@ export default function Footer() {
               ].map((c, i) => (
                 <li key={i} className="flex flex-col">
                   <span className="text-xs text-stone-500">{c.name} <span className="text-stone-400">({c.note})</span></span>
-                  <span className="font-bold text-brand-primary text-sm">{c.number}</span>
+                  <a
+                    href={`tel:${c.number.replace(/\s/g, '')}`}
+                    className="font-bold text-brand-primary text-sm hover:underline transition-all w-fit"
+                  >
+                    {c.number}
+                  </a>
                 </li>
               ))}
             </ul>

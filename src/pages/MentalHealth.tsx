@@ -29,26 +29,33 @@ export default function MentalHealth() {
       <section className="py-6 px-6 bg-red-50 border-b border-red-200">
         <div className="max-w-5xl mx-auto flex gap-3 items-start">
           <AlertTriangle size={18} className="text-red-600 shrink-0 mt-0.5" />
-          <p className="text-sm text-red-800"><strong>In crisis right now?</strong> Call <strong>Lifeline on 13 11 14</strong> (24/7) or <strong>000</strong> if you are in immediate danger. You do not have to face this alone.</p>
+          <p className="text-sm text-red-800"><strong>In crisis right now?</strong> Call <a href="tel:131114" className="font-bold hover:underline">Lifeline on 13 11 14</a> (24/7) or <a href="tel:000" className="font-bold hover:underline">000</a> if you are in immediate danger. You do not have to face this alone.</p>
         </div>
       </section>
 
       <section className="py-16 px-6 bg-white">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-3xl font-serif text-stone-900 mb-4">Crisis & Support Lines</h2>
-          <p className="text-stone-500 mb-8">Free services available to anyone in Victoria who needs support.</p>
+          <p className="text-stone-500 mb-8">Free services available to anyone in Victoria who needs support. Click to call.</p>
           <div className="grid md:grid-cols-2 gap-4">
             {crisisLines.map((line, i) => (
-              <motion.div key={i} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className={`bg-white border-2 ${line.urgent ? 'border-red-200' : 'border-purple-100'} p-5 rounded-2xl flex gap-4 items-start`}>
-                <div className={`w-10 h-10 ${line.colour} rounded-xl flex items-center justify-center shrink-0`}>
+              <motion.a
+                key={i}
+                href={`tel:${line.number.replace(/\s/g, '')}`}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.08 }}
+                className={`bg-white border-2 ${line.urgent ? 'border-red-200 hover:border-red-400' : 'border-purple-100 hover:border-brand-primary'} p-5 rounded-2xl flex gap-4 items-start transition-all hover:shadow-md group`}
+              >
+                <div className={`w-10 h-10 ${line.colour} rounded-xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110`}>
                   <Phone size={16} className="text-white" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-stone-800 mb-0.5">{line.name}</h3>
-                  <p className="text-2xl font-bold text-brand-primary mb-1">{line.number}</p>
+                  <h3 className="font-bold text-stone-800 mb-0.5 group-hover:text-brand-primary transition-colors">{line.name}</h3>
+                  <p className="text-2xl font-bold text-brand-primary mb-1 underline decoration-transparent group-hover:decoration-brand-primary/30 transition-all">{line.number}</p>
                   <p className="text-stone-500 text-xs">{line.desc}</p>
                 </div>
-              </motion.div>
+              </motion.a>
             ))}
           </div>
         </div>

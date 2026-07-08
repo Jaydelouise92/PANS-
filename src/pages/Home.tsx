@@ -644,10 +644,10 @@ export default function Home() {
             If you need to talk to someone now
           </h2>
           <p className="text-stone-700 leading-relaxed mb-6">
-            For legal advice, contact <strong>Victoria Legal Aid on 1300 792 387</strong>.
+            For legal advice, contact <a href="tel:1300792387" className="font-bold hover:underline">Victoria Legal Aid on 1300 792 387</a>.
             <br />
             If you are in crisis or need someone to talk to, call{' '}
-            <strong>Lifeline on 13 11 14</strong> (24 hours, every day).
+            <a href="tel:131114" className="font-bold hover:underline">Lifeline on 13 11 14</a> (24 hours, every day).
           </p>
           <Link
             to="/mental-health"
@@ -666,8 +666,7 @@ export default function Home() {
             <strong>Important:</strong> PANS Victoria provides general information
             and navigation support only. Nothing on this website is legal advice.
             For legal representation or advice about your specific situation,
-            please contact Victoria Legal Aid on{' '}
-            <strong>1300 792 387</strong> or your nearest community legal centre.
+            please contact <a href="tel:1300792387" className="font-bold hover:underline text-amber-950">Victoria Legal Aid on 1300 792 387</a> or your nearest community legal centre.
           </p>
         </div>
       </section>
