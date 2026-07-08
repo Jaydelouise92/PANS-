@@ -3,6 +3,7 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
 import Database from "better-sqlite3";
+import crypto from "crypto";
 import { GoogleGenAI, ThinkingLevel, Modality, type Part, type GenerateContentParameters } from "@google/genai";
 
 dotenv.config();
@@ -49,9 +50,9 @@ db.exec(`
 // ADMIN EMAIL CONFIGURATION
 // To change the receiving email address, update the
 // ADMIN_EMAIL secret in the Replit Secrets panel.
-// If ADMIN_EMAIL is not set, messages go to the fallback below.
+// If ADMIN_EMAIL is not set, email notifications will be skipped.
 // ─────────────────────────────────────────────────────────
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "ourvoicemattersaus@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
 // ── Rate limiting ──────────────────────────────────────────
 // Each mail-sending endpoint has its own independent bucket so that
@@ -87,6 +88,8 @@ const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
 const checkChatLimit = makeRateLimiter(10, 10 * 60 * 1000);
 // TTS: 10 per 10 minutes
 const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
+// Dashboard login: 3 attempts per 10 minutes
+const checkDashboardLimit = makeRateLimiter(3, 10 * 60 * 1000);
 
 // Use the actual TCP socket address as the rate-limit key.
 // Use req.ip which respects 'trust proxy' (line 124) to get the real client IP
@@ -108,13 +111,25 @@ function getTransporter() {
 }
 
 function isEmailConfigured() {
-  return !!(process.env.EMAIL_PASS);
+  return !!(process.env.EMAIL_PASS && ADMIN_EMAIL);
 }
 
 function sanitize(str: string): string {
   return String(str || "").replace(/[<>&"']/g, (c) =>
     ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[c] || c)
   );
+}
+
+/**
+ * timingSafeCompare
+ * Prevents timing attacks by hashing both strings before a constant-time comparison.
+ * This is effective even if the strings have different lengths.
+ */
+function timingSafeCompare(input: string, secret: string): boolean {
+  if (!secret) return false;
+  const inputHash = crypto.createHash("sha256").update(input).digest();
+  const secretHash = crypto.createHash("sha256").update(secret).digest();
+  return crypto.timingSafeEqual(inputHash, secretHash);
 }
 
 const CHAT_SYSTEM_INSTRUCTION = `You are the PANS (Parent Advocacy and Navigation Support) assistant — a calm, knowledgeable, and empathetic guide for parents in Victoria, Australia who are navigating the child protection system or Children's Court.
@@ -178,9 +193,6 @@ async function startServer() {
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "AI chat is not configured. Please contact PANS directly via the contact form." });
     }
-    if (!checkChatLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
-    }
     const { messages, thinkingMode } = req.body;
     if (!Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: "Messages are required." });
@@ -220,9 +232,6 @@ async function startServer() {
     }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "TTS not configured." });
-    }
-    if (!checkTtsLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { text } = req.body;
     if (typeof text !== "string" || text.length === 0 || text.length > 1000) {
@@ -613,10 +622,19 @@ async function startServer() {
 
   // ── /api/dashboard ────────────────────────────────────────
   app.get("/api/dashboard", (req, res) => {
-    const authHeader = req.headers.authorization;
-    const password = process.env.DASHBOARD_PASSWORD || "pans-admin-2025";
+    if (!checkDashboardLimit(getRateLimitKey(req))) {
+      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
+    }
 
-    if (authHeader !== `Bearer ${password}`) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader?.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const inputPassword = authHeader.substring(7);
+    const dashboardPassword = process.env.DASHBOARD_PASSWORD;
+
+    if (!dashboardPassword || !timingSafeCompare(inputPassword, dashboardPassword)) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 

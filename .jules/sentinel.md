@@ -12,3 +12,8 @@
 **Vulnerability:** Information disclosure via headers, potential XSS in attribute-based contexts, and lack of rate limiting on costly AI endpoints.
 **Learning:** Hardening should be multi-layered. Disabling 'X-Powered-By' is a simple but effective fingerprinting prevention. Sanitization must include single quotes to handle common HTML attribute injection.
 **Prevention:** Use a standard security check-list for every new Express project: disable identifying headers, use strict rate limiting on all public POST routes, and ensure the sanitization logic covers all HTML-sensitive characters (<, >, &, ", ').
+
+## 2025-05-22 - [Constant-Time Password Comparison]
+**Vulnerability:** Comparing passwords using standard equality operators (`===`) is vulnerable to timing attacks.
+**Learning:** Even with `crypto.timingSafeEqual`, comparing strings of different lengths can leak information. Hashing both the input and the secret before comparison ensures both buffers are of equal length and provides a robust defense.
+**Prevention:** Always use a timing-safe comparison helper that hashes inputs before calling `crypto.timingSafeEqual` for any sensitive token or password validation.
