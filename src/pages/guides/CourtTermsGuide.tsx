@@ -40,11 +40,13 @@ const terms = [
 export default function CourtTermsGuide() {
   const [search, setSearch] = useState('');
 
-  const filtered = terms.filter(
-    (t) =>
-      t.term.toLowerCase().includes(search.toLowerCase()) ||
-      t.definition.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = React.useMemo(() => {
+    return terms.filter(
+      (t) =>
+        t.term.toLowerCase().includes(search.toLowerCase()) ||
+        t.definition.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search]);
 
   return (
     <div className="pt-16 print:pt-0">
