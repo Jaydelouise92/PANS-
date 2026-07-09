@@ -114,13 +114,15 @@ export default function Dashboard() {
           <h1 className="text-2xl font-serif text-center mb-6">PANS Dashboard Access</h1>
           <form onSubmit={handleLogin} className="space-y-4">
             <div>
-              <label className="text-xs font-bold text-stone-600 uppercase tracking-wider block mb-2">Password</label>
+              <label htmlFor="dashboard-password" className="text-xs font-bold text-stone-600 uppercase tracking-wider block mb-2">Password</label>
               <input
+                id="dashboard-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-purple-200 focus:border-brand-primary outline-none"
                 placeholder="Enter dashboard password"
+                required
               />
             </div>
             {loginError && <p className="text-red-500 text-xs">{loginError}</p>}
