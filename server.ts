@@ -2,6 +2,7 @@ import express from "express";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
+import crypto from "crypto";
 import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel, Modality, type Part, type GenerateContentParameters } from "@google/genai";
 
@@ -87,6 +88,8 @@ const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
 const checkChatLimit = makeRateLimiter(10, 10 * 60 * 1000);
 // TTS: 10 per 10 minutes
 const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
+// Dashboard: 3 attempts per 10 minutes (strictly protected)
+const checkDashboardLimit = makeRateLimiter(3, 10 * 60 * 1000);
 
 // Use the actual TCP socket address as the rate-limit key.
 // Use req.ip which respects 'trust proxy' (line 124) to get the real client IP
@@ -115,6 +118,17 @@ function sanitize(str: string): string {
   return String(str || "").replace(/[<>&"']/g, (c) =>
     ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[c] || c)
   );
+}
+
+/**
+ * Constant-time comparison for secrets.
+ * Uses SHA-256 to handle variable-length inputs safely with timingSafeEqual.
+ */
+function timingSafeCompare(provided: string, actual: string): boolean {
+  if (!provided || !actual) return false;
+  const h1 = crypto.createHash("sha256").update(provided).digest();
+  const h2 = crypto.createHash("sha256").update(actual).digest();
+  return crypto.timingSafeEqual(h1, h2);
 }
 
 const CHAT_SYSTEM_INSTRUCTION = `You are the PANS (Parent Advocacy and Navigation Support) assistant — a calm, knowledgeable, and empathetic guide for parents in Victoria, Australia who are navigating the child protection system or Children's Court.
@@ -613,10 +627,19 @@ async function startServer() {
 
   // ── /api/dashboard ────────────────────────────────────────
   app.get("/api/dashboard", (req, res) => {
-    const authHeader = req.headers.authorization;
-    const password = process.env.DASHBOARD_PASSWORD || "pans-admin-2025";
+    if (!checkDashboardLimit(getRateLimitKey(req))) {
+      return res.status(429).json({ error: "Too many attempts. Please try again later." });
+    }
 
-    if (authHeader !== `Bearer ${password}`) {
+    const authHeader = req.headers.authorization || "";
+    const password = process.env.DASHBOARD_PASSWORD;
+
+    if (!password || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const provided = authHeader.split(" ")[1];
+    if (!timingSafeCompare(provided, password)) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
