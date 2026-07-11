@@ -27,9 +27,9 @@ export default function EmotionalImpact() {
           <Phone size={20} className="text-brand-primary shrink-0 mt-1" />
           <p className="text-stone-700 leading-relaxed">
             <strong>If you need to talk to someone right now:</strong> call{' '}
-            <strong>Lifeline on 13 11 14</strong> (24 hours) or{' '}
-            <strong>Beyond Blue on 1300 22 4636</strong>. If you are in
-            immediate danger, call <strong>000</strong>.
+            <strong>Lifeline on <a href="tel:131114" className="hover:underline">13 11 14</a></strong> (24 hours) or{' '}
+            <strong>Beyond Blue on <a href="tel:1300224636" className="hover:underline">1300 22 4636</a></strong>. If you are in
+            immediate danger, call <strong><a href="tel:000" className="hover:underline">000</a></strong>.
           </p>
         </div>
       </section>
@@ -149,20 +149,22 @@ export default function EmotionalImpact() {
             <h2 className="text-2xl font-serif text-stone-900 mb-3">Support services in Victoria</h2>
             <ul className="space-y-3">
               {[
-                { name: 'Lifeline', contact: '13 11 14 — 24 hours, every day' },
-                { name: 'Beyond Blue', contact: '1300 22 4636' },
-                { name: 'Suicide Call Back Service', contact: '1300 659 467' },
-                { name: 'MensLine Australia', contact: '1300 78 99 78' },
-                { name: '1800RESPECT (family violence)', contact: '1800 737 732' },
-                { name: 'PANDA (perinatal mental health)', contact: '1300 726 306' },
-                { name: '13YARN (Aboriginal & Torres Strait Islander crisis line)', contact: '13 92 76' },
-                { name: 'GriefLine', contact: '1300 845 745' },
+                { name: 'Lifeline', number: '13 11 14', contact: '13 11 14 — 24 hours, every day' },
+                { name: 'Beyond Blue', number: '1300 22 4636', contact: '1300 22 4636' },
+                { name: 'Suicide Call Back Service', number: '1300 659 467', contact: '1300 659 467' },
+                { name: 'MensLine Australia', number: '1300 78 99 78', contact: '1300 78 99 78' },
+                { name: '1800RESPECT (family violence)', number: '1800 737 732', contact: '1800 737 732' },
+                { name: 'PANDA (perinatal mental health)', number: '1300 726 306', contact: '1300 726 306' },
+                { name: '13YARN (Aboriginal & Torres Strait Islander crisis line)', number: '13 92 76', contact: '13 92 76' },
+                { name: 'GriefLine', number: '1300 845 745', contact: '1300 845 745' },
               ].map((row, i) => (
                 <li key={i} className="flex gap-3 items-start bg-brand-secondary border border-purple-100 rounded-xl p-4">
                   <Phone size={18} className="text-brand-primary shrink-0 mt-1" />
                   <div>
                     <div className="font-semibold text-stone-900">{row.name}</div>
-                    <div className="text-stone-700 text-sm">{row.contact}</div>
+                    <a href={`tel:${row.number.replace(/\s+/g, '')}`} className="text-stone-700 text-sm hover:underline">
+                      {row.contact}
+                    </a>
                   </div>
                 </li>
               ))}
@@ -207,8 +209,8 @@ export default function EmotionalImpact() {
           <p className="text-amber-900 text-sm leading-relaxed">
             <strong>Important:</strong> PANS provides general support
             information. We are not a counselling service or a crisis line. If
-            you need urgent help, please call <strong>Lifeline 13 11 14</strong>{' '}
-            or <strong>000</strong> in an emergency.
+            you need urgent help, please call <strong>Lifeline <a href="tel:131114" className="hover:underline">13 11 14</a></strong>{' '}
+            or <strong><a href="tel:000" className="hover:underline">000</a></strong> in an emergency.
           </p>
         </div>
       </section>
