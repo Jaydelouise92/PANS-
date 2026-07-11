@@ -2,6 +2,7 @@ import express from "express";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
+import crypto from "crypto";
 import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel, Modality, type Part, type GenerateContentParameters } from "@google/genai";
 
@@ -87,6 +88,19 @@ const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
 const checkChatLimit = makeRateLimiter(10, 10 * 60 * 1000);
 // TTS: 10 per 10 minutes
 const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
+// Dashboard: 3 attempts per 10 minutes
+const checkDashboardLimit = makeRateLimiter(3, 10 * 60 * 1000);
+
+/**
+ * Constant-time comparison for secrets to prevent timing attacks.
+ * Hashes inputs first to handle different lengths securely.
+ */
+function timingSafeCompare(a: string, b: string): boolean {
+  if (typeof a !== "string" || typeof b !== "string") return false;
+  const hashA = crypto.createHash("sha256").update(a).digest();
+  const hashB = crypto.createHash("sha256").update(b).digest();
+  return crypto.timingSafeEqual(hashA, hashB);
+}
 
 // Use the actual TCP socket address as the rate-limit key.
 // Use req.ip which respects 'trust proxy' (line 124) to get the real client IP
@@ -172,14 +186,12 @@ async function startServer() {
 
   // ── /api/chat ──────────────────────────────────────────────
   app.post("/api/chat", async (req, res) => {
+    // Note: Redundant rate limit check removed to ensure accurate request tracking
     if (!checkChatLimit(getRateLimitKey(req))) {
       return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "AI chat is not configured. Please contact PANS directly via the contact form." });
-    }
-    if (!checkChatLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { messages, thinkingMode } = req.body;
     if (!Array.isArray(messages) || messages.length === 0) {
@@ -215,14 +227,12 @@ async function startServer() {
 
   // ── /api/tts ───────────────────────────────────────────────
   app.post("/api/tts", async (req, res) => {
+    // Note: Redundant rate limit check removed to ensure accurate request tracking
     if (!checkTtsLimit(getRateLimitKey(req))) {
       return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "TTS not configured." });
-    }
-    if (!checkTtsLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { text } = req.body;
     if (typeof text !== "string" || text.length === 0 || text.length > 1000) {
@@ -613,10 +623,20 @@ async function startServer() {
 
   // ── /api/dashboard ────────────────────────────────────────
   app.get("/api/dashboard", (req, res) => {
-    const authHeader = req.headers.authorization;
-    const password = process.env.DASHBOARD_PASSWORD || "pans-admin-2025";
+    if (!checkDashboardLimit(getRateLimitKey(req))) {
+      return res.status(429).json({ error: "Too many attempts. Please wait 10 minutes." });
+    }
 
-    if (authHeader !== `Bearer ${password}`) {
+    const authHeader = req.headers.authorization;
+    const password = process.env.DASHBOARD_PASSWORD;
+
+    // Fail-secure: Require DASHBOARD_PASSWORD to be configured
+    if (!password || !authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const providedPassword = authHeader.substring(7);
+    if (!timingSafeCompare(providedPassword, password)) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
