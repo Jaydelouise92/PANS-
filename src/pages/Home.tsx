@@ -644,10 +644,10 @@ export default function Home() {
             If you need to talk to someone now
           </h2>
           <p className="text-stone-700 leading-relaxed mb-6">
-            For legal advice, contact <strong>Victoria Legal Aid on 1300 792 387</strong>.
+            For legal advice, contact <strong>Victoria Legal Aid on <a href="tel:1300792387" className="hover:underline">1300 792 387</a></strong>.
             <br />
             If you are in crisis or need someone to talk to, call{' '}
-            <strong>Lifeline on 13 11 14</strong> (24 hours, every day).
+            <strong>Lifeline on <a href="tel:131114" className="hover:underline">13 11 14</a></strong> (24 hours, every day).
           </p>
           <Link
             to="/mental-health"
@@ -667,7 +667,7 @@ export default function Home() {
             and navigation support only. Nothing on this website is legal advice.
             For legal representation or advice about your specific situation,
             please contact Victoria Legal Aid on{' '}
-            <strong>1300 792 387</strong> or your nearest community legal centre.
+            <strong><a href="tel:1300792387" className="hover:underline">1300 792 387</a></strong> or your nearest community legal centre.
           </p>
         </div>
       </section>

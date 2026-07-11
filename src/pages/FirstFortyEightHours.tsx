@@ -66,7 +66,7 @@ export default function FirstFortyEightHours() {
       <section className="py-6 px-6 bg-amber-50 border-b border-amber-200">
         <div className="max-w-4xl mx-auto flex gap-3 items-start">
           <AlertTriangle size={18} className="text-amber-600 shrink-0 mt-0.5" />
-          <p className="text-sm text-amber-800"><strong>Important:</strong> This guide provides general information only. It is not legal advice. If your child has been removed or you have a court date, contact Victoria Legal Aid immediately on <strong>1300 792 387</strong>.</p>
+          <p className="text-sm text-amber-800"><strong>Important:</strong> This guide provides general information only. It is not legal advice. If your child has been removed or you have a court date, contact Victoria Legal Aid immediately on <strong><a href="tel:1300792387" className="hover:underline">1300 792 387</a></strong>.</p>
         </div>
       </section>
 
@@ -113,7 +113,9 @@ export default function FirstFortyEightHours() {
             ].map((c, i) => (
               <div key={i} className="bg-white p-6 rounded-2xl border border-purple-100 shadow-sm">
                 <h3 className="font-bold text-stone-800 mb-1 flex items-center gap-2"><Phone size={16} className="text-brand-primary" /> {c.name}</h3>
-                <p className="text-2xl font-bold text-brand-primary mb-2">{c.number}</p>
+                <a href={`tel:${c.number.replace(/\s+/g, '')}`} className="text-2xl font-bold text-brand-primary mb-2 hover:underline block w-fit">
+                  {c.number}
+                </a>
                 <p className="text-stone-500 text-sm">{c.desc}</p>
               </div>
             ))}
