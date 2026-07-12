@@ -90,14 +90,14 @@ export default function Contact() {
   };
 
   const Field = ({ id, label, required, error }: { id: string; label: string; required?: boolean; error?: string }) => (
-    <label className="block space-y-1.5">
-      <span className="text-xs font-bold text-stone-600 uppercase tracking-wider">
+    <div className="flex justify-between items-center">
+      <label htmlFor={id} className="text-xs font-bold text-stone-600 uppercase tracking-wider">
         {label} {required && <span className="text-brand-primary">*</span>}
-      </span>
+      </label>
       {error && touched[id] && (
-        <span className="text-red-500 text-xs ml-2">{error}</span>
+        <span id={`${id}-error`} role="alert" className="text-red-500 text-xs">{error}</span>
       )}
-    </label>
+    </div>
   );
 
   const inputClass = (id: string) =>
@@ -230,6 +230,7 @@ export default function Contact() {
                   <div className="space-y-1.5">
                     <Field id="firstName" label="First Name" required error={errors.firstName} />
                     <input
+                      id="firstName"
                       type="text"
                       placeholder="Jane"
                       value={form.firstName}
@@ -237,11 +238,14 @@ export default function Contact() {
                       onBlur={() => touch('firstName')}
                       className={inputClass('firstName')}
                       autoComplete="given-name"
+                      aria-invalid={touched.firstName && !!errors.firstName}
+                      aria-describedby={touched.firstName && errors.firstName ? 'firstName-error' : undefined}
                     />
                   </div>
                   <div className="space-y-1.5">
                     <Field id="lastName" label="Last Name" required error={errors.lastName} />
                     <input
+                      id="lastName"
                       type="text"
                       placeholder="Smith"
                       value={form.lastName}
@@ -249,6 +253,8 @@ export default function Contact() {
                       onBlur={() => touch('lastName')}
                       className={inputClass('lastName')}
                       autoComplete="family-name"
+                      aria-invalid={touched.lastName && !!errors.lastName}
+                      aria-describedby={touched.lastName && errors.lastName ? 'lastName-error' : undefined}
                     />
                   </div>
                 </div>
@@ -257,6 +263,7 @@ export default function Contact() {
                 <div className="space-y-1.5">
                   <Field id="email" label="Email Address" required error={errors.email} />
                   <input
+                    id="email"
                     type="email"
                     placeholder="jane@example.com"
                     value={form.email}
@@ -264,13 +271,16 @@ export default function Contact() {
                     onBlur={() => touch('email')}
                     className={inputClass('email')}
                     autoComplete="email"
+                    aria-invalid={touched.email && !!errors.email}
+                    aria-describedby={touched.email && errors.email ? 'email-error' : undefined}
                   />
                 </div>
 
                 {/* Subject */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-stone-600 uppercase tracking-wider block">Subject</label>
+                  <label htmlFor="subject" className="text-xs font-bold text-stone-600 uppercase tracking-wider block">Subject</label>
                   <input
+                    id="subject"
                     type="text"
                     placeholder="e.g. Preparing for a court hearing"
                     value={form.subject}
@@ -281,8 +291,9 @@ export default function Contact() {
 
                 {/* Support type */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-stone-600 uppercase tracking-wider block">What do you need help with?</label>
+                  <label htmlFor="supportType" className="text-xs font-bold text-stone-600 uppercase tracking-wider block">What do you need help with?</label>
                   <select
+                    id="supportType"
                     value={form.supportType}
                     onChange={(e) => set('supportType', e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-purple-200 bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none text-sm transition-all"
@@ -297,12 +308,15 @@ export default function Contact() {
                 <div className="space-y-1.5">
                   <Field id="message" label="Your Message" required error={errors.message} />
                   <textarea
+                    id="message"
                     rows={6}
                     placeholder="Tell us a bit about your situation and what you need help with. You don't need to share everything — just what feels right."
                     value={form.message}
                     onChange={(e) => set('message', e.target.value)}
                     onBlur={() => touch('message')}
                     className={`${inputClass('message')} resize-none`}
+                    aria-invalid={touched.message && !!errors.message}
+                    aria-describedby={touched.message && errors.message ? 'message-error' : undefined}
                   />
                   <p className="text-xs text-stone-400 text-right">{form.message.length} / 5000</p>
                 </div>
