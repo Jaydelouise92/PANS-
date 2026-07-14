@@ -2,6 +2,7 @@ import express from "express";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
+import crypto from "crypto";
 import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel, Modality, type Part, type GenerateContentParameters } from "@google/genai";
 
@@ -87,6 +88,8 @@ const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
 const checkChatLimit = makeRateLimiter(10, 10 * 60 * 1000);
 // TTS: 10 per 10 minutes
 const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
+// Dashboard: 3 attempts per 10 minutes
+const checkDashboardLimit = makeRateLimiter(3, 10 * 60 * 1000);
 
 // Use the actual TCP socket address as the rate-limit key.
 // Use req.ip which respects 'trust proxy' (line 124) to get the real client IP
@@ -115,6 +118,18 @@ function sanitize(str: string): string {
   return String(str || "").replace(/[<>&"']/g, (c) =>
     ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&#39;" }[c] || c)
   );
+}
+
+function timingSafeCompare(userInput: string, secret: string): boolean {
+  if (!secret) return false;
+  // Use SHA-256 to hash inputs before timingSafeEqual to handle variable length secrets
+  const userHash = crypto.createHash("sha256").update(userInput).digest();
+  const secretHash = crypto.createHash("sha256").update(secret).digest();
+  try {
+    return crypto.timingSafeEqual(userHash, secretHash);
+  } catch {
+    return false;
+  }
 }
 
 const CHAT_SYSTEM_INSTRUCTION = `You are the PANS (Parent Advocacy and Navigation Support) assistant — a calm, knowledgeable, and empathetic guide for parents in Victoria, Australia who are navigating the child protection system or Children's Court.
@@ -178,9 +193,6 @@ async function startServer() {
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "AI chat is not configured. Please contact PANS directly via the contact form." });
     }
-    if (!checkChatLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
-    }
     const { messages, thinkingMode } = req.body;
     if (!Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: "Messages are required." });
@@ -220,9 +232,6 @@ async function startServer() {
     }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "TTS not configured." });
-    }
-    if (!checkTtsLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { text } = req.body;
     if (typeof text !== "string" || text.length === 0 || text.length > 1000) {
@@ -613,10 +622,19 @@ async function startServer() {
 
   // ── /api/dashboard ────────────────────────────────────────
   app.get("/api/dashboard", (req, res) => {
-    const authHeader = req.headers.authorization;
-    const password = process.env.DASHBOARD_PASSWORD || "pans-admin-2025";
+    if (!checkDashboardLimit(getRateLimitKey(req))) {
+      return res.status(429).json({ error: "Too many attempts. Please try again later." });
+    }
 
-    if (authHeader !== `Bearer ${password}`) {
+    const authHeader = req.headers.authorization;
+    const password = process.env.DASHBOARD_PASSWORD;
+
+    if (!password || !authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const token = authHeader.split(" ")[1];
+    if (!timingSafeCompare(token, password)) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
