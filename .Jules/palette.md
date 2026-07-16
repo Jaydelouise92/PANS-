@@ -1,0 +1,3 @@
+## 2025-05-15 - Accessible Form Pattern for Helper Components
+**Learning:** Refactoring form helper components (like a `Field` wrapper) from a root `<label>` to a `<div>` prevents invalid HTML nesting and allows for more precise control over accessibility associations. Associating labels via `htmlFor` and error messages via `aria-describedby` (with `role="alert"`) ensures that screen reader users receive both the field context and immediate validation feedback correctly.
+**Action:** When creating reusable form field wrappers, avoid nesting inputs inside labels. Use explicit `id`/`htmlFor` pairs and always programmatically link error spans to their inputs using `aria-describedby`.
