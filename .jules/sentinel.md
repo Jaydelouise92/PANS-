@@ -12,3 +12,8 @@
 **Vulnerability:** Information disclosure via headers, potential XSS in attribute-based contexts, and lack of rate limiting on costly AI endpoints.
 **Learning:** Hardening should be multi-layered. Disabling 'X-Powered-By' is a simple but effective fingerprinting prevention. Sanitization must include single quotes to handle common HTML attribute injection.
 **Prevention:** Use a standard security check-list for every new Express project: disable identifying headers, use strict rate limiting on all public POST routes, and ensure the sanitization logic covers all HTML-sensitive characters (<, >, &, ", ').
+
+## 2025-05-22 - [Secure Authentication for Administrative Endpoints]
+**Vulnerability:** The dashboard endpoint lacked rate limiting, utilized standard non-constant-time comparison for authentication, and failed soft by reverting to a default hardcoded password when the expected environment secret was missing.
+**Learning:** Administrative endpoints must be heavily rate-limited to prevent brute-force attacks, comparison of authorization credentials must be timing-safe to prevent timing side-channel attacks, and credentials must fail securely rather than falling back to default values.
+**Prevention:** Do not hardcode default administrative passwords. Implement timing-safe comparison helpers using cryptographic libraries and always apply rate limiters to any credential-checking route.
