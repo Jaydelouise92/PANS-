@@ -40,11 +40,18 @@ const terms = [
 export default function CourtTermsGuide() {
   const [search, setSearch] = useState('');
 
-  const filtered = terms.filter(
-    (t) =>
-      t.term.toLowerCase().includes(search.toLowerCase()) ||
-      t.definition.toLowerCase().includes(search.toLowerCase())
-  );
+  // ⚡ Bolt Optimization: Use React.useMemo to prevent expensive filtering and array recreation on every render.
+  // Converting search query to lowercase once outside the loop instead of on every iteration is O(1) vs O(N).
+  // Returning the static terms list directly when query is empty preserves reference equality and completely skips filtering.
+  const filtered = React.useMemo(() => {
+    const query = search.toLowerCase().trim();
+    if (!query) return terms;
+    return terms.filter(
+      (t) =>
+        t.term.toLowerCase().includes(query) ||
+        t.definition.toLowerCase().includes(query)
+    );
+  }, [search]);
 
   return (
     <div className="pt-16 print:pt-0">
