@@ -1,0 +1,3 @@
+## 2026-07-19 - Accessible Form Label and Error Associations
+**Learning:** Standard form layouts often neglect screen-reader accessibility by leaving input elements without proper programmatic label associations or error linkings. Using a div container instead of wrapping elements directly in a `<label>` prevents layout distortion and CSS breaking while enabling standard `id` and `htmlFor` linkages. Using `aria-invalid` and `aria-describedby` linked to alert-role errors provides immediate accessible validation.
+**Action:** Always inspect custom input fields and search bars to ensure they have explicit `id`/`htmlFor` associations. Use `sr-only` labels for visual-only search designs, and associate validation errors programmatically with their inputs.
