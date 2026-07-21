@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback, memo } from 'react';
 import { MessageCircle, X, Send, Bot, Volume2, Brain, Zap, ThumbsUp, ThumbsDown, AlertCircle, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -199,6 +199,88 @@ const SUGGESTIONS = [
 
 type Message = { role: 'user' | 'assistant'; text: string };
 
+// Render message text with basic markdown-like formatting
+const renderText = (text: string) => {
+  const lines = text.split('\n');
+  return lines.map((line, i) => {
+    if (line.startsWith('**') && line.endsWith('**')) {
+      return <p key={i} className="font-bold mt-2">{line.slice(2, -2)}</p>;
+    }
+    if (line.startsWith('- ') || line.startsWith('• ')) {
+      return (
+        <div key={i} className="flex gap-2 mt-1">
+          <span className="shrink-0 mt-0.5 text-brand-primary">·</span>
+          <span>{line.slice(2)}</span>
+        </div>
+      );
+    }
+    if (line.trim() === '') return <div key={i} className="h-2" />;
+    // Bold inline **text**
+    const parts = line.split(/\*\*(.*?)\*\*/g);
+    return (
+      <p key={i} className="mt-0.5">
+        {parts.map((part, j) => j % 2 === 1 ? <strong key={j}>{part}</strong> : part)}
+      </p>
+    );
+  });
+};
+
+const MessageItem = memo(({
+  message,
+  index,
+  onSpeak,
+  onFeedback,
+  feedbackStatus
+}: {
+  message: Message;
+  index: number;
+  onSpeak: (text: string) => void;
+  onFeedback: (index: number, rating: 'positive' | 'negative') => void;
+  feedbackStatus: 'positive' | 'negative' | null;
+}) => (
+  <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
+    {message.role === 'assistant' && (
+      <div className="w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center shrink-0 mt-1">
+        <Bot size={13} className="text-white" />
+      </div>
+    )}
+    <div className={`group relative max-w-[85%] ${message.role === 'user' ? '' : 'flex-1'}`}>
+      <div
+        className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+          message.role === 'user'
+            ? 'bg-brand-primary text-white rounded-br-sm'
+            : 'bg-white text-stone-800 border border-stone-200 rounded-bl-sm shadow-sm'
+        }`}
+      >
+        {message.role === 'assistant' ? renderText(message.text) : message.text}
+      </div>
+      {message.role === 'assistant' && (
+        <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button onClick={() => onSpeak(message.text)} className="p-1 text-stone-400 hover:text-brand-primary transition-colors" title="Read aloud">
+            <Volume2 size={12} />
+          </button>
+          <button
+            onClick={() => onFeedback(index, 'positive')}
+            className={`p-1 transition-colors ${feedbackStatus === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
+            title="Helpful"
+          >
+            <ThumbsUp size={12} />
+          </button>
+          <button
+            onClick={() => onFeedback(index, 'negative')}
+            className={`p-1 transition-colors ${feedbackStatus === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
+            title="Not helpful"
+          >
+            <ThumbsDown size={12} />
+          </button>
+        </div>
+      )}
+    </div>
+  </div>
+));
+
+MessageItem.displayName = 'MessageItem';
+
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
@@ -217,11 +299,16 @@ const ChatWidget = () => {
   const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const messagesRef = useRef(messages);
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
 
-  const speakText = async (text: string) => {
+  const speakText = useCallback(async (text: string) => {
     try {
       const res = await fetch('/api/tts', {
         method: 'POST',
@@ -248,7 +335,7 @@ const ChatWidget = () => {
     } catch (error) {
       console.error("TTS Error:", error);
     }
-  };
+  }, []);
 
   const sendMessage = async (text: string) => {
     if (!text.trim()) return;
@@ -280,16 +367,17 @@ const ChatWidget = () => {
     }
   };
 
-  const handleFeedback = async (index: number, rating: 'positive' | 'negative') => {
+  const handleFeedback = useCallback(async (index: number, rating: 'positive' | 'negative') => {
     setFeedbackStatus((prev) => ({ ...prev, [index]: rating }));
     try {
+      const currentMessages = messagesRef.current;
       await fetch('/api/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rating, context: { message: messages[index].text, history: messages.slice(0, index + 1) } }),
+        body: JSON.stringify({ rating, context: { message: currentMessages[index].text, history: currentMessages.slice(0, index + 1) } }),
       });
     } catch {}
-  };
+  }, []);
 
   const handleReport = async () => {
     if (!reportText.trim()) return;
@@ -305,32 +393,6 @@ const ChatWidget = () => {
     } catch {} finally {
       setIsReporting(false);
     }
-  };
-
-  // Render message text with basic markdown-like formatting
-  const renderText = (text: string) => {
-    const lines = text.split('\n');
-    return lines.map((line, i) => {
-      if (line.startsWith('**') && line.endsWith('**')) {
-        return <p key={i} className="font-bold mt-2">{line.slice(2, -2)}</p>;
-      }
-      if (line.startsWith('- ') || line.startsWith('• ')) {
-        return (
-          <div key={i} className="flex gap-2 mt-1">
-            <span className="shrink-0 mt-0.5 text-brand-primary">·</span>
-            <span>{line.slice(2)}</span>
-          </div>
-        );
-      }
-      if (line.trim() === '') return <div key={i} className="h-2" />;
-      // Bold inline **text**
-      const parts = line.split(/\*\*(.*?)\*\*/g);
-      return (
-        <p key={i} className="mt-0.5">
-          {parts.map((part, j) => j % 2 === 1 ? <strong key={j}>{part}</strong> : part)}
-        </p>
-      );
-    });
   };
 
   return (
@@ -374,45 +436,14 @@ const ChatWidget = () => {
             {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-stone-50">
               {messages.map((m, i) => (
-                <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
-                  {m.role === 'assistant' && (
-                    <div className="w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center shrink-0 mt-1">
-                      <Bot size={13} className="text-white" />
-                    </div>
-                  )}
-                  <div className={`group relative max-w-[85%] ${m.role === 'user' ? '' : 'flex-1'}`}>
-                    <div
-                      className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                        m.role === 'user'
-                          ? 'bg-brand-primary text-white rounded-br-sm'
-                          : 'bg-white text-stone-800 border border-stone-200 rounded-bl-sm shadow-sm'
-                      }`}
-                    >
-                      {m.role === 'assistant' ? renderText(m.text) : m.text}
-                    </div>
-                    {m.role === 'assistant' && (
-                      <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => speakText(m.text)} className="p-1 text-stone-400 hover:text-brand-primary transition-colors" title="Read aloud">
-                          <Volume2 size={12} />
-                        </button>
-                        <button
-                          onClick={() => handleFeedback(i, 'positive')}
-                          className={`p-1 transition-colors ${feedbackStatus[i] === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
-                          title="Helpful"
-                        >
-                          <ThumbsUp size={12} />
-                        </button>
-                        <button
-                          onClick={() => handleFeedback(i, 'negative')}
-                          className={`p-1 transition-colors ${feedbackStatus[i] === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
-                          title="Not helpful"
-                        >
-                          <ThumbsDown size={12} />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <MessageItem
+                  key={i}
+                  message={m}
+                  index={i}
+                  onSpeak={speakText}
+                  onFeedback={handleFeedback}
+                  feedbackStatus={feedbackStatus[i] || null}
+                />
               ))}
 
               {isLoading && (
