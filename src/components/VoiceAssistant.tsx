@@ -16,15 +16,14 @@ const VoiceAssistant = () => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const processorRef = useRef<ScriptProcessorNode | null>(null);
-  // Persisted AudioContext to prevent redundant object instantiation during rapid live audio stream playback
+  // Ref to persist and reuse a single AudioContext for playback to prevent memory leaks,
+  // high garbage collection overhead, and browser-enforced resource limit errors.
   const playbackAudioCtxRef = useRef<AudioContext | null>(null);
 
-  // Close playback audio context on unmount to prevent browser resource leaks
   useEffect(() => {
     return () => {
-      if (playbackAudioCtxRef.current) {
-        playbackAudioCtxRef.current.close().catch(() => {});
-      }
+      stopMic();
+      stopAudio();
     };
   }, []);
 
@@ -124,13 +123,13 @@ const VoiceAssistant = () => {
     setIsListening(false);
   };
 
-  // Play incoming audio packets by reusing a single playback AudioContext instance to avoid performance bottlenecks, high GC churn, and browser resource exhaustion.
+  // Optimized: Persist and reuse a single AudioContext for playback instead of creating
+  // a new one on every audio chunk, preventing browser resource limits from being exceeded.
   const playAudio = (base64Data: string) => {
-    let audioContext = playbackAudioCtxRef.current;
-    if (!audioContext || audioContext.state === 'closed') {
-      audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
-      playbackAudioCtxRef.current = audioContext;
+    if (!playbackAudioCtxRef.current) {
+      playbackAudioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
     }
+    const audioContext = playbackAudioCtxRef.current;
     if (audioContext.state === 'suspended') {
       audioContext.resume().catch(() => {});
     }
@@ -148,16 +147,18 @@ const VoiceAssistant = () => {
     source.start();
   };
 
+  // Clean up playback audio context resources
   const stopAudio = () => {
+    if (playbackAudioCtxRef.current) {
+      playbackAudioCtxRef.current.close().catch(() => {});
+      playbackAudioCtxRef.current = null;
+    }
   };
 
   const closeSession = () => {
     sessionRef.current?.close();
     stopMic();
-    if (playbackAudioCtxRef.current) {
-      playbackAudioCtxRef.current.close().catch(() => {});
-      playbackAudioCtxRef.current = null;
-    }
+    stopAudio();
     setIsOpen(false);
   };
 
