@@ -40,11 +40,18 @@ const terms = [
 export default function CourtTermsGuide() {
   const [search, setSearch] = useState('');
 
-  const filtered = terms.filter(
-    (t) =>
-      t.term.toLowerCase().includes(search.toLowerCase()) ||
-      t.definition.toLowerCase().includes(search.toLowerCase())
-  );
+  // ⚡ Bolt Optimization: Use React.useMemo to cache filtered results.
+  // We return early when search is empty to avoid filtering/allocation altogether.
+  // We also convert the query to lowercase once outside the loop to avoid redundant operations.
+  const filtered = React.useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return terms;
+    return terms.filter(
+      (t) =>
+        t.term.toLowerCase().includes(query) ||
+        t.definition.toLowerCase().includes(query)
+    );
+  }, [search]);
 
   return (
     <div className="pt-16 print:pt-0">

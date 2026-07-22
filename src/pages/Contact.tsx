@@ -90,14 +90,16 @@ export default function Contact() {
   };
 
   const Field = ({ id, label, required, error }: { id: string; label: string; required?: boolean; error?: string }) => (
-    <label htmlFor={id} className="block space-y-1.5">
-      <span className="text-xs font-bold text-stone-600 uppercase tracking-wider">
+    <div className="flex justify-between items-center">
+      <label htmlFor={id} className="text-xs font-bold text-stone-600 uppercase tracking-wider">
         {label} {required && <span className="text-brand-primary">*</span>}
-      </span>
+      </label>
       {error && touched[id] && (
-        <span id={`${id}-error`} role="alert" className="text-red-500 text-xs ml-2">{error}</span>
+        <span id={`${id}-error`} role="alert" className="text-red-500 text-xs ml-2">
+          {error}
+        </span>
       )}
-    </label>
+    </div>
   );
 
   const inputClass = (id: string) =>

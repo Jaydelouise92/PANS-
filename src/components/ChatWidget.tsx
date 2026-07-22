@@ -121,6 +121,11 @@ const ChatWidget = () => {
     messagesRef.current = messages;
   }, [messages]);
 
+  const messagesRef = useRef(messages);
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
@@ -372,7 +377,6 @@ const ChatWidget = () => {
                   onClick={() => sendMessage(input)}
                   disabled={!input.trim() || isLoading}
                   className="bg-brand-primary text-white p-2.5 rounded-full hover:bg-brand-primary/90 transition-all disabled:opacity-40 shrink-0"
-                  aria-label="Send message"
                 >
                   {isLoading ? (
                     <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -423,7 +427,6 @@ const ChatWidget = () => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="bg-brand-primary text-white px-5 py-3.5 rounded-full shadow-lg hover:bg-brand-primary/90 transition-all flex items-center gap-2 shadow-brand-primary/30"
-        aria-label={isOpen ? "Close chat" : "Chat with PANS"}
         aria-expanded={isOpen}
       >
         <MessageCircle size={20} />
