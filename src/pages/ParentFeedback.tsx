@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'motion/react';
 import { Heart, Star, CheckCircle2, AlertTriangle, MessageCircle } from 'lucide-react';
+import { getApiUrl } from '../lib/api';
 
 type Status = 'idle' | 'sending' | 'success' | 'error';
 
@@ -33,7 +34,7 @@ export default function ParentFeedback() {
     setStatus('sending');
     setErrorMsg('');
     try {
-      const res = await fetch('/api/parent-feedback', {
+      const res = await fetch(getApiUrl('/api/parent-feedback'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),

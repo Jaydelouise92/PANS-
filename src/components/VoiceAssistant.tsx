@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Mic, MicOff, X, Volume2, Bot } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { GoogleGenAI, Modality, LiveServerMessage } from "@google/genai";
+import { getApiUrl } from '../lib/api';
 
 const VoiceAssistant = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +20,7 @@ const VoiceAssistant = () => {
   const startSession = async () => {
     setIsConnecting(true);
     try {
-      const tokenRes = await fetch('/api/voice-token', { method: 'POST' });
+      const tokenRes = await fetch(getApiUrl('/api/voice-token'), { method: 'POST' });
       if (!tokenRes.ok) throw new Error('Failed to get voice token');
       const { token } = await tokenRes.json();
 

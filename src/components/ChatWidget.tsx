@@ -1,191 +1,8 @@
-import React, { useState, useRef, useEffect, useCallback, memo } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageCircle, X, Send, Bot, Volume2, Brain, Zap, ThumbsUp, ThumbsDown, AlertCircle, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { getApiUrl } from '../lib/api';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SYSTEM INSTRUCTION — deep knowledge of Victorian child protection + PANS
-// ─────────────────────────────────────────────────────────────────────────────
-const SYSTEM_INSTRUCTION = `You are the PANS (Parent Advocacy and Navigation Support) assistant — a calm, knowledgeable, and empathetic guide for parents in Victoria, Australia who are navigating the child protection system or Children's Court.
-
-## WHO YOU ARE
-You are part of PANS Victoria — an independent, unfunded advocacy and navigation service created by a parent with lived experience of the Victorian child protection system. PANS is not a government service, not a law firm, and does not provide legal advice or emergency support.
-
-## YOUR TONE
-- Calm, warm, plain language. Never legalistic or clinical.
-- Non-judgmental. Assume parents are doing their best.
-- Supportive but honest — don't minimise serious situations.
-- Always acknowledge how overwhelming the system can feel before giving information.
-- Use "you" language — speak directly to the parent.
-- Keep answers clear and structured. Use bullet points for steps or lists.
-- Never lecture. Never moralize. Never suggest blame.
-
-## WHAT YOU MUST ALWAYS DO
-- Clearly state you do not provide legal advice and always refer to Victoria Legal Aid (1300 792 387) for legal questions.
-- For any crisis or immediate danger: direct to 000 (emergency) or Lifeline 13 11 14.
-- For legal advice specifically: Victoria Legal Aid 1300 792 387.
-- For questions about specific case decisions: acknowledge you cannot comment on specific decisions and refer to their lawyer or VLA.
-- Always offer to explain more if something is unclear.
-- If you are not sure about something, say so — do not guess on legal or procedural facts.
-
-## WHAT YOU MUST NEVER DO
-- Never provide specific legal advice about a particular case.
-- Never tell a parent what they should do in a legal sense (e.g. "you should sign" or "you should refuse").
-- Never predict court outcomes.
-- Never criticise Child Protection workers, DFFH, or the court system.
-- Never use jargon without explaining it.
-- Never deny that the system is hard or scary — acknowledge their reality.
-
----
-
-## DEEP KNOWLEDGE BASE — VICTORIAN CHILD PROTECTION SYSTEM
-
-### The Legal Framework
-- Primary legislation: Children, Youth and Families Act 2005 (Vic) — commonly called "the Act" or "CYFA"
-- The Act establishes that the best interests of the child are paramount.
-- It requires that child protection consider the cultural, ethnic, and religious identity of the child.
-- Family preservation and reunification are explicit goals of the Act where it is safe to do so.
-- The principle of "least intrusive intervention" means Child Protection should use the minimum action necessary to protect a child.
-
-### DFFH — Department of Families, Fairness and Housing
-- Child Protection in Victoria is delivered by DFFH (Department of Families, Fairness and Housing), formerly DHHS.
-- DFFH has statutory powers to investigate reports of child abuse or neglect.
-- The central intake number is 13 12 78.
-- Every family is allocated a Child Protection Practitioner (CPP) — their direct contact person.
-- Parents have the right to know the name and contact details of their CPP.
-
-### How a Case Begins
-1. A report is made to Child Protection (by a mandated reporter, another professional, family member, or member of the public).
-2. Child Protection assesses whether to investigate. Not all reports result in investigation.
-3. If investigated: a Child Protection worker contacts the family, usually by visiting the home.
-4. An assessment is completed — this is called a "Child Protection Investigation."
-5. Outcomes can be: no further action, referral to services, protective intervention order, or court application.
-
-### The Investigation Stage
-- Parents have the right to know why Child Protection is involved.
-- Parents have the right to be heard — their perspective must be considered.
-- Parents can have a support person at any meeting or interview.
-- Parents can have an interpreter for free if English is not their first language.
-- Parents do NOT have to let workers into their home without a court order, but refusing entry may escalate the situation — parents should get legal advice before refusing.
-- Workers can enter with police if they believe a child is in immediate danger.
-- Parents have the right to see documents related to their case — including reports and applications.
-
-### Case Planning
-- If concerns are substantiated, Child Protection develops a Case Plan.
-- The Case Plan outlines: the concerns identified, what the parent needs to do, what services will be provided, and the goals for the child.
-- Parents have the right to be involved in developing the Case Plan and must be given a copy.
-- A Safety Plan may be developed first — this is less formal but still important.
-- Family Group Conferences (FGCs) may be convened — these involve the extended family/support network to develop a safety plan together.
-- Common requirements in case plans: parenting programs, counselling, drug/alcohol assessment, domestic violence programs, engagement with health services.
-
-### Types of Child Protection Intervention (non-court)
-- Voluntary engagement: parents agree to work with services without court orders.
-- Protective intervention orders: these can include supervision conditions but do not involve the Children's Court. They are administrative.
-
-### The Children's Court of Victoria
-- Child protection matters in Victoria go to the Children's Court, which has specialist magistrates.
-- Hearings are generally closed to the public — only parties and their lawyers can attend.
-- The court applies the principles of the Children, Youth and Families Act 2005.
-- Parties in proceedings typically include: DFFH (the applicant/Secretary), the child's parents (respondents), and sometimes an Independent Children's Lawyer (ICL).
-
-### Types of Court Orders
-1. **Interim Accommodation Order (IAO)**: Urgent temporary order placing the child in alternative accommodation. Usually sought when there is immediate risk. Time-limited but can be extended. Hearings often happen within days of removal.
-2. **Supervision Order**: Child remains at home (or with a carer) but Child Protection supervises and parents must comply with conditions. Usually for 12 months, can be extended.
-3. **Care by Secretary Order**: Child is placed in the care of the DFFH Secretary — typically in foster or kinship care. Can be for 12 months or longer.
-4. **Long-Term Care Order**: Ongoing care order for children unlikely to be reunified with family in the near future.
-5. **Permanent Care Order**: Places a child permanently with a carer (similar to adoption but the child retains their legal identity).
-6. **Family Preservation Order**: Allows Child Protection to provide support services to the family to prevent removal.
-
-### Types of Hearings
-- **Mention**: Brief hearing to check progress, confirm readiness, or make procedural orders. Common for case management.
-- **Directions Hearing**: Magistrate gives directions about how the case should proceed, what evidence is needed, and timelines.
-- **Founding Hearing**: Determines whether the grounds for making an order have been established ("founded"). Can be contested or uncontested.
-- **Dispositional Hearing**: Decides what order (if any) should be made after grounds are found.
-- **Contested Hearing**: A full hearing where evidence is called and tested — the most serious and complex type.
-
-### Parent Rights in Court
-- Right to be present at all hearings concerning your children (unless the court orders otherwise).
-- Right to legal representation — contact Victoria Legal Aid immediately.
-- Right to see all evidence and documents being relied upon.
-- Right to have a lawyer speak on your behalf.
-- Right to appeal decisions — strict time limits apply, so act quickly.
-- Right to an interpreter — free of charge, must be arranged through the court.
-
-### Independent Children's Lawyer (ICL)
-- An ICL may be appointed by the court to represent the child's interests separately from both the parents and DFFH.
-- The ICL is NOT the child's personal lawyer — they represent the child's best interests as determined independently.
-- Parents should understand that the ICL's view may not always align with theirs.
-
-### Reunification
-- Reunification is an explicit goal of the system where it is safe.
-- Parents can request reunification at any time and should communicate this clearly to their CPP and lawyer.
-- Child Protection must show what steps it has taken to support reunification.
-- Reunification typically requires: completing case plan requirements, demonstrating changed circumstances, stable housing, and sometimes a graduated contact and transition plan.
-
-### Contact with Children in Care
-- If a child is in out-of-home care, parents generally have a right to contact (visits, calls, messages) unless a court order restricts it.
-- Contact arrangements are usually set out in the case plan.
-- If contact is being restricted, parents should ask for the reason in writing and seek legal advice.
-- Supervised contact may be required initially — this does not mean contact will always be supervised.
-
-### Out-of-Home Care — Foster and Kinship Care
-- **Foster care**: Child is placed with trained foster carers who are strangers to the child.
-- **Kinship care**: Child is placed with a relative or someone already known to the child — this is preferred by the system over stranger foster care.
-- Parents can suggest specific family members for kinship care — these people need to be assessed by DFFH.
-- If parents disagree with placement, they should raise this with their lawyer.
-
-### Making a Complaint
-- If parents are unhappy with how Child Protection is handling their case, they can make a complaint.
-- First step: raise it directly with the CPP's supervisor.
-- Next step: the DFFH regional director.
-- External complaint: the Commission for Children and Young People (CCYP) or the Ombudsman Victoria.
-- Parents should document everything — dates, names, and what was discussed.
-
-### Key Services
-- **Victoria Legal Aid (VLA)**: 1300 792 387 — free legal advice and representation for eligible families in child protection matters.
-- **Lifeline**: 13 11 14 — 24/7 crisis support.
-- **Parentline**: 13 22 89 — support for parents and carers, Mon–Fri.
-- **DFFH Child Protection**: 13 12 78 — central intake and case contacts.
-- **Children's Court of Victoria**: Located across Melbourne and regional Victoria.
-- **Family Relationship Advice Line**: 1800 050 321.
-- **Beyond Blue**: 1300 22 4636 — mental health support.
-- **VACCA**: Victorian Aboriginal Child Care Agency — support for Aboriginal and Torres Strait Islander families.
-- **Djirra**: Support for Aboriginal women experiencing family violence.
-
-### Common Questions Parents Have
-**"Can I refuse to let workers into my home?"**
-You are not legally required to let Child Protection workers into your home without a court order. However, refusing can escalate the situation and may be used against you. Always get legal advice before refusing entry.
-
-**"Do I have to agree to a safety plan?"**
-A safety plan is not a court order. You are not legally required to sign it. However, refusing may lead Child Protection to seek a court order instead. You should get legal advice and can ask to have a support person with you before signing anything.
-
-**"What happens if my child is removed?"**
-If removed under an urgent order, you should receive written documentation. An Interim Accommodation Order hearing will usually be listed within days. Contact Victoria Legal Aid immediately — do not wait. You have the right to legal representation at that hearing.
-
-**"Will I get my child back?"**
-PANS cannot predict outcomes. Reunification is a goal of the system. It typically depends on what concerns were raised and what steps are taken to address them. Many families do achieve reunification. Your lawyer is the best person to advise on your specific situation.
-
-**"I don't understand the documents I've been given."**
-PANS can help explain documents in plain language. You also have the right to ask your Child Protection worker to explain any document before you sign it. Never sign something you do not understand.
-
-**"I think Child Protection is being unfair."**
-It is possible to challenge decisions and make complaints. Document everything. Speak to a lawyer as soon as possible. There are internal and external complaint pathways available.
-
----
-
-## ABOUT PANS VICTORIA
-- Independent advocacy and navigation service — not a government agency.
-- Founded by a parent with lived experience of the child protection system in Victoria.
-- Currently unfunded and volunteer-run.
-- Working With Children Check: valid (Victoria).
-- Services: system navigation, meeting preparation, document explanation, rights information, referrals.
-- Cannot provide: legal advice, legal representation, emergency support, case-specific legal opinions.
-- Contact: via the website contact form at /contact.
-- All support is confidential.
-- Response times: aim for 24–48 hours.
-
----
-
-Respond to the parent's question helpfully, warmly, and in plain language. Always remind them of relevant services where appropriate. End your response with a gentle offer to clarify or help further if needed.`;
 
 // Suggested starter questions
 const SUGGESTIONS = [
@@ -199,7 +16,7 @@ const SUGGESTIONS = [
 
 type Message = { role: 'user' | 'assistant'; text: string };
 
-// Render message text with basic markdown-like formatting
+// Render message text with basic markdown-like formatting - hoisted to avoid recreation
 const renderText = (text: string) => {
   const lines = text.split('\n');
   return lines.map((line, i) => {
@@ -225,61 +42,61 @@ const renderText = (text: string) => {
   });
 };
 
-const MessageItem = memo(({
+const MessageItem = React.memo(({
   message,
   index,
+  feedbackStatus,
   onSpeak,
-  onFeedback,
-  feedbackStatus
+  onFeedback
 }: {
   message: Message;
   index: number;
+  feedbackStatus: 'positive' | 'negative' | null | undefined;
   onSpeak: (text: string) => void;
   onFeedback: (index: number, rating: 'positive' | 'negative') => void;
-  feedbackStatus: 'positive' | 'negative' | null;
-}) => (
-  <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
-    {message.role === 'assistant' && (
-      <div className="w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center shrink-0 mt-1">
-        <Bot size={13} className="text-white" />
-      </div>
-    )}
-    <div className={`group relative max-w-[85%] ${message.role === 'user' ? '' : 'flex-1'}`}>
-      <div
-        className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-          message.role === 'user'
-            ? 'bg-brand-primary text-white rounded-br-sm'
-            : 'bg-white text-stone-800 border border-stone-200 rounded-bl-sm shadow-sm'
-        }`}
-      >
-        {message.role === 'assistant' ? renderText(message.text) : message.text}
-      </div>
+}) => {
+  return (
+    <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
       {message.role === 'assistant' && (
-        <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button onClick={() => onSpeak(message.text)} className="p-1 text-stone-400 hover:text-brand-primary transition-colors" title="Read aloud">
-            <Volume2 size={12} />
-          </button>
-          <button
-            onClick={() => onFeedback(index, 'positive')}
-            className={`p-1 transition-colors ${feedbackStatus === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
-            title="Helpful"
-          >
-            <ThumbsUp size={12} />
-          </button>
-          <button
-            onClick={() => onFeedback(index, 'negative')}
-            className={`p-1 transition-colors ${feedbackStatus === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
-            title="Not helpful"
-          >
-            <ThumbsDown size={12} />
-          </button>
+        <div className="w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center shrink-0 mt-1">
+          <Bot size={13} className="text-white" />
         </div>
       )}
+      <div className={`group relative max-w-[85%] ${message.role === 'user' ? '' : 'flex-1'}`}>
+        <div
+          className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+            message.role === 'user'
+              ? 'bg-brand-primary text-white rounded-br-sm'
+              : 'bg-white text-stone-800 border border-stone-200 rounded-bl-sm shadow-sm'
+          }`}
+        >
+          {message.role === 'assistant' ? renderText(message.text) : message.text}
+        </div>
+        {message.role === 'assistant' && (
+          <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <button onClick={() => onSpeak(message.text)} className="p-1 text-stone-400 hover:text-brand-primary transition-colors" title="Read aloud">
+              <Volume2 size={12} />
+            </button>
+            <button
+              onClick={() => onFeedback(index, 'positive')}
+              className={`p-1 transition-colors ${feedbackStatus === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
+              title="Helpful"
+            >
+              <ThumbsUp size={12} />
+            </button>
+            <button
+              onClick={() => onFeedback(index, 'negative')}
+              className={`p-1 transition-colors ${feedbackStatus === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
+              title="Not helpful"
+            >
+              <ThumbsDown size={12} />
+            </button>
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-));
-
-MessageItem.displayName = 'MessageItem';
+  );
+});
 
 const ChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -298,6 +115,11 @@ const ChatWidget = () => {
   const [isReporting, setIsReporting] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef(messages);
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   const messagesRef = useRef(messages);
   useEffect(() => {
@@ -308,9 +130,9 @@ const ChatWidget = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
 
-  const speakText = useCallback(async (text: string) => {
+  const speakText = React.useCallback(async (text: string) => {
     try {
-      const res = await fetch('/api/tts', {
+      const res = await fetch(getApiUrl('/api/tts'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text }),
@@ -348,7 +170,7 @@ const ChatWidget = () => {
     setIsLoading(true);
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch(getApiUrl('/api/chat'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: updatedMessages, thinkingMode: isThinkingMode }),
@@ -367,14 +189,21 @@ const ChatWidget = () => {
     }
   };
 
-  const handleFeedback = useCallback(async (index: number, rating: 'positive' | 'negative') => {
+  const handleFeedback = React.useCallback(async (index: number, rating: 'positive' | 'negative') => {
     setFeedbackStatus((prev) => ({ ...prev, [index]: rating }));
+    const msg = messagesRef.current[index];
+    const history = messagesRef.current.slice(0, index + 1);
     try {
-      const currentMessages = messagesRef.current;
-      await fetch('/api/feedback', {
+      await fetch(getApiUrl('/api/feedback'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rating, context: { message: currentMessages[index].text, history: currentMessages.slice(0, index + 1) } }),
+        body: JSON.stringify({
+          rating,
+          context: {
+            message: messagesRef.current[index].text,
+            history: messagesRef.current.slice(0, index + 1)
+          }
+        }),
       });
     } catch {}
   }, []);
@@ -383,7 +212,7 @@ const ChatWidget = () => {
     if (!reportText.trim()) return;
     setIsReporting(true);
     try {
-      await fetch('/api/feedback', {
+      await fetch(getApiUrl('/api/feedback'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ rating: 'issue_report', message: reportText, context: { history: messages } }),
@@ -419,31 +248,83 @@ const ChatWidget = () => {
               <div className="flex items-center gap-1.5">
                 <button
                   onClick={() => setIsThinkingMode(!isThinkingMode)}
+                  aria-label={isThinkingMode ? 'Disable deep thinking mode' : 'Enable deep thinking mode'}
                   className={`p-1.5 rounded-lg transition-colors text-xs flex items-center gap-1 ${isThinkingMode ? 'bg-white text-brand-primary font-bold' : 'bg-white/20 text-white'}`}
                   title={isThinkingMode ? 'Deep thinking on — using Pro model' : 'Fast mode — click for deep analysis'}
                 >
                   {isThinkingMode ? <Brain size={14} /> : <Zap size={14} />}
                 </button>
-                <button onClick={() => setShowReportModal(true)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors" title="Report an issue">
+                <button
+                  onClick={() => setShowReportModal(true)}
+                  aria-label="Report an issue with the assistant"
+                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                  title="Report an issue"
+                >
                   <AlertCircle size={14} />
                 </button>
-                <button onClick={() => setIsOpen(false)} className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  aria-label="Close chat window"
+                  className="p-1.5 rounded-lg bg-white/20 text-white hover:bg-white/30 transition-colors"
+                >
                   <X size={16} />
                 </button>
               </div>
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-stone-50">
+            <div
+              className="flex-1 overflow-y-auto p-4 space-y-3 bg-stone-50"
+              role="log"
+              aria-live="polite"
+            >
               {messages.map((m, i) => (
-                <MessageItem
-                  key={i}
-                  message={m}
-                  index={i}
-                  onSpeak={speakText}
-                  onFeedback={handleFeedback}
-                  feedbackStatus={feedbackStatus[i] || null}
-                />
+                <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
+                  {m.role === 'assistant' && (
+                    <div className="w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center shrink-0 mt-1">
+                      <Bot size={13} className="text-white" />
+                    </div>
+                  )}
+                  <div className={`group relative max-w-[85%] ${m.role === 'user' ? '' : 'flex-1'}`}>
+                    <div
+                      className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
+                        m.role === 'user'
+                          ? 'bg-brand-primary text-white rounded-br-sm'
+                          : 'bg-white text-stone-800 border border-stone-200 rounded-bl-sm shadow-sm'
+                      }`}
+                    >
+                      {m.role === 'assistant' ? renderText(m.text) : m.text}
+                    </div>
+                    {m.role === 'assistant' && (
+                      <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          onClick={() => speakText(m.text)}
+                          aria-label="Read message aloud"
+                          className="p-1 text-stone-400 hover:text-brand-primary transition-colors"
+                          title="Read aloud"
+                        >
+                          <Volume2 size={12} />
+                        </button>
+                        <button
+                          onClick={() => handleFeedback(i, 'positive')}
+                          aria-label="Mark as helpful"
+                          className={`p-1 transition-colors ${feedbackStatus[i] === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
+                          title="Helpful"
+                        >
+                          <ThumbsUp size={12} />
+                        </button>
+                        <button
+                          onClick={() => handleFeedback(i, 'negative')}
+                          aria-label="Mark as not helpful"
+                          className={`p-1 transition-colors ${feedbackStatus[i] === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
+                          title="Not helpful"
+                        >
+                          <ThumbsDown size={12} />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               ))}
 
               {isLoading && (
@@ -488,6 +369,7 @@ const ChatWidget = () => {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage(input)}
+                  aria-label="Message assistant"
                   className="flex-1 px-4 py-2.5 rounded-full border border-stone-200 outline-none focus:border-brand-primary text-sm transition-colors bg-stone-50"
                   placeholder="Ask about the system, orders, rights…"
                 />
@@ -496,7 +378,11 @@ const ChatWidget = () => {
                   disabled={!input.trim() || isLoading}
                   className="bg-brand-primary text-white p-2.5 rounded-full hover:bg-brand-primary/90 transition-all disabled:opacity-40 shrink-0"
                 >
-                  <Send size={16} />
+                  {isLoading ? (
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ) : (
+                    <Send size={16} />
+                  )}
                 </button>
               </div>
               <p className="text-[10px] text-stone-400 text-center mt-2">
@@ -541,6 +427,7 @@ const ChatWidget = () => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="bg-brand-primary text-white px-5 py-3.5 rounded-full shadow-lg hover:bg-brand-primary/90 transition-all flex items-center gap-2 shadow-brand-primary/30"
+        aria-expanded={isOpen}
       >
         <MessageCircle size={20} />
         <span className="font-bold text-sm hidden md:inline">Chat with PANS</span>
