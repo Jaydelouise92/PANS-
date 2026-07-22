@@ -1,4 +1,6 @@
+import crypto from "crypto";
 import express from "express";
+import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -121,6 +123,7 @@ function sanitize(str: string): string {
 }
 
 function timingSafeCompare(a: string, b: string): boolean {
+  if (!a || !b) return false;
   const aHash = crypto.createHash("sha256").update(a).digest();
   const bHash = crypto.createHash("sha256").update(b).digest();
   return crypto.timingSafeEqual(aHash, bHash);
@@ -623,18 +626,14 @@ async function startServer() {
   // ── /api/dashboard ────────────────────────────────────────
   app.get("/api/dashboard", (req, res) => {
     if (!checkDashboardLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
+      return res.status(429).json({ error: "Too many attempts. Please try again later." });
     }
-
     const authHeader = req.headers.authorization;
     const password = process.env.DASHBOARD_PASSWORD;
-
     if (!password) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return res.status(500).json({ error: "Dashboard password not configured." });
     }
-
-    const expectedHeader = `Bearer ${password}`;
-    if (!authHeader || !timingSafeCompare(authHeader, expectedHeader)) {
+    if (!authHeader || !timingSafeCompare(authHeader, `Bearer ${password}`)) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 

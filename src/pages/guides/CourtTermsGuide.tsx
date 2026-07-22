@@ -40,11 +40,19 @@ const terms = [
 export default function CourtTermsGuide() {
   const [search, setSearch] = useState('');
 
-  const filtered = terms.filter(
-    (t) =>
-      t.term.toLowerCase().includes(search.toLowerCase()) ||
-      t.definition.toLowerCase().includes(search.toLowerCase())
-  );
+  // ⚡ Bolt Optimization:
+  // 1. Memoize filtered results to prevent array recreation and recalculation on unrelated re-renders.
+  // 2. Return static terms early if query is empty to bypass filter logic.
+  // 3. Normalize search query once outside the loop (O(1)) instead of twice per iteration (O(N)).
+  const filtered = React.useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return terms;
+    return terms.filter(
+      (t) =>
+        t.term.toLowerCase().includes(query) ||
+        t.definition.toLowerCase().includes(query)
+    );
+  }, [search]);
 
   return (
     <div className="pt-16 print:pt-0">
@@ -85,8 +93,10 @@ export default function CourtTermsGuide() {
 
         {/* Search */}
         <div className="relative no-print">
-          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" />
+          <label htmlFor="search-terms" className="sr-only">Search terms</label>
+          <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" aria-hidden="true" />
           <input
+            id="search-terms"
             type="text"
             placeholder="Search terms…"
             value={search}
