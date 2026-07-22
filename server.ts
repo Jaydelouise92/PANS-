@@ -1,10 +1,12 @@
 import crypto from "crypto";
 import express from "express";
+import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
 import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel, Modality, type Part, type GenerateContentParameters } from "@google/genai";
+import crypto from "crypto";
 
 dotenv.config();
 
@@ -121,13 +123,10 @@ function sanitize(str: string): string {
 }
 
 function timingSafeCompare(a: string, b: string): boolean {
-  try {
-    const aHash = crypto.createHash("sha256").update(a).digest();
-    const bHash = crypto.createHash("sha256").update(b).digest();
-    return crypto.timingSafeEqual(aHash, bHash);
-  } catch {
-    return false;
-  }
+  if (!a || !b) return false;
+  const aHash = crypto.createHash("sha256").update(a).digest();
+  const bHash = crypto.createHash("sha256").update(b).digest();
+  return crypto.timingSafeEqual(aHash, bHash);
 }
 
 const CHAT_SYSTEM_INSTRUCTION = `You are the PANS (Parent Advocacy and Navigation Support) assistant — a calm, knowledgeable, and empathetic guide for parents in Victoria, Australia who are navigating the child protection system or Children's Court.
@@ -627,23 +626,14 @@ async function startServer() {
   // ── /api/dashboard ────────────────────────────────────────
   app.get("/api/dashboard", (req, res) => {
     if (!checkDashboardLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
+      return res.status(429).json({ error: "Too many attempts. Please try again later." });
     }
-
     const authHeader = req.headers.authorization;
     const password = process.env.DASHBOARD_PASSWORD;
-
-    // Fail securely if DASHBOARD_PASSWORD is not configured in the environment variables
     if (!password) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return res.status(500).json({ error: "Dashboard password not configured." });
     }
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    const token = authHeader.substring(7); // Extract token after "Bearer "
-    if (!timingSafeCompare(token, password)) {
+    if (!authHeader || !timingSafeCompare(authHeader, `Bearer ${password}`)) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
