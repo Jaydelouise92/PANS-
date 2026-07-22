@@ -13,7 +13,7 @@
 **Learning:** Hardening should be multi-layered. Disabling 'X-Powered-By' is a simple but effective fingerprinting prevention. Sanitization must include single quotes to handle common HTML attribute injection.
 **Prevention:** Use a standard security check-list for every new Express project: disable identifying headers, use strict rate limiting on all public POST routes, and ensure the sanitization logic covers all HTML-sensitive characters (<, >, &, ", ').
 
-## 2025-05-23 - [Dashboard Authentication Hardening]
-**Vulnerability:** Timing attacks on dashboard authorization and hardcoded default passwords in the backend configuration.
-**Learning:** Standard string comparisons (`!==`) are susceptible to timing attacks. Relying on default fallback passwords in code creates credential disclosure risks.
-**Prevention:** Always compare sensitive credentials in constant-time using cryptographic utilities (e.g., `crypto.timingSafeEqual` over hashed strings), enforce dedicated endpoint-level rate limits, and fail securely if environment variables for secrets are missing.
+## 2025-05-22 - [Timing Attack Mitigation for Dashboard Authentication]
+**Vulnerability:** Comparing potentially different-length authorization headers using simple string comparison (`!==`) was vulnerable to timing-based brute force attacks.
+**Learning:** `crypto.timingSafeEqual` in Node.js throws an error if compared buffers differ in length. To compare arbitrary, attacker-supplied inputs with secrets safely, we must compute SHA-256 hashes of both strings and compare those fixed-length hashes instead.
+**Prevention:** Always hash unequal/unknown-length strings before comparing them with `timingSafeEqual`, and enforce that administrative endpoints fail closed if their authentication environment variables are unconfigured.

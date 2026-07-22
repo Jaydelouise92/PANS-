@@ -1,4 +1,5 @@
 import express from "express";
+import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -88,7 +89,7 @@ const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
 const checkChatLimit = makeRateLimiter(10, 10 * 60 * 1000);
 // TTS: 10 per 10 minutes
 const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
-// Dashboard attempts: 3 per 10 minutes (sensitive admin endpoint)
+// Dashboard: 3 attempts per 10 minutes
 const checkDashboardLimit = makeRateLimiter(3, 10 * 60 * 1000);
 
 // Use the actual TCP socket address as the rate-limit key.
@@ -121,13 +122,10 @@ function sanitize(str: string): string {
 }
 
 function timingSafeCompare(a: string, b: string): boolean {
-  try {
-    const aHash = crypto.createHash("sha256").update(a).digest();
-    const bHash = crypto.createHash("sha256").update(b).digest();
-    return crypto.timingSafeEqual(aHash, bHash);
-  } catch {
-    return false;
-  }
+  if (!a || !b) return false;
+  const aHash = crypto.createHash("sha256").update(a).digest();
+  const bHash = crypto.createHash("sha256").update(b).digest();
+  return crypto.timingSafeEqual(aHash, bHash);
 }
 
 const CHAT_SYSTEM_INSTRUCTION = `You are the PANS (Parent Advocacy and Navigation Support) assistant — a calm, knowledgeable, and empathetic guide for parents in Victoria, Australia who are navigating the child protection system or Children's Court.
@@ -629,22 +627,12 @@ async function startServer() {
     if (!checkDashboardLimit(getRateLimitKey(req))) {
       return res.status(429).json({ error: "Too many attempts. Please try again later." });
     }
-
     const authHeader = req.headers.authorization;
     const password = process.env.DASHBOARD_PASSWORD;
-
-    // Fail securely if DASHBOARD_PASSWORD is not configured
     if (!password) {
-      return res.status(401).json({ error: "Unauthorized" });
+      return res.status(500).json({ error: "Dashboard password not configured." });
     }
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    const token = authHeader.substring(7);
-
-    if (!timingSafeCompare(token, password)) {
+    if (!authHeader || !timingSafeCompare(authHeader, `Bearer ${password}`)) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
