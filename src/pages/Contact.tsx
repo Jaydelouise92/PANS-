@@ -90,14 +90,12 @@ export default function Contact() {
   };
 
   const Field = ({ id, label, required, error }: { id: string; label: string; required?: boolean; error?: string }) => (
-    <div className="flex justify-between items-center">
+    <div className="block space-y-1.5">
       <label htmlFor={id} className="text-xs font-bold text-stone-600 uppercase tracking-wider">
         {label} {required && <span className="text-brand-primary">*</span>}
       </label>
       {error && touched[id] && (
-        <span id={`${id}-error`} role="alert" className="text-red-500 text-xs font-semibold ml-2">
-          {error}
-        </span>
+        <span id={`${id}-error`} role="alert" className="text-red-500 text-xs ml-2">{error}</span>
       )}
     </div>
   );
@@ -240,7 +238,7 @@ export default function Contact() {
                       onBlur={() => touch('firstName')}
                       className={inputClass('firstName')}
                       autoComplete="given-name"
-                      aria-invalid={touched.firstName && !!errors.firstName ? 'true' : 'false'}
+                      aria-invalid={touched.firstName && !!errors.firstName}
                       aria-describedby={touched.firstName && errors.firstName ? 'firstName-error' : undefined}
                     />
                   </div>
@@ -255,7 +253,7 @@ export default function Contact() {
                       onBlur={() => touch('lastName')}
                       className={inputClass('lastName')}
                       autoComplete="family-name"
-                      aria-invalid={touched.lastName && !!errors.lastName ? 'true' : 'false'}
+                      aria-invalid={touched.lastName && !!errors.lastName}
                       aria-describedby={touched.lastName && errors.lastName ? 'lastName-error' : undefined}
                     />
                   </div>
@@ -273,7 +271,7 @@ export default function Contact() {
                     onBlur={() => touch('email')}
                     className={inputClass('email')}
                     autoComplete="email"
-                    aria-invalid={touched.email && !!errors.email ? 'true' : 'false'}
+                    aria-invalid={touched.email && !!errors.email}
                     aria-describedby={touched.email && errors.email ? 'email-error' : undefined}
                   />
                 </div>
@@ -317,7 +315,7 @@ export default function Contact() {
                     onChange={(e) => set('message', e.target.value)}
                     onBlur={() => touch('message')}
                     className={`${inputClass('message')} resize-none`}
-                    aria-invalid={touched.message && !!errors.message ? 'true' : 'false'}
+                    aria-invalid={touched.message && !!errors.message}
                     aria-describedby={touched.message && errors.message ? 'message-error' : undefined}
                   />
                   <p className="text-xs text-stone-400 text-right">{form.message.length} / 5000</p>
