@@ -121,6 +121,11 @@ const ChatWidget = () => {
     messagesRef.current = messages;
   }, [messages]);
 
+  const messagesRef = useRef(messages);
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
