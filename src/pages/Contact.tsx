@@ -95,9 +95,7 @@ export default function Contact() {
         {label} {required && <span className="text-brand-primary">*</span>}
       </label>
       {error && touched[id] && (
-        <span id={`${id}-error`} role="alert" className="text-red-500 text-xs ml-2 font-medium">
-          {error}
-        </span>
+        <span id={`${id}-error`} role="alert" className="text-red-500 text-xs ml-2">{error}</span>
       )}
     </div>
   );
