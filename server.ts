@@ -1,4 +1,6 @@
+import crypto from "crypto";
 import express from "express";
+import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
@@ -88,7 +90,7 @@ const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
 const checkChatLimit = makeRateLimiter(10, 10 * 60 * 1000);
 // TTS: 10 per 10 minutes
 const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
-// Dashboard: 3 attempts per 10 minutes (strict brute-force prevention)
+// Dashboard: 3 attempts per 10 minutes
 const checkDashboardLimit = makeRateLimiter(3, 10 * 60 * 1000);
 
 // Use the actual TCP socket address as the rate-limit key.
@@ -121,9 +123,7 @@ function sanitize(str: string): string {
 }
 
 function timingSafeCompare(a: string, b: string): boolean {
-  if (typeof a !== "string" || typeof b !== "string") {
-    return false;
-  }
+  if (!a || !b) return false;
   const aHash = crypto.createHash("sha256").update(a).digest();
   const bHash = crypto.createHash("sha256").update(b).digest();
   return crypto.timingSafeEqual(aHash, bHash);
@@ -626,20 +626,14 @@ async function startServer() {
   // ── /api/dashboard ────────────────────────────────────────
   app.get("/api/dashboard", (req, res) => {
     if (!checkDashboardLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
+      return res.status(429).json({ error: "Too many attempts. Please try again later." });
     }
-
     const authHeader = req.headers.authorization;
     const password = process.env.DASHBOARD_PASSWORD;
-
     if (!password) {
-      // Fail securely if DASHBOARD_PASSWORD environment variable is not configured
-      return res.status(401).json({ error: "Unauthorized" });
+      return res.status(500).json({ error: "Dashboard password not configured." });
     }
-
-    // Use constant-time comparison to protect against timing attacks
-    const expectedHeader = `Bearer ${password}`;
-    if (!authHeader || !timingSafeCompare(authHeader, expectedHeader)) {
+    if (!authHeader || !timingSafeCompare(authHeader, `Bearer ${password}`)) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 

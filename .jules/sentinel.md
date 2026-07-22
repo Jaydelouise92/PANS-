@@ -13,7 +13,7 @@
 **Learning:** Hardening should be multi-layered. Disabling 'X-Powered-By' is a simple but effective fingerprinting prevention. Sanitization must include single quotes to handle common HTML attribute injection.
 **Prevention:** Use a standard security check-list for every new Express project: disable identifying headers, use strict rate limiting on all public POST routes, and ensure the sanitization logic covers all HTML-sensitive characters (<, >, &, ", ').
 
-## 2025-05-23 - [Timing-Safe Comparison and Fail-Secure Configurations for Sensitive Endpoints]
-**Vulnerability:** Endpoint `/api/dashboard` used insecure non-constant-time comparison for authentication checks, fell back to a hardcoded default password if the environment variable was missing, and lacked brute-force protection.
-**Learning:** Hardcoded defaults and basic comparison operator (`===` / `!==`) leave administrative interfaces open to timing attacks and default-credential exposure if config is omitted. To perform timing-safe string comparison without throwing length-mismatch errors or leaking length information, both strings should be hashed (e.g. via SHA-256) before utilizing `crypto.timingSafeEqual`.
-**Prevention:** Always fail securely if critical configuration variables (like administrative passwords) are missing. Apply strict rate-limiting on sensitive admin endpoints, and use SHA-256 pre-hashed constant-time comparisons.
+## 2025-05-22 - [Timing Attack Mitigation for Dashboard Authentication]
+**Vulnerability:** Comparing potentially different-length authorization headers using simple string comparison (`!==`) was vulnerable to timing-based brute force attacks.
+**Learning:** `crypto.timingSafeEqual` in Node.js throws an error if compared buffers differ in length. To compare arbitrary, attacker-supplied inputs with secrets safely, we must compute SHA-256 hashes of both strings and compare those fixed-length hashes instead.
+**Prevention:** Always hash unequal/unknown-length strings before comparing them with `timingSafeEqual`, and enforce that administrative endpoints fail closed if their authentication environment variables are unconfigured.
