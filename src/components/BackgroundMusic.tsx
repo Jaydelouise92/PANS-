@@ -56,7 +56,7 @@ export default function BackgroundMusic() {
             exit={{ opacity: 0, x: -10 }}
             className="bg-white border border-purple-200 shadow-lg rounded-2xl px-4 py-2.5 text-xs text-stone-600 flex items-center gap-2 max-w-[200px]"
           >
-            <Music size={13} className="text-brand-primary shrink-0" aria-hidden="true" />
+            <Music size={13} className="text-brand-primary shrink-0" />
             <div>
               <p className="font-semibold text-stone-700 leading-tight">Song by the Founder</p>
               <p className="text-stone-400 leading-tight">Tap to play</p>
@@ -70,7 +70,6 @@ export default function BackgroundMusic() {
           onClick={toggle}
           whileTap={{ scale: 0.92 }}
           title={playing ? 'Pause background music' : 'Play background music'}
-          aria-label={playing ? 'Pause background music' : 'Play background music'}
           className="w-11 h-11 rounded-full bg-white border border-purple-200 shadow-md flex items-center justify-center text-brand-primary hover:bg-brand-secondary transition-colors"
         >
           {playing ? (
@@ -81,12 +80,11 @@ export default function BackgroundMusic() {
                   className="w-[3px] bg-brand-primary rounded-full"
                   animate={{ height: ['6px', '14px', '6px'] }}
                   transition={{ duration: 0.7, repeat: Infinity, delay: i * 0.15, ease: 'easeInOut' }}
-                  aria-hidden="true"
                 />
               ))}
             </motion.div>
           ) : (
-            <Music size={16} aria-hidden="true" />
+            <Music size={16} />
           )}
         </motion.button>
 
@@ -99,10 +97,8 @@ export default function BackgroundMusic() {
               onClick={() => setShowVolume((v) => !v)}
               className="w-8 h-8 rounded-full bg-white border border-purple-100 shadow-sm flex items-center justify-center text-stone-400 hover:text-brand-primary transition-colors"
               title="Adjust volume"
-              aria-label="Adjust volume"
-              aria-expanded={showVolume}
             >
-              {volume === 0 ? <VolumeX size={13} aria-hidden="true" /> : <Volume2 size={13} aria-hidden="true" />}
+              {volume === 0 ? <VolumeX size={13} /> : <Volume2 size={13} />}
             </motion.button>
           )}
         </AnimatePresence>
@@ -116,9 +112,8 @@ export default function BackgroundMusic() {
             exit={{ opacity: 0, y: 6 }}
             className="bg-white border border-purple-200 shadow-md rounded-xl px-3 py-2 flex items-center gap-2"
           >
-            <VolumeX size={12} className="text-stone-400" aria-hidden="true" />
+            <VolumeX size={12} className="text-stone-400" />
             <input
-              id="volume-slider"
               type="range"
               min={0}
               max={1}
@@ -126,9 +121,8 @@ export default function BackgroundMusic() {
               value={volume}
               onChange={handleVolume}
               className="w-20 accent-brand-primary"
-              aria-label="Volume"
             />
-            <Volume2 size={12} className="text-brand-primary" aria-hidden="true" />
+            <Volume2 size={12} className="text-brand-primary" />
           </motion.div>
         )}
       </AnimatePresence>

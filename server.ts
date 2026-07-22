@@ -3,19 +3,9 @@ import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
 import Database from "better-sqlite3";
-import crypto from "crypto";
 import { GoogleGenAI, ThinkingLevel, Modality, type Part, type GenerateContentParameters } from "@google/genai";
 
 dotenv.config();
-
-// Secure comparison function using SHA-256 to prevent timing attacks on strings of unequal lengths
-function timingSafeCompare(a: string, b: string): boolean {
-  if (!a || !b) return false;
-  const key = crypto.randomBytes(32);
-  const hashA = crypto.createHmac("sha256", key).update(a).digest();
-  const hashB = crypto.createHmac("sha256", key).update(b).digest();
-  return crypto.timingSafeEqual(hashA, hashB);
-}
 
 const dbPath = process.env.DATABASE_PATH || "pans.db";
 const db = new Database(dbPath);
@@ -97,8 +87,6 @@ const checkParentFeedbackLimit = makeRateLimiter(3, 10 * 60 * 1000);
 const checkChatLimit = makeRateLimiter(10, 10 * 60 * 1000);
 // TTS: 10 per 10 minutes
 const checkTtsLimit = makeRateLimiter(10, 10 * 60 * 1000);
-// Dashboard access: 3 attempts per 10 minutes (mitigate brute force on sensitive admin endpoint)
-const checkDashboardLimit = makeRateLimiter(3, 10 * 60 * 1000);
 
 // Use the actual TCP socket address as the rate-limit key.
 // Use req.ip which respects 'trust proxy' (line 124) to get the real client IP
@@ -625,20 +613,10 @@ async function startServer() {
 
   // ── /api/dashboard ────────────────────────────────────────
   app.get("/api/dashboard", (req, res) => {
-    if (!checkDashboardLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many attempts. Please try again later." });
-    }
-
-    const password = process.env.DASHBOARD_PASSWORD;
-    // Secure failure state if DASHBOARD_PASSWORD is not configured
-    if (!password) {
-      return res.status(500).json({ error: "Dashboard password is not configured on the server." });
-    }
-
     const authHeader = req.headers.authorization;
-    const expectedAuth = `Bearer ${password}`;
+    const password = process.env.DASHBOARD_PASSWORD || "pans-admin-2025";
 
-    if (!authHeader || !timingSafeCompare(authHeader, expectedAuth)) {
+    if (authHeader !== `Bearer ${password}`) {
       return res.status(401).json({ error: "Unauthorized" });
     }
 
