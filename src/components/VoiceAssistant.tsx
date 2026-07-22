@@ -16,6 +16,16 @@ const VoiceAssistant = () => {
   const audioContextRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const processorRef = useRef<ScriptProcessorNode | null>(null);
+  // Ref to persist and reuse a single AudioContext for playback to prevent memory leaks,
+  // high garbage collection overhead, and browser-enforced resource limit errors.
+  const playbackAudioCtxRef = useRef<AudioContext | null>(null);
+
+  useEffect(() => {
+    return () => {
+      stopMic();
+      stopAudio();
+    };
+  }, []);
 
   const startSession = async () => {
     setIsConnecting(true);
@@ -113,8 +123,16 @@ const VoiceAssistant = () => {
     setIsListening(false);
   };
 
+  // Optimized: Persist and reuse a single AudioContext for playback instead of creating
+  // a new one on every audio chunk, preventing browser resource limits from being exceeded.
   const playAudio = (base64Data: string) => {
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+    if (!playbackAudioCtxRef.current) {
+      playbackAudioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+    }
+    const audioContext = playbackAudioCtxRef.current;
+    if (audioContext.state === 'suspended') {
+      audioContext.resume().catch(() => {});
+    }
     const arrayBuffer = Uint8Array.from(atob(base64Data), c => c.charCodeAt(0)).buffer;
     const float32Array = new Float32Array(arrayBuffer.byteLength / 2);
     const view = new DataView(arrayBuffer);
@@ -129,12 +147,18 @@ const VoiceAssistant = () => {
     source.start();
   };
 
+  // Clean up playback audio context resources
   const stopAudio = () => {
+    if (playbackAudioCtxRef.current) {
+      playbackAudioCtxRef.current.close().catch(() => {});
+      playbackAudioCtxRef.current = null;
+    }
   };
 
   const closeSession = () => {
     sessionRef.current?.close();
     stopMic();
+    stopAudio();
     setIsOpen(false);
   };
 
