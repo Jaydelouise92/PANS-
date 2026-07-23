@@ -423,6 +423,7 @@ const ChatWidget = () => {
         onClick={() => setIsOpen(!isOpen)}
         className="bg-brand-primary text-white px-5 py-3.5 rounded-full shadow-lg hover:bg-brand-primary/90 transition-all flex items-center gap-2 shadow-brand-primary/30"
         aria-expanded={isOpen}
+        aria-label={isOpen ? "Close PANS Assistant" : "Chat with PANS"}
       >
         <MessageCircle size={20} />
         <span className="font-bold text-sm hidden md:inline">Chat with PANS</span>
