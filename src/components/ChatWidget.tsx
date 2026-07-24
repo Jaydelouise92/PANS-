@@ -116,6 +116,7 @@ const ChatWidget = () => {
   const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef(messages);
+  const playbackAudioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -124,6 +125,16 @@ const ChatWidget = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
+
+  // Safely close the playback AudioContext upon component unmount to prevent leaks.
+  useEffect(() => {
+    return () => {
+      if (playbackAudioCtxRef.current) {
+        playbackAudioCtxRef.current.close().catch(() => {});
+        playbackAudioCtxRef.current = null;
+      }
+    };
+  }, []);
 
   const speakText = React.useCallback(async (text: string) => {
     try {
@@ -135,7 +146,16 @@ const ChatWidget = () => {
       const data = await res.json();
       const base64Audio = data.audio;
       if (base64Audio) {
-        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+        // Optimized: Persist and reuse a single AudioContext for TTS playback to prevent
+        // memory leaks, excessive garbage collection, and browser context exhaustion.
+        if (!playbackAudioCtxRef.current) {
+          playbackAudioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+        }
+        const audioContext = playbackAudioCtxRef.current;
+        if (audioContext.state === 'suspended') {
+          await audioContext.resume();
+        }
+
         const arrayBuffer = Uint8Array.from(atob(base64Audio), c => c.charCodeAt(0)).buffer;
         const float32Array = new Float32Array(arrayBuffer.byteLength / 2);
         const view = new DataView(arrayBuffer);
@@ -274,52 +294,14 @@ const ChatWidget = () => {
               aria-live="polite"
             >
               {messages.map((m, i) => (
-                <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} gap-2`}>
-                  {m.role === 'assistant' && (
-                    <div className="w-6 h-6 bg-brand-primary rounded-full flex items-center justify-center shrink-0 mt-1">
-                      <Bot size={13} className="text-white" />
-                    </div>
-                  )}
-                  <div className={`group relative max-w-[85%] ${m.role === 'user' ? '' : 'flex-1'}`}>
-                    <div
-                      className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                        m.role === 'user'
-                          ? 'bg-brand-primary text-white rounded-br-sm'
-                          : 'bg-white text-stone-800 border border-stone-200 rounded-bl-sm shadow-sm'
-                      }`}
-                    >
-                      {m.role === 'assistant' ? renderText(m.text) : m.text}
-                    </div>
-                    {m.role === 'assistant' && (
-                      <div className="flex items-center gap-1 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button
-                          onClick={() => speakText(m.text)}
-                          aria-label="Read message aloud"
-                          className="p-1 text-stone-400 hover:text-brand-primary transition-colors"
-                          title="Read aloud"
-                        >
-                          <Volume2 size={12} />
-                        </button>
-                        <button
-                          onClick={() => handleFeedback(i, 'positive')}
-                          aria-label="Mark as helpful"
-                          className={`p-1 transition-colors ${feedbackStatus[i] === 'positive' ? 'text-green-500' : 'text-stone-400 hover:text-green-500'}`}
-                          title="Helpful"
-                        >
-                          <ThumbsUp size={12} />
-                        </button>
-                        <button
-                          onClick={() => handleFeedback(i, 'negative')}
-                          aria-label="Mark as not helpful"
-                          className={`p-1 transition-colors ${feedbackStatus[i] === 'negative' ? 'text-red-500' : 'text-stone-400 hover:text-red-500'}`}
-                          title="Not helpful"
-                        >
-                          <ThumbsDown size={12} />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                <MessageItem
+                  key={i}
+                  message={m}
+                  index={i}
+                  feedbackStatus={feedbackStatus[i]}
+                  onSpeak={speakText}
+                  onFeedback={handleFeedback}
+                />
               ))}
 
               {isLoading && (
