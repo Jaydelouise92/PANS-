@@ -177,7 +177,7 @@ const VoiceAssistant = () => {
                 <Bot size={20} />
                 <span className="font-bold">Voice Guide</span>
               </div>
-              <button onClick={closeSession} className="hover:bg-white/20 p-1 rounded-full"><X size={20} /></button>
+              <button onClick={closeSession} aria-label="Close voice navigation panel" className="hover:bg-white/20 p-1 rounded-full"><X size={20} /></button>
             </div>
 
             <div className="relative">
@@ -237,6 +237,8 @@ const VoiceAssistant = () => {
           onClick={() => setIsOpen(true)}
           className="bg-emerald-500 text-white p-4 rounded-full shadow-lg hover:bg-emerald-600 transition-all flex items-center gap-2 group"
           title="Voice Assistant"
+          aria-label={isOpen ? "Close Voice Assistant" : "Open Voice Assistant"}
+          aria-expanded={isOpen}
         >
           <Mic size={24} />
           <span className="font-bold max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 whitespace-nowrap">

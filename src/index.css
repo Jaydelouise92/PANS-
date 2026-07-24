@@ -15,6 +15,11 @@
 }
 
 @layer base {
+  /* Hide Safari default details marker */
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
   html {
     scroll-behavior: smooth;
     font-size: 16px;

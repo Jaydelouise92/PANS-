@@ -70,6 +70,8 @@ export default function BackgroundMusic() {
           onClick={toggle}
           whileTap={{ scale: 0.92 }}
           title={playing ? 'Pause background music' : 'Play background music'}
+          aria-label={playing ? 'Pause background music' : 'Play background music'}
+          aria-pressed={playing}
           className="w-11 h-11 rounded-full bg-white border border-purple-200 shadow-md flex items-center justify-center text-brand-primary hover:bg-brand-secondary transition-colors"
         >
           {playing ? (
@@ -97,6 +99,8 @@ export default function BackgroundMusic() {
               onClick={() => setShowVolume((v) => !v)}
               className="w-8 h-8 rounded-full bg-white border border-purple-100 shadow-sm flex items-center justify-center text-stone-400 hover:text-brand-primary transition-colors"
               title="Adjust volume"
+              aria-label="Adjust volume"
+              aria-expanded={showVolume}
             >
               {volume === 0 ? <VolumeX size={13} /> : <Volume2 size={13} />}
             </motion.button>
@@ -120,6 +124,7 @@ export default function BackgroundMusic() {
               step={0.01}
               value={volume}
               onChange={handleVolume}
+              aria-label="Background music volume"
               className="w-20 accent-brand-primary"
             />
             <Volume2 size={12} className="text-brand-primary" />
