@@ -1,12 +1,10 @@
 import crypto from "crypto";
 import express from "express";
-import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
 import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel, Modality, type Part, type GenerateContentParameters } from "@google/genai";
-import crypto from "crypto";
 
 dotenv.config();
 
@@ -178,6 +176,15 @@ async function startServer() {
 
   app.set("trust proxy", 1);
   app.disable("x-powered-by");
+
+  // Standard security headers to defend against clickjacking, MIME-sniffing, and cross-site scripting
+  app.use((_req, res, next) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("X-XSS-Protection", "1; mode=block");
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    next();
+  });
 
   app.use(cors());
   app.use(express.json({ limit: "128kb" }));
