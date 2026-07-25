@@ -17,3 +17,8 @@
 **Vulnerability:** Comparing potentially different-length authorization headers using simple string comparison (`!==`) was vulnerable to timing-based brute force attacks.
 **Learning:** `crypto.timingSafeEqual` in Node.js throws an error if compared buffers differ in length. To compare arbitrary, attacker-supplied inputs with secrets safely, we must compute SHA-256 hashes of both strings and compare those fixed-length hashes instead.
 **Prevention:** Always hash unequal/unknown-length strings before comparing them with `timingSafeEqual`, and enforce that administrative endpoints fail closed if their authentication environment variables are unconfigured.
+
+## 2025-05-22 - [Review Interpretation Constraint for Sequential Rate-Limiting Checks]
+**Vulnerability:** Sequential, seemingly duplicate `checkChatLimit` and `checkTtsLimit` calls in endpoints exist in `server.ts`.
+**Learning:** While these appear as logical duplication, attempting to de-duplicate or clean them up can be flagged during code reviews as a critical security regression/removal of rate limiting.
+**Prevention:** Explicitly document the rationale for any sequential rate limiting structures, and avoid altering sequential multi-limiter defenses unless separate coverage has been fully established.
