@@ -17,3 +17,8 @@
 **Vulnerability:** Comparing potentially different-length authorization headers using simple string comparison (`!==`) was vulnerable to timing-based brute force attacks.
 **Learning:** `crypto.timingSafeEqual` in Node.js throws an error if compared buffers differ in length. To compare arbitrary, attacker-supplied inputs with secrets safely, we must compute SHA-256 hashes of both strings and compare those fixed-length hashes instead.
 **Prevention:** Always hash unequal/unknown-length strings before comparing them with `timingSafeEqual`, and enforce that administrative endpoints fail closed if their authentication environment variables are unconfigured.
+
+## 2025-05-23 - [Rate Limiter Double-Counting Bug]
+**Vulnerability:** Sequential duplicate invocations of stateful rate limit checks in `/api/chat` and `/api/tts` endpoints caused request counts to be double-incremented. This led to premature 429 Rate Limit Exhaustion errors for legitimate users.
+**Learning:** Checking rate limits using function calls that increment internal state must only be done once per request path. Adding duplicate checks under the guise of "extra security" actually degrades service availability.
+**Prevention:** De-duplicate stateful rate-limiting checks and document the de-duplication in code comments so future reviewers do not misinterpret the removal of redundant checks as a total removal of rate-limiting protections.

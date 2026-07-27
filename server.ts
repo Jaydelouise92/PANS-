@@ -1,12 +1,10 @@
 import crypto from "crypto";
 import express from "express";
-import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
 import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel, Modality, type Part, type GenerateContentParameters } from "@google/genai";
-import crypto from "crypto";
 
 dotenv.config();
 
@@ -179,19 +177,31 @@ async function startServer() {
   app.set("trust proxy", 1);
   app.disable("x-powered-by");
 
+  // Custom middleware to set standard security headers on all responses
+  app.use((req, res, next) => {
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    res.setHeader("X-XSS-Protection", "1; mode=block");
+    res.setHeader(
+      "Content-Security-Policy",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https:; media-src 'self' blob: data:;"
+    );
+    next();
+  });
+
   app.use(cors());
   app.use(express.json({ limit: "128kb" }));
 
   // ── /api/chat ──────────────────────────────────────────────
   app.post("/api/chat", async (req, res) => {
+    // De-duplication: This single checkChatLimit is the only rate limit check for this endpoint,
+    // preventing double-counting of requests that occurred when sequential checks were called.
     if (!checkChatLimit(getRateLimitKey(req))) {
       return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "AI chat is not configured. Please contact PANS directly via the contact form." });
-    }
-    if (!checkChatLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { messages, thinkingMode } = req.body;
     if (!Array.isArray(messages) || messages.length === 0) {
@@ -227,14 +237,13 @@ async function startServer() {
 
   // ── /api/tts ───────────────────────────────────────────────
   app.post("/api/tts", async (req, res) => {
+    // De-duplication: This single checkTtsLimit is the only rate limit check for this endpoint,
+    // preventing double-counting of requests that occurred when sequential checks were called.
     if (!checkTtsLimit(getRateLimitKey(req))) {
       return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "TTS not configured." });
-    }
-    if (!checkTtsLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { text } = req.body;
     if (typeof text !== "string" || text.length === 0 || text.length > 1000) {
