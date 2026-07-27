@@ -1,12 +1,10 @@
 import crypto from "crypto";
 import express from "express";
-import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
 import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel, Modality, type Part, type GenerateContentParameters } from "@google/genai";
-import crypto from "crypto";
 
 dotenv.config();
 
