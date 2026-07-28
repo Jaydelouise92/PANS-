@@ -10,7 +10,7 @@ export default function PrintButton({ label = 'Print / Save as PDF', className =
   return (
     <button
       onClick={() => window.print()}
-      className={`no-print inline-flex items-center gap-2 bg-white border border-purple-200 text-brand-primary px-5 py-2.5 rounded-full font-bold text-sm hover:bg-brand-secondary hover:border-brand-primary transition-all shadow-sm ${className}`}
+      className={`no-print inline-flex items-center gap-2 bg-white border border-purple-200 text-brand-primary px-5 py-2.5 rounded-full font-bold text-sm hover:bg-brand-secondary hover:border-brand-primary transition-all shadow-sm focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 ${className}`}
     >
       <Printer size={15} />
       {label}
