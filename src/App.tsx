@@ -4,6 +4,7 @@ import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ChatWidget from './components/ChatWidget';
 import BackgroundMusic from './components/BackgroundMusic';
+import VoiceAssistant from './components/VoiceAssistant';
 
 const Home = lazy(() => import('./pages/Home'));
 const StartHere = lazy(() => import('./pages/StartHere'));
@@ -102,6 +103,7 @@ function AppLayout() {
       </main>
       <Footer />
       <ChatWidget />
+      <VoiceAssistant />
       <BackgroundMusic />
       <CookieBanner />
     </div>
