@@ -124,7 +124,7 @@ export default function ParentFeedback() {
                       role="radio"
                       aria-checked={selected}
                       onClick={() => set('rating', String(n) as typeof form.rating)}
-                      className={`flex-1 py-3 rounded-xl border transition-all flex items-center justify-center gap-1 ${
+                      className={`flex-1 py-3 rounded-xl border transition-all flex items-center justify-center gap-1 focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 ${
                         selected
                           ? 'bg-brand-primary text-white border-brand-primary'
                           : 'bg-white border-purple-200 text-stone-500 hover:border-brand-primary/40'
@@ -154,7 +154,7 @@ export default function ParentFeedback() {
                       role="radio"
                       aria-checked={selected}
                       onClick={() => set('helpful', opt)}
-                      className={`py-2.5 rounded-xl border text-sm transition-all ${
+                      className={`py-2.5 rounded-xl border text-sm transition-all focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 ${
                         selected
                           ? 'bg-brand-primary text-white border-brand-primary'
                           : 'bg-white border-purple-200 text-stone-600 hover:border-brand-primary/40'
@@ -215,19 +215,19 @@ export default function ParentFeedback() {
               </div>
             </div>
 
-            <label htmlFor="pf-consent" className="flex gap-3 items-start bg-white border border-purple-100 rounded-xl p-4 cursor-pointer">
+            <div className="flex gap-3 items-start bg-white border border-purple-100 rounded-xl p-4">
               <input
                 id="pf-consent"
                 type="checkbox"
                 checked={form.consentToShare}
                 onChange={(e) => set('consentToShare', e.target.checked)}
-                className="mt-0.5 accent-brand-primary"
+                className="mt-1 accent-brand-primary cursor-pointer focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none rounded"
               />
-              <span className="text-sm text-stone-600 leading-relaxed">
+              <label htmlFor="pf-consent" className="text-sm text-stone-600 leading-relaxed cursor-pointer select-none">
                 You may share my feedback anonymously on the PANS website to help other parents.
                 <span className="block text-xs text-stone-400 mt-1">No names, locations, or identifying details will ever be shared.</span>
-              </span>
-            </label>
+              </label>
+            </div>
 
             {status === 'error' && (
               <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3">
@@ -239,9 +239,21 @@ export default function ParentFeedback() {
             <button
               type="submit"
               disabled={status === 'sending'}
-              className="w-full bg-brand-primary text-white py-4 rounded-xl font-bold hover:bg-brand-primary/90 transition-all shadow-lg shadow-brand-primary/20 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-brand-primary text-white py-4 rounded-xl font-bold hover:bg-brand-primary/90 transition-all shadow-lg shadow-brand-primary/20 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2"
             >
-              {status === 'sending' ? 'Sending…' : (<><Heart size={16} /> Send feedback</>)}
+              {status === 'sending' ? (
+                <>
+                  <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                  </svg>
+                  Sending…
+                </>
+              ) : (
+                <>
+                  <Heart size={16} /> Send feedback
+                </>
+              )}
             </button>
 
             <p className="text-center text-xs text-stone-400 leading-relaxed">
