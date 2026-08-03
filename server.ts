@@ -1,12 +1,10 @@
 import crypto from "crypto";
 import express from "express";
-import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
 import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel, Modality, type Part, type GenerateContentParameters } from "@google/genai";
-import crypto from "crypto";
 
 dotenv.config();
 
@@ -63,6 +61,20 @@ const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "ourvoicemattersaus@gmail.com";
 
 function makeRateLimiter(maxCount: number, windowMs: number) {
   const store = new Map<string, { count: number; resetAt: number }>();
+
+  // Periodically clean up expired rate limit entries to prevent memory leaks
+  const interval = setInterval(() => {
+    const now = Date.now();
+    for (const [key, entry] of store.entries()) {
+      if (now > entry.resetAt) {
+        store.delete(key);
+      }
+    }
+  }, windowMs);
+  if (interval && typeof interval.unref === "function") {
+    interval.unref();
+  }
+
   return function check(key: string): boolean {
     const now = Date.now();
     const entry = store.get(key);
