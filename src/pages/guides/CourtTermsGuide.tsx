@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, ArrowLeft, Search } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Search, X } from 'lucide-react';
 import PrintButton from '../../components/PrintButton';
 import LastUpdated from '../../components/LastUpdated';
 
@@ -39,6 +39,7 @@ const terms = [
 
 export default function CourtTermsGuide() {
   const [search, setSearch] = useState('');
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // ⚡ Bolt Optimization:
   // 1. Memoize filtered results to prevent array recreation and recalculation on unrelated re-renders.
@@ -96,13 +97,31 @@ export default function CourtTermsGuide() {
           <label htmlFor="search-terms" className="sr-only">Search terms</label>
           <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" aria-hidden="true" />
           <input
+            ref={searchInputRef}
             id="search-terms"
             type="text"
             placeholder="Search terms…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 rounded-xl border border-purple-200 bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none text-sm"
+            className="w-full pl-10 pr-10 py-3 rounded-xl border border-purple-200 bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none text-sm"
           />
+          {search && (
+            <button
+              onClick={() => {
+                setSearch('');
+                searchInputRef.current?.focus();
+              }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-stone-400 hover:text-stone-600 hover:bg-stone-100 focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none transition-all cursor-pointer"
+              aria-label="Clear search terms"
+            >
+              <X size={15} />
+            </button>
+          )}
+        </div>
+
+        {/* Screen Reader Announcements for search results */}
+        <div className="sr-only" role="status" aria-live="polite">
+          {search ? `${filtered.length} term${filtered.length === 1 ? '' : 's'} found for "${search}"` : ''}
         </div>
 
         {/* Terms */}
