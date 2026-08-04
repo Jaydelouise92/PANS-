@@ -53,6 +53,15 @@
     text-decoration: underline;
     text-underline-offset: 2px;
   }
+
+  /* Hide native Safari/iOS details disclosure triangle markers */
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary {
+    list-style: none;
+  }
 }
 
 /* ── Print styles ── */
