@@ -65,7 +65,7 @@ export default function Dashboard() {
         setFeedbacks(data.feedbacks || []);
         setStories(data.stories || []);
         setIsAuthenticated(true);
-        localStorage.setItem('pans_dashboard_token', token);
+        sessionStorage.setItem('pans_dashboard_token', token);
       } else {
         setLoginError('Invalid dashboard password.');
         setIsAuthenticated(false);
@@ -79,7 +79,7 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    const savedToken = localStorage.getItem('pans_dashboard_token');
+    const savedToken = sessionStorage.getItem('pans_dashboard_token');
     if (savedToken) {
       fetchDashboardData(savedToken);
     } else {
@@ -153,13 +153,28 @@ export default function Dashboard() {
     </div>
   );
 
+  const handleLogout = () => {
+    sessionStorage.removeItem('pans_dashboard_token');
+    setIsAuthenticated(false);
+    setPassword('');
+  };
+
   return (
     <div className="pt-24 px-6 pb-20 bg-stone-50 min-h-screen">
       <div className="max-w-6xl mx-auto">
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-3xl font-serif text-stone-900">Site Management</h1>
-            <p className="text-stone-500">Track activity and manage inquiries.</p>
+          <div className="flex justify-between items-start w-full">
+            <div>
+              <h1 className="text-3xl font-serif text-stone-900">Site Management</h1>
+              <p className="text-stone-500">Track activity and manage inquiries.</p>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-stone-200 text-stone-700 hover:bg-stone-300 rounded-xl font-bold text-sm transition-all shadow-sm"
+              aria-label="Logout from Dashboard"
+            >
+              Logout
+            </button>
           </div>
           <div className="flex bg-white p-1 rounded-2xl border border-purple-100 shadow-sm">
             {[
