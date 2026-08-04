@@ -17,3 +17,8 @@
 **Vulnerability:** Comparing potentially different-length authorization headers using simple string comparison (`!==`) was vulnerable to timing-based brute force attacks.
 **Learning:** `crypto.timingSafeEqual` in Node.js throws an error if compared buffers differ in length. To compare arbitrary, attacker-supplied inputs with secrets safely, we must compute SHA-256 hashes of both strings and compare those fixed-length hashes instead.
 **Prevention:** Always hash unequal/unknown-length strings before comparing them with `timingSafeEqual`, and enforce that administrative endpoints fail closed if their authentication environment variables are unconfigured.
+
+## 2025-05-22 - [Dashboard Token Storage and Session Exposure]
+**Vulnerability:** Storing sensitive administrative passwords/tokens in persistent `localStorage` exposes them indefinitely on the client's disk, risking unauthorized access if a device is shared or compromised.
+**Learning:** Administrative dashboard sessions should not persist across browser restarts or tab lifecycles. Utilizing `sessionStorage` limits credentials strictly to the current session scope.
+**Prevention:** Use `sessionStorage` for storing authentication credentials on the frontend and always implement an explicit, accessible Logout mechanism to clear session data.
