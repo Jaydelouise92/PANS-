@@ -841,11 +841,12 @@ function Faq({
 }) {
   return (
     <details className="group bg-white border border-purple-100 rounded-xl p-5 hover:border-brand-primary/40 transition">
-      <summary className="cursor-pointer font-semibold text-stone-900 flex items-center justify-between gap-3 list-none">
+      <summary className="cursor-pointer font-semibold text-stone-900 flex items-center justify-between gap-3 list-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 rounded-lg">
         <span>{question}</span>
         <ArrowRight
           size={16}
           className="text-brand-primary shrink-0 transition-transform group-open:rotate-90"
+          aria-hidden="true"
         />
       </summary>
       <div className="mt-3 pt-3 border-t border-stone-100">
