@@ -35,6 +35,7 @@ const Copyright = lazy(() => import('./pages/Copyright'));
 const DisabilityRights = lazy(() => import('./pages/DisabilityRights'));
 const Services = lazy(() => import('./pages/Services'));
 const FAQ = lazy(() => import('./pages/FAQ'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
 import CookieBanner from './components/CookieBanner';
 
 function ScrollToTop() {
@@ -96,6 +97,7 @@ function AppLayout() {
             <Route path="/services" element={<Services />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/video" element={<Video />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="*" element={<Home />} />
           </Routes>
         </Suspense>
