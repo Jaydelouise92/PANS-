@@ -82,7 +82,32 @@ export default function ParentFeedback() {
     );
   }
 
+  const ratingOptions = ['1', '2', '3', '4', '5'] as const;
   const helpfulOptions: Array<typeof form.helpful> = ['Yes', 'Somewhat', 'Not really'];
+
+  const handleRadioKeyDown = (
+    e: React.KeyboardEvent<HTMLButtonElement>,
+    index: number,
+    options: readonly string[],
+    setSelected: (val: any) => void
+  ) => {
+    let nextIndex = index;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+      nextIndex = (index + 1) % options.length;
+      e.preventDefault();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      nextIndex = (index - 1 + options.length) % options.length;
+      e.preventDefault();
+    } else {
+      return;
+    }
+    setSelected(options[nextIndex]);
+    const parent = e.currentTarget.parentElement;
+    if (parent) {
+      const buttons = parent.querySelectorAll<HTMLButtonElement>('button[role="radio"]');
+      buttons[nextIndex]?.focus();
+    }
+  };
 
   return (
     <div className="pt-16">
@@ -115,24 +140,27 @@ export default function ParentFeedback() {
                 Overall, how would you rate PANS?
               </legend>
               <div role="radiogroup" aria-labelledby="rating-label" className="flex gap-2">
-                {([1, 2, 3, 4, 5] as const).map((n) => {
-                  const selected = form.rating === String(n);
+                {ratingOptions.map((nStr, idx) => {
+                  const selected = form.rating === nStr;
+                  const isFocusable = form.rating === '' ? idx === 0 : selected;
                   return (
                     <button
-                      key={n}
+                      key={nStr}
                       type="button"
                       role="radio"
                       aria-checked={selected}
-                      onClick={() => set('rating', String(n) as typeof form.rating)}
-                      className={`flex-1 py-3 rounded-xl border transition-all flex items-center justify-center gap-1 ${
+                      tabIndex={isFocusable ? 0 : -1}
+                      onKeyDown={(e) => handleRadioKeyDown(e, idx, ratingOptions, (val) => set('rating', val))}
+                      onClick={() => set('rating', nStr as typeof form.rating)}
+                      className={`flex-1 py-3 rounded-xl border transition-all flex items-center justify-center gap-1 focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 ${
                         selected
                           ? 'bg-brand-primary text-white border-brand-primary'
                           : 'bg-white border-purple-200 text-stone-500 hover:border-brand-primary/40'
                       }`}
-                      aria-label={`${n} star${n > 1 ? 's' : ''}`}
+                      aria-label={`${nStr} star${nStr !== '1' ? 's' : ''}`}
                     >
                       <Star size={16} fill={selected ? 'currentColor' : 'none'} />
-                      <span className="text-sm font-semibold">{n}</span>
+                      <span className="text-sm font-semibold">{nStr}</span>
                     </button>
                   );
                 })}
@@ -145,16 +173,19 @@ export default function ParentFeedback() {
                 Was the information here helpful?
               </legend>
               <div role="radiogroup" aria-labelledby="helpful-label" className="grid grid-cols-3 gap-2">
-                {helpfulOptions.map((opt) => {
+                {helpfulOptions.map((opt, idx) => {
                   const selected = form.helpful === opt;
+                  const isFocusable = form.helpful === '' ? idx === 0 : selected;
                   return (
                     <button
                       key={opt}
                       type="button"
                       role="radio"
                       aria-checked={selected}
+                      tabIndex={isFocusable ? 0 : -1}
+                      onKeyDown={(e) => handleRadioKeyDown(e, idx, helpfulOptions, (val) => set('helpful', val))}
                       onClick={() => set('helpful', opt)}
-                      className={`py-2.5 rounded-xl border text-sm transition-all ${
+                      className={`py-2.5 rounded-xl border text-sm transition-all focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 ${
                         selected
                           ? 'bg-brand-primary text-white border-brand-primary'
                           : 'bg-white border-purple-200 text-stone-600 hover:border-brand-primary/40'
