@@ -20,13 +20,19 @@ export default function ParentFeedback() {
   const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState<Status>('idle');
   const [errorMsg, setErrorMsg] = useState('');
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const set = <K extends keyof typeof initialForm>(key: K, val: typeof initialForm[K]) =>
     setForm((f) => ({ ...f, [key]: val }));
 
+  const touch = (key: string) => setTouched((t) => ({ ...t, [key]: true }));
+
+  const messageError = form.message.trim().length < 10 ? 'Please enter a message (at least 10 characters).' : '';
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (form.message.trim().length < 10) {
+    setTouched({ message: true });
+    if (messageError) {
       setStatus('error');
       setErrorMsg('Please share at least a sentence so we can learn from your experience.');
       return;
@@ -124,7 +130,7 @@ export default function ParentFeedback() {
                       role="radio"
                       aria-checked={selected}
                       onClick={() => set('rating', String(n) as typeof form.rating)}
-                      className={`flex-1 py-3 rounded-xl border transition-all flex items-center justify-center gap-1 ${
+                      className={`flex-1 py-3 rounded-xl border transition-all flex items-center justify-center gap-1 focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 ${
                         selected
                           ? 'bg-brand-primary text-white border-brand-primary'
                           : 'bg-white border-purple-200 text-stone-500 hover:border-brand-primary/40'
@@ -154,7 +160,7 @@ export default function ParentFeedback() {
                       role="radio"
                       aria-checked={selected}
                       onClick={() => set('helpful', opt)}
-                      className={`py-2.5 rounded-xl border text-sm transition-all ${
+                      className={`py-2.5 rounded-xl border text-sm transition-all focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 ${
                         selected
                           ? 'bg-brand-primary text-white border-brand-primary'
                           : 'bg-white border-purple-200 text-stone-600 hover:border-brand-primary/40'
@@ -169,9 +175,14 @@ export default function ParentFeedback() {
 
             {/* Message */}
             <div>
-              <label htmlFor="pf-message" className="text-xs font-bold text-stone-600 uppercase tracking-wider block mb-2">
-                What would you like us to know? <span className="text-brand-primary">*</span>
-              </label>
+              <div className="flex justify-between items-center mb-2">
+                <label htmlFor="pf-message" className="text-xs font-bold text-stone-600 uppercase tracking-wider block">
+                  What would you like us to know? <span className="text-brand-primary">*</span>
+                </label>
+                {touched.message && messageError && (
+                  <span id="pf-message-error" role="alert" className="text-red-500 text-xs font-semibold">{messageError}</span>
+                )}
+              </div>
               <textarea
                 id="pf-message"
                 rows={6}
@@ -179,7 +190,14 @@ export default function ParentFeedback() {
                 placeholder="Tell us what helped, what was hard to find, what you wished was here, or anything else you'd like to share."
                 value={form.message}
                 onChange={(e) => set('message', e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-purple-200 bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none text-sm transition-all resize-none"
+                onBlur={() => touch('message')}
+                className={`w-full px-4 py-3 rounded-xl border bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none text-sm transition-all resize-none ${
+                  touched.message && messageError
+                    ? 'border-red-300 ring-2 ring-red-100 focus:border-red-400'
+                    : 'border-purple-200 focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2'
+                }`}
+                aria-invalid={touched.message && !!messageError}
+                aria-describedby={touched.message && messageError ? 'pf-message-error' : undefined}
               />
               <p className="text-xs text-stone-400 text-right mt-1">{form.message.length} / 5000</p>
             </div>
@@ -215,19 +233,19 @@ export default function ParentFeedback() {
               </div>
             </div>
 
-            <label htmlFor="pf-consent" className="flex gap-3 items-start bg-white border border-purple-100 rounded-xl p-4 cursor-pointer">
+            <div className="flex gap-3 items-start bg-white border border-purple-100 rounded-xl p-4">
               <input
                 id="pf-consent"
                 type="checkbox"
                 checked={form.consentToShare}
                 onChange={(e) => set('consentToShare', e.target.checked)}
-                className="mt-0.5 accent-brand-primary"
+                className="mt-1.5 accent-brand-primary focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 rounded shrink-0 cursor-pointer"
               />
-              <span className="text-sm text-stone-600 leading-relaxed">
+              <label htmlFor="pf-consent" className="text-sm text-stone-600 leading-relaxed cursor-pointer select-none">
                 You may share my feedback anonymously on the PANS website to help other parents.
                 <span className="block text-xs text-stone-400 mt-1">No names, locations, or identifying details will ever be shared.</span>
-              </span>
-            </label>
+              </label>
+            </div>
 
             {status === 'error' && (
               <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-4 flex gap-3">
