@@ -6,3 +6,7 @@
 ## 2026-07-20 - [Persist and Reuse AudioContext in Voice Stream Playback]
 **Learning:** Instantiating a new `AudioContext` on every audio chunk received in real-time streaming creates massive garbage collection overhead, leads to severe memory leaks, and quickly hits hard browser limits for active contexts (causing audio playback failure and page crashes). Persisting and reusing a single `AudioContext` instance via `playbackAudioCtxRef` with explicit unmount/session teardown resource cleanup resolves this entirely.
 **Action:** Always persist and reuse a single `AudioContext` across streaming callbacks instead of recreating it dynamically. Be sure to release/close the context upon component unmount and session termination.
+
+## 2026-10-24 - [Persist and Reuse AudioContext in Chat TTS Playback]
+**Learning:** Initializing a new `AudioContext` instance for every text-to-speech play request in `ChatWidget.tsx` causes a resource leak and eventually triggers browser-enforced resource limit errors (e.g. hitting Chrome/Safari limits of ~6 active contexts), crashing the audio feature. Persisting and reusing a single instance via `playbackAudioCtxRef` and closing/cleaning it up on unmount completely prevents this silent audio failure.
+**Action:** Persist and reuse a single `AudioContext` across subsequent text-to-speech audio playbacks in components like `ChatWidget.tsx` and register a `useEffect` cleanup handler to close it on unmount.
