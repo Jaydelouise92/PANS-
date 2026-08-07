@@ -42,6 +42,11 @@
     border-radius: 4px;
   }
 
+  /* Hide native Safari/iOS disclosure triangles on <summary> elements */
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
   /* Darken mid-tone text for better contrast */
   .text-stone-500 {
     color: #6b7068;
