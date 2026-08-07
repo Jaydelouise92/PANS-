@@ -17,3 +17,8 @@
 **Vulnerability:** Comparing potentially different-length authorization headers using simple string comparison (`!==`) was vulnerable to timing-based brute force attacks.
 **Learning:** `crypto.timingSafeEqual` in Node.js throws an error if compared buffers differ in length. To compare arbitrary, attacker-supplied inputs with secrets safely, we must compute SHA-256 hashes of both strings and compare those fixed-length hashes instead.
 **Prevention:** Always hash unequal/unknown-length strings before comparing them with `timingSafeEqual`, and enforce that administrative endpoints fail closed if their authentication environment variables are unconfigured.
+
+## 2025-05-24 - [Storage Vulnerability: localStorage Persistent Storage of Cleartext Credentials]
+**Vulnerability:** Dashboard access tokens/credentials stored persistently in `localStorage` remained saved on client disk indefinitely, presenting a major security risk on shared or public computers where other users could access the token.
+**Learning:** Storing authentication headers/credentials in `localStorage` allows them to persist across sessions and device restarts, increasing exposure to physical and malicious extension extraction.
+**Prevention:** Use `sessionStorage` for sensitive session tokens to ensure they are cleared automatically when the browser tab is closed, and provide an explicit "Logout" button to let users clean up session state immediately.
