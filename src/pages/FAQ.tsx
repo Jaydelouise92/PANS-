@@ -71,7 +71,7 @@ export default function FAQ() {
         <div className="max-w-3xl mx-auto space-y-4">
           {faqs.map((f) => (
             <details key={f.q} className="group bg-brand-secondary border border-purple-100 rounded-xl p-5 hover:border-brand-primary/40 transition">
-              <summary className="cursor-pointer font-semibold text-stone-900 flex items-center justify-between gap-3 list-none">
+              <summary className="cursor-pointer font-semibold text-stone-900 flex items-center justify-between gap-3 list-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 rounded-lg">
                 <span>{f.q}</span>
                 <ArrowRight size={16} className="text-brand-primary shrink-0 transition-transform group-open:rotate-90" />
               </summary>
