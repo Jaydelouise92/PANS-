@@ -15,6 +15,11 @@
 }
 
 @layer base {
+  /* Globally hide native Safari/iOS disclosure markers */
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
   html {
     scroll-behavior: smooth;
     font-size: 16px;
