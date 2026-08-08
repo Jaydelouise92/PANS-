@@ -65,7 +65,7 @@ export default function Dashboard() {
         setFeedbacks(data.feedbacks || []);
         setStories(data.stories || []);
         setIsAuthenticated(true);
-        localStorage.setItem('pans_dashboard_token', token);
+        sessionStorage.setItem('pans_dashboard_token', token);
       } else {
         setLoginError('Invalid dashboard password.');
         setIsAuthenticated(false);
@@ -79,13 +79,19 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    const savedToken = localStorage.getItem('pans_dashboard_token');
+    const savedToken = sessionStorage.getItem('pans_dashboard_token');
     if (savedToken) {
       fetchDashboardData(savedToken);
     } else {
       setLoading(false);
     }
   }, []);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('pans_dashboard_token');
+    setIsAuthenticated(false);
+    setPassword('');
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -161,25 +167,33 @@ export default function Dashboard() {
             <h1 className="text-3xl font-serif text-stone-900">Site Management</h1>
             <p className="text-stone-500">Track activity and manage inquiries.</p>
           </div>
-          <div className="flex bg-white p-1 rounded-2xl border border-purple-100 shadow-sm">
-            {[
-              { id: 'overview', label: 'Overview' },
-              { id: 'contacts', label: 'Messages' },
-              { id: 'feedback', label: 'Feedback' },
-              { id: 'stories', label: 'Stories' }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-brand-primary text-white'
-                    : 'text-stone-500 hover:text-brand-primary'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex bg-white p-1 rounded-2xl border border-purple-100 shadow-sm">
+              {[
+                { id: 'overview', label: 'Overview' },
+                { id: 'contacts', label: 'Messages' },
+                { id: 'feedback', label: 'Feedback' },
+                { id: 'stories', label: 'Stories' }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                    activeTab === tab.id
+                      ? 'bg-brand-primary text-white'
+                      : 'text-stone-500 hover:text-brand-primary'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-stone-100 hover:bg-red-50 hover:text-red-600 text-stone-600 font-bold text-sm rounded-xl transition-all border border-stone-200"
+            >
+              Logout
+            </button>
           </div>
         </header>
 
