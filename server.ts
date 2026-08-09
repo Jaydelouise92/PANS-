@@ -1,12 +1,10 @@
 import crypto from "crypto";
 import express from "express";
-import crypto from "crypto";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import cors from "cors";
 import Database from "better-sqlite3";
 import { GoogleGenAI, ThinkingLevel, Modality, type Part, type GenerateContentParameters } from "@google/genai";
-import crypto from "crypto";
 
 dotenv.config();
 
@@ -46,6 +44,11 @@ db.exec(`
     urgency TEXT,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  -- Descending indexes on createdAt for faster ORDER BY queries on dashboard
+  CREATE INDEX IF NOT EXISTS idx_contacts_createdAt_desc ON contacts (createdAt DESC);
+  CREATE INDEX IF NOT EXISTS idx_feedback_createdAt_desc ON feedback (createdAt DESC);
+  CREATE INDEX IF NOT EXISTS idx_stories_createdAt_desc ON stories (createdAt DESC);
 `);
 
 // ─────────────────────────────────────────────────────────
