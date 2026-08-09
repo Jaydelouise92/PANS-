@@ -65,7 +65,7 @@ export default function Dashboard() {
         setFeedbacks(data.feedbacks || []);
         setStories(data.stories || []);
         setIsAuthenticated(true);
-        localStorage.setItem('pans_dashboard_token', token);
+        sessionStorage.setItem('pans_dashboard_token', token);
       } else {
         setLoginError('Invalid dashboard password.');
         setIsAuthenticated(false);
@@ -79,7 +79,15 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    const savedToken = localStorage.getItem('pans_dashboard_token');
+    let savedToken = sessionStorage.getItem('pans_dashboard_token');
+    // Migration fallback for existing sessions
+    if (!savedToken) {
+      savedToken = localStorage.getItem('pans_dashboard_token');
+      if (savedToken) {
+        sessionStorage.setItem('pans_dashboard_token', savedToken);
+        localStorage.removeItem('pans_dashboard_token');
+      }
+    }
     if (savedToken) {
       fetchDashboardData(savedToken);
     } else {
@@ -90,6 +98,16 @@ export default function Dashboard() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     fetchDashboardData(password);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem('pans_dashboard_token');
+    localStorage.removeItem('pans_dashboard_token');
+    setIsAuthenticated(false);
+    setPassword('');
+    setContacts([]);
+    setFeedbacks([]);
+    setStories([]);
   };
 
   if (loading && !isAuthenticated) {
@@ -161,25 +179,33 @@ export default function Dashboard() {
             <h1 className="text-3xl font-serif text-stone-900">Site Management</h1>
             <p className="text-stone-500">Track activity and manage inquiries.</p>
           </div>
-          <div className="flex bg-white p-1 rounded-2xl border border-purple-100 shadow-sm">
-            {[
-              { id: 'overview', label: 'Overview' },
-              { id: 'contacts', label: 'Messages' },
-              { id: 'feedback', label: 'Feedback' },
-              { id: 'stories', label: 'Stories' }
-            ].map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-brand-primary text-white'
-                    : 'text-stone-500 hover:text-brand-primary'
-                }`}
-              >
-                {tab.label}
-              </button>
-            ))}
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex bg-white p-1 rounded-2xl border border-purple-100 shadow-sm">
+              {[
+                { id: 'overview', label: 'Overview' },
+                { id: 'contacts', label: 'Messages' },
+                { id: 'feedback', label: 'Feedback' },
+                { id: 'stories', label: 'Stories' }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+                    activeTab === tab.id
+                      ? 'bg-brand-primary text-white'
+                      : 'text-stone-500 hover:text-brand-primary'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-stone-200 hover:bg-stone-300 text-stone-700 hover:text-stone-900 rounded-2xl text-sm font-bold transition-all shadow-sm"
+            >
+              Logout
+            </button>
           </div>
         </header>
 
