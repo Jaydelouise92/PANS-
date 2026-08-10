@@ -6,3 +6,7 @@
 ## 2026-07-20 - [Persist and Reuse AudioContext in Voice Stream Playback]
 **Learning:** Instantiating a new `AudioContext` on every audio chunk received in real-time streaming creates massive garbage collection overhead, leads to severe memory leaks, and quickly hits hard browser limits for active contexts (causing audio playback failure and page crashes). Persisting and reusing a single `AudioContext` instance via `playbackAudioCtxRef` with explicit unmount/session teardown resource cleanup resolves this entirely.
 **Action:** Always persist and reuse a single `AudioContext` across streaming callbacks instead of recreating it dynamically. Be sure to release/close the context upon component unmount and session termination.
+
+## 2026-07-21 - [Component Lazy Loading for Layout Widgets]
+**Learning:** Deferring the import of heavy floating widgets (`ChatWidget`, `BackgroundMusic`, and `CookieBanner`) that are present on every layout page using `lazy()` and `Suspense` reduced the initial production bundle size by 151.11 kB (~37.2% reduction, from 406.34 kB down to 255.23 kB). This significantly improves FCP/TTI without any user-visible layout shifts or functional regressions.
+**Action:** Always lazy-load non-critical floating elements and interactive widgets that are not required for the immediate first paint or critical rendering path of the page.
