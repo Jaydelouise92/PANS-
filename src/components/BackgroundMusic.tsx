@@ -70,7 +70,9 @@ export default function BackgroundMusic() {
           onClick={toggle}
           whileTap={{ scale: 0.92 }}
           title={playing ? 'Pause background music' : 'Play background music'}
-          className="w-11 h-11 rounded-full bg-white border border-purple-200 shadow-md flex items-center justify-center text-brand-primary hover:bg-brand-secondary transition-colors"
+          aria-label={playing ? 'Pause background music' : 'Play background music'}
+          aria-pressed={playing}
+          className="w-11 h-11 rounded-full bg-white border border-purple-200 shadow-md flex items-center justify-center text-brand-primary hover:bg-brand-secondary transition-colors focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:outline-none"
         >
           {playing ? (
             <motion.div className="flex items-end gap-[2px] h-4">
@@ -95,8 +97,10 @@ export default function BackgroundMusic() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               onClick={() => setShowVolume((v) => !v)}
-              className="w-8 h-8 rounded-full bg-white border border-purple-100 shadow-sm flex items-center justify-center text-stone-400 hover:text-brand-primary transition-colors"
+              className="w-8 h-8 rounded-full bg-white border border-purple-100 shadow-sm flex items-center justify-center text-stone-400 hover:text-brand-primary transition-colors focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:outline-none"
               title="Adjust volume"
+              aria-label="Adjust volume"
+              aria-expanded={showVolume}
             >
               {volume === 0 ? <VolumeX size={13} /> : <Volume2 size={13} />}
             </motion.button>
@@ -120,7 +124,8 @@ export default function BackgroundMusic() {
               step={0.01}
               value={volume}
               onChange={handleVolume}
-              className="w-20 accent-brand-primary"
+              className="w-20 accent-brand-primary focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:outline-none"
+              aria-label="Volume level"
             />
             <Volume2 size={12} className="text-brand-primary" />
           </motion.div>
