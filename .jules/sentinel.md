@@ -17,3 +17,8 @@
 **Vulnerability:** Comparing potentially different-length authorization headers using simple string comparison (`!==`) was vulnerable to timing-based brute force attacks.
 **Learning:** `crypto.timingSafeEqual` in Node.js throws an error if compared buffers differ in length. To compare arbitrary, attacker-supplied inputs with secrets safely, we must compute SHA-256 hashes of both strings and compare those fixed-length hashes instead.
 **Prevention:** Always hash unequal/unknown-length strings before comparing them with `timingSafeEqual`, and enforce that administrative endpoints fail closed if their authentication environment variables are unconfigured.
+
+## 2025-05-23 - [De-duplication of Stateful Security Interceptors]
+**Vulnerability:** Redundant, sequential invocations of stateful rate-limiting check functions inside request handlers caused a self-inflicted Denial of Service (premature 429 errors) due to double-incrementing client request counters.
+**Learning:** Security controls that maintain state across invocations (like rate limiters) must never be executed repeatedly in the same execution path. When removing such redundant security checks, explicitly document the change as a "de-duplication" to ensure future code reviewers do not misinterpret the simplification as a removal of critical protection.
+**Prevention:** Audit all stateful middleware and utility invocations to ensure they execute exactly once per request cycle, and use clear inline comments to document any architectural de-duplication.
