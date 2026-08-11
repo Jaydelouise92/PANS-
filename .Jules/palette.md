@@ -1,3 +1,7 @@
 ## 2026-07-21 - Form Control Label Wrapping and Accessibility Links
 **Learning:** HTML nested label wrapping (e.g. `<label><span>Label</span><input /></label>`) can sometimes cause accessibility and screen-reader mapping problems, especially when validation errors are also placed inside or outside the label without explicit programmatic associations. Refactoring these fields into standalone containers with an explicit `<label htmlFor={id}>` coupled with `aria-invalid` and `aria-describedby` linked to validation elements (marked with `role="alert"`) ensures a much more robust and compliant screen-reader experience.
 **Action:** Use standalone containers with explicit `htmlFor` and `id` linking, along with programmatic error association, rather than relying on automatic nested label mapping.
+
+## 2026-07-22 - Custom Rounded Focus Ring Alignment on Floating Circular Controls
+**Learning:** Circular floating micro-widgets (such as background music or voice assistants) often look unpolished or clipped with default rectangular browser focus rings. Adding customized, shape-matching rings using tailwind's offset utilities (`focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 focus-visible:outline-none`) maintains robust keyboard focus visibility while fully respecting the circular visual geometry of the element.
+**Action:** Ensure floating circular triggers and actions explicitly match their parent border radii in focus states, rather than fallback to standard rectangular outline behaviors.
