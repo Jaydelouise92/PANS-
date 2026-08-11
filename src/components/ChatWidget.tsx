@@ -116,6 +116,9 @@ const ChatWidget = () => {
   const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef(messages);
+  // Persist and reuse a single AudioContext for playback to prevent memory leaks,
+  // high garbage collection overhead, and browser-enforced resource limit errors.
+  const playbackAudioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -124,6 +127,16 @@ const ChatWidget = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
+
+  // Clean up playback audio context resources on unmount
+  useEffect(() => {
+    return () => {
+      if (playbackAudioCtxRef.current) {
+        playbackAudioCtxRef.current.close().catch(() => {});
+        playbackAudioCtxRef.current = null;
+      }
+    };
+  }, []);
 
   const speakText = React.useCallback(async (text: string) => {
     try {
@@ -135,7 +148,13 @@ const ChatWidget = () => {
       const data = await res.json();
       const base64Audio = data.audio;
       if (base64Audio) {
-        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+        if (!playbackAudioCtxRef.current) {
+          playbackAudioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+        }
+        const audioContext = playbackAudioCtxRef.current;
+        if (audioContext.state === 'suspended') {
+          await audioContext.resume().catch(() => {});
+        }
         const arrayBuffer = Uint8Array.from(atob(base64Audio), c => c.charCodeAt(0)).buffer;
         const float32Array = new Float32Array(arrayBuffer.byteLength / 2);
         const view = new DataView(arrayBuffer);
