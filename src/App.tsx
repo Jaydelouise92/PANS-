@@ -29,6 +29,7 @@ const CourtTermsGuide = lazy(() => import('./pages/guides/CourtTermsGuide'));
 const OrganiseDocumentsGuide = lazy(() => import('./pages/guides/OrganiseDocumentsGuide'));
 const Video = lazy(() => import('./pages/Video'));
 const CPProcessFromFirstContact = lazy(() => import('./pages/articles/CPProcessFromFirstContact'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Privacy = lazy(() => import('./pages/Privacy'));
 const ParentFeedback = lazy(() => import('./pages/ParentFeedback'));
 const Copyright = lazy(() => import('./pages/Copyright'));
@@ -96,6 +97,7 @@ function AppLayout() {
             <Route path="/services" element={<Services />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/video" element={<Video />} />
+            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="*" element={<Home />} />
           </Routes>
         </Suspense>
