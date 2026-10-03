@@ -1,3 +1,4 @@
+import React, { memo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import VideoTemplate from '../components/video/VideoTemplate';
@@ -736,8 +737,8 @@ export default function Home() {
   );
 }
 
-// ── Reusable card components ──────────────────────────────────
-function HelpCard({
+// ── Reusable card components (memoized to prevent redundant re-renders) ──
+const HelpCard = memo(function HelpCard({
   to,
   icon,
   title,
@@ -766,9 +767,9 @@ function HelpCard({
       <p className="text-stone-600 text-sm leading-relaxed">{description}</p>
     </Link>
   );
-}
+});
 
-function StartCard({
+const StartCard = memo(function StartCard({
   to,
   title,
   description,
@@ -803,9 +804,9 @@ function StartCard({
       </div>
     </Link>
   );
-}
+});
 
-function GuideCard({
+const GuideCard = memo(function GuideCard({
   to,
   icon,
   title,
@@ -828,9 +829,9 @@ function GuideCard({
       <p className="text-stone-600 text-sm leading-relaxed">{description}</p>
     </Link>
   );
-}
+});
 
-function Faq({
+const Faq = memo(function Faq({
   question,
   answer,
   link,
@@ -856,4 +857,4 @@ function Faq({
       </div>
     </details>
   );
-}
+});
