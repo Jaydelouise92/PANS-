@@ -68,15 +68,21 @@ export default function Footer() {
             <h4 className="font-bold text-stone-700 mb-4 text-xs uppercase tracking-wider flex items-center gap-1.5"><Phone size={12} /> Key Numbers</h4>
             <ul className="space-y-3">
               {[
-                { name: 'Lifeline (crisis)', number: '13 11 14', note: '24/7' },
-                { name: 'Victoria Legal Aid', number: '1300 792 387', note: 'Free legal advice' },
-                { name: 'Child Protection', number: '13 12 78', note: 'DFFH' },
-                { name: 'Parentline', number: '13 22 89', note: 'Mon–Fri' },
-                { name: 'Emergency', number: '000', note: 'Immediate danger' },
+                { name: 'Lifeline (crisis)', number: '13 11 14', tel: '131114', note: '24/7' },
+                { name: 'Victoria Legal Aid', number: '1300 792 387', tel: '1300792387', note: 'Free legal advice' },
+                { name: 'Child Protection', number: '13 12 78', tel: '131278', note: 'DFFH' },
+                { name: 'Parentline', number: '13 22 89', tel: '132289', note: 'Mon–Fri' },
+                { name: 'Emergency', number: '000', tel: '000', note: 'Immediate danger' },
               ].map((c, i) => (
                 <li key={i} className="flex flex-col">
                   <span className="text-xs text-stone-500">{c.name} <span className="text-stone-400">({c.note})</span></span>
-                  <span className="font-bold text-brand-primary text-sm">{c.number}</span>
+                  <a
+                    href={`tel:${c.tel}`}
+                    className="font-bold text-brand-primary text-sm hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:ring-offset-1 rounded-sm w-fit"
+                    aria-label={`Call ${c.name} on ${c.number}`}
+                  >
+                    {c.number}
+                  </a>
                 </li>
               ))}
             </ul>
