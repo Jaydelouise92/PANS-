@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, ArrowLeft, Search } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, Search, X } from 'lucide-react';
 import PrintButton from '../../components/PrintButton';
 import LastUpdated from '../../components/LastUpdated';
 
@@ -101,14 +101,33 @@ export default function CourtTermsGuide() {
             placeholder="Search terms…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 rounded-xl border border-purple-200 bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none text-sm"
+            className="w-full pl-10 pr-10 py-3 rounded-xl border border-purple-200 bg-white focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20 outline-none text-sm"
           />
+          {search && (
+            <button
+              type="button"
+              onClick={() => setSearch('')}
+              aria-label="Clear search terms"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-stone-400 hover:text-stone-600 focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none rounded-md"
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
 
         {/* Terms */}
         <div className="space-y-3">
           {filtered.length === 0 ? (
-            <p className="text-stone-400 text-sm text-center py-8">No terms match your search.</p>
+            <div className="text-center py-8 space-y-3">
+              <p className="text-stone-500 text-sm">No terms match "{search}".</p>
+              <button
+                type="button"
+                onClick={() => setSearch('')}
+                className="text-xs text-brand-primary font-bold hover:underline focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none rounded-md px-2 py-1"
+              >
+                Clear search
+              </button>
+            </div>
           ) : (
             filtered.map((t, i) => (
               <div key={i} className="bg-brand-secondary border border-purple-100 rounded-xl p-5">
