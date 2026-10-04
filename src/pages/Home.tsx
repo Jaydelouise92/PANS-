@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import VideoTemplate from '../components/video/VideoTemplate';
@@ -737,123 +738,153 @@ export default function Home() {
 }
 
 // ── Reusable card components ──────────────────────────────────
-function HelpCard({
-  to,
-  icon,
-  title,
-  description,
-}: {
-  to: string;
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}) {
-  return (
-    <Link
-      to={to}
-      className="group block bg-white border border-purple-100 rounded-2xl p-6 hover:border-brand-primary/40 hover:shadow-lg hover:-translate-y-0.5 transition-all"
-    >
-      <div className="w-12 h-12 rounded-xl bg-brand-soft text-brand-primary flex items-center justify-center mb-4 group-hover:bg-brand-primary group-hover:text-white transition">
-        {icon}
-      </div>
-      <h3 className="font-semibold text-stone-900 mb-2 flex items-center gap-2">
-        {title}
-        <ArrowRight
-          size={16}
-          className="text-brand-primary opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
-        />
-      </h3>
-      <p className="text-stone-600 text-sm leading-relaxed">{description}</p>
-    </Link>
-  );
-}
-
-function StartCard({
-  to,
-  title,
-  description,
-  icon,
-}: {
-  to: string;
-  title: string;
-  description: string;
-  icon?: React.ReactNode;
-}) {
-  return (
-    <Link
-      to={to}
-      className="block bg-white border border-purple-100 rounded-xl p-5 hover:border-brand-primary/40 hover:shadow-sm transition group"
-    >
-      <div className="flex gap-4 items-start">
-        {icon && (
-          <div className="w-10 h-10 rounded-lg bg-brand-soft text-brand-primary flex items-center justify-center shrink-0">
-            {icon}
-          </div>
-        )}
-        <div className="flex-1">
-          <h3 className="font-semibold text-stone-900 mb-1 flex items-center gap-2">
-            {title}
-            <ArrowRight
-              size={16}
-              className="text-brand-primary opacity-0 group-hover:opacity-100 transition"
-            />
-          </h3>
-          <p className="text-stone-600 text-sm leading-relaxed">{description}</p>
+// ⚡ Bolt Optimization: Wrap static card sub-components in React.memo to prevent
+// unnecessary re-renders when parent or ancestor components re-render.
+const HelpCard = React.memo(
+  function HelpCard({
+    to,
+    icon,
+    title,
+    description,
+  }: {
+    to: string;
+    icon: React.ReactNode;
+    title: string;
+    description: string;
+  }) {
+    return (
+      <Link
+        to={to}
+        className="group block bg-white border border-purple-100 rounded-2xl p-6 hover:border-brand-primary/40 hover:shadow-lg hover:-translate-y-0.5 transition-all"
+      >
+        <div className="w-12 h-12 rounded-xl bg-brand-soft text-brand-primary flex items-center justify-center mb-4 group-hover:bg-brand-primary group-hover:text-white transition">
+          {icon}
         </div>
-      </div>
-    </Link>
-  );
-}
+        <h3 className="font-semibold text-stone-900 mb-2 flex items-center gap-2">
+          {title}
+          <ArrowRight
+            size={16}
+            className="text-brand-primary opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all"
+          />
+        </h3>
+        <p className="text-stone-600 text-sm leading-relaxed">{description}</p>
+      </Link>
+    );
+  },
+  (prev, next) =>
+    prev.to === next.to &&
+    prev.title === next.title &&
+    prev.description === next.description &&
+    (prev.icon as any)?.type === (next.icon as any)?.type
+);
 
-function GuideCard({
-  to,
-  icon,
-  title,
-  description,
-}: {
-  to: string;
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}) {
-  return (
-    <Link
-      to={to}
-      className="block bg-brand-secondary border border-purple-100 rounded-xl p-5 hover:border-brand-primary/40 hover:bg-white hover:shadow-sm transition"
-    >
-      <div className="w-10 h-10 rounded-lg bg-white text-brand-primary flex items-center justify-center mb-3 border border-purple-100">
-        {icon}
-      </div>
-      <h3 className="font-semibold text-stone-900 mb-1.5">{title}</h3>
-      <p className="text-stone-600 text-sm leading-relaxed">{description}</p>
-    </Link>
-  );
-}
+const StartCard = React.memo(
+  function StartCard({
+    to,
+    title,
+    description,
+    icon,
+  }: {
+    to: string;
+    title: string;
+    description: string;
+    icon?: React.ReactNode;
+  }) {
+    return (
+      <Link
+        to={to}
+        className="block bg-white border border-purple-100 rounded-xl p-5 hover:border-brand-primary/40 hover:shadow-sm transition group"
+      >
+        <div className="flex gap-4 items-start">
+          {icon && (
+            <div className="w-10 h-10 rounded-lg bg-brand-soft text-brand-primary flex items-center justify-center shrink-0">
+              {icon}
+            </div>
+          )}
+          <div className="flex-1">
+            <h3 className="font-semibold text-stone-900 mb-1 flex items-center gap-2">
+              {title}
+              <ArrowRight
+                size={16}
+                className="text-brand-primary opacity-0 group-hover:opacity-100 transition"
+              />
+            </h3>
+            <p className="text-stone-600 text-sm leading-relaxed">{description}</p>
+          </div>
+        </div>
+      </Link>
+    );
+  },
+  (prev, next) =>
+    prev.to === next.to &&
+    prev.title === next.title &&
+    prev.description === next.description &&
+    (prev.icon as any)?.type === (next.icon as any)?.type
+);
 
-function Faq({
-  question,
-  answer,
-  link,
-}: {
-  question: string;
-  answer: string;
-  link: { to: string; label: string };
-}) {
-  return (
-    <details className="group bg-white border border-purple-100 rounded-xl p-5 hover:border-brand-primary/40 transition">
-      <summary className="cursor-pointer font-semibold text-stone-900 flex items-center justify-between gap-3 list-none">
-        <span>{question}</span>
-        <ArrowRight
-          size={16}
-          className="text-brand-primary shrink-0 transition-transform group-open:rotate-90"
-        />
-      </summary>
-      <div className="mt-3 pt-3 border-t border-stone-100">
-        <p className="text-stone-700 leading-relaxed mb-3">{answer}</p>
-        <Link to={link.to} className="text-brand-primary font-semibold text-sm hover:underline inline-flex items-center gap-1">
-          {link.label} <ArrowRight size={14} />
-        </Link>
-      </div>
-    </details>
-  );
-}
+const GuideCard = React.memo(
+  function GuideCard({
+    to,
+    icon,
+    title,
+    description,
+  }: {
+    to: string;
+    icon: React.ReactNode;
+    title: string;
+    description: string;
+  }) {
+    return (
+      <Link
+        to={to}
+        className="block bg-brand-secondary border border-purple-100 rounded-xl p-5 hover:border-brand-primary/40 hover:bg-white hover:shadow-sm transition"
+      >
+        <div className="w-10 h-10 rounded-lg bg-white text-brand-primary flex items-center justify-center mb-3 border border-purple-100">
+          {icon}
+        </div>
+        <h3 className="font-semibold text-stone-900 mb-1.5">{title}</h3>
+        <p className="text-stone-600 text-sm leading-relaxed">{description}</p>
+      </Link>
+    );
+  },
+  (prev, next) =>
+    prev.to === next.to &&
+    prev.title === next.title &&
+    prev.description === next.description &&
+    (prev.icon as any)?.type === (next.icon as any)?.type
+);
+
+const Faq = React.memo(
+  function Faq({
+    question,
+    answer,
+    link,
+  }: {
+    question: string;
+    answer: string;
+    link: { to: string; label: string };
+  }) {
+    return (
+      <details className="group bg-white border border-purple-100 rounded-xl p-5 hover:border-brand-primary/40 transition">
+        <summary className="cursor-pointer font-semibold text-stone-900 flex items-center justify-between gap-3 list-none">
+          <span>{question}</span>
+          <ArrowRight
+            size={16}
+            className="text-brand-primary shrink-0 transition-transform group-open:rotate-90"
+          />
+        </summary>
+        <div className="mt-3 pt-3 border-t border-stone-100">
+          <p className="text-stone-700 leading-relaxed mb-3">{answer}</p>
+          <Link to={link.to} className="text-brand-primary font-semibold text-sm hover:underline inline-flex items-center gap-1">
+            {link.label} <ArrowRight size={14} />
+          </Link>
+        </div>
+      </details>
+    );
+  },
+  (prev, next) =>
+    prev.question === next.question &&
+    prev.answer === next.answer &&
+    prev.link.to === next.link.to &&
+    prev.link.label === next.link.label
+);
