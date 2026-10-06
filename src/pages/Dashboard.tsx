@@ -43,6 +43,21 @@ type Story = {
   createdAt: string;
 };
 
+// Extracted outside component to prevent re-creation on renders and unmount/remount churn
+const StatCard = React.memo(({ icon: Icon, label, value, color }: any) => (
+  <div className="bg-white p-6 rounded-3xl border border-purple-50 shadow-sm">
+    <div className="flex items-start justify-between">
+      <div>
+        <p className="text-stone-500 text-sm mb-1">{label}</p>
+        <h3 className="text-3xl font-serif text-stone-900">{value}</h3>
+      </div>
+      <div className={`p-3 rounded-2xl ${color}`}>
+        <Icon size={24} className="text-white" />
+      </div>
+    </div>
+  </div>
+));
+
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'overview' | 'contacts' | 'feedback' | 'stories'>('overview');
   const [contacts, setContacts] = useState<ContactSubmission[]>([]);
@@ -52,6 +67,27 @@ export default function Dashboard() {
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Memoized average rating calculation to prevent redundant .reduce() on unrelated renders
+  const avgRating = React.useMemo(() => {
+    if (!feedbacks.length) return '0.0';
+    const total = feedbacks.reduce((acc, f) => acc + (parseInt(f.rating) || 0), 0);
+    return (total / feedbacks.length).toFixed(1);
+  }, [feedbacks]);
+
+  // Memoized contact filtering for efficient message searching
+  const filteredContacts = React.useMemo(() => {
+    if (!searchQuery.trim()) return contacts;
+    const q = searchQuery.toLowerCase();
+    return contacts.filter((c) =>
+      c.name.toLowerCase().includes(q) ||
+      c.email.toLowerCase().includes(q) ||
+      c.subject.toLowerCase().includes(q) ||
+      c.supportType.toLowerCase().includes(q) ||
+      c.message.toLowerCase().includes(q)
+    );
+  }, [contacts, searchQuery]);
 
   const fetchDashboardData = async (token: string) => {
     setLoading(true);
@@ -145,20 +181,6 @@ export default function Dashboard() {
     );
   }
 
-  const StatCard = ({ icon: Icon, label, value, color }: any) => (
-    <div className="bg-white p-6 rounded-3xl border border-purple-50 shadow-sm">
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-stone-500 text-sm mb-1">{label}</p>
-          <h3 className="text-3xl font-serif text-stone-900">{value}</h3>
-        </div>
-        <div className={`p-3 rounded-2xl ${color}`}>
-          <Icon size={24} className="text-white" />
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <div className="pt-24 px-6 pb-20 bg-stone-50 min-h-screen">
       <div className="max-w-6xl mx-auto">
@@ -202,11 +224,7 @@ export default function Dashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <StatCard icon={Users} label="New Clients" value={contacts.length} color="bg-blue-500" />
               <StatCard icon={MessageSquare} label="Total Messages" value={contacts.length} color="bg-brand-primary" />
-              <StatCard icon={Star} label="Avg Rating" value={
-                feedbacks.length > 0
-                  ? (feedbacks.reduce((acc, f) => acc + (parseInt(f.rating) || 0), 0) / feedbacks.length).toFixed(1)
-                  : '0.0'
-              } color="bg-amber-500" />
+              <StatCard icon={Star} label="Avg Rating" value={avgRating} color="bg-amber-500" />
               <StatCard icon={BookOpen} label="Stories Submitted" value={stories.length} color="bg-emerald-500" />
             </div>
 
@@ -275,6 +293,8 @@ export default function Dashboard() {
                 <input
                   type="text"
                   placeholder="Search messages..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 pr-4 py-2 bg-stone-50 border border-stone-200 rounded-xl text-sm outline-none focus:border-brand-primary w-full md:w-64"
                 />
               </div>
@@ -291,7 +311,7 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-stone-100">
-                  {contacts.map((c) => (
+                  {filteredContacts.map((c) => (
                     <tr key={c.id} className="hover:bg-stone-50 transition-colors">
                       <td className="px-6 py-4 text-sm text-stone-500 whitespace-nowrap">{new Date(c.createdAt).toLocaleDateString()}</td>
                       <td className="px-6 py-4">
@@ -309,6 +329,13 @@ export default function Dashboard() {
                       </td>
                     </tr>
                   ))}
+                  {filteredContacts.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="px-6 py-8 text-center text-stone-400 text-sm">
+                        No messages found matching "{searchQuery}".
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
