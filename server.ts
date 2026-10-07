@@ -182,14 +182,13 @@ async function startServer() {
 
   // ── /api/chat ──────────────────────────────────────────────
   app.post("/api/chat", async (req, res) => {
+    // ⚡ Bolt Optimization: Rate limiter increments token counts on invocation.
+    // Check once per request to avoid double-counting usage and premature 429 exhaustion.
     if (!checkChatLimit(getRateLimitKey(req))) {
       return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "AI chat is not configured. Please contact PANS directly via the contact form." });
-    }
-    if (!checkChatLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { messages, thinkingMode } = req.body;
     if (!Array.isArray(messages) || messages.length === 0) {
@@ -225,14 +224,13 @@ async function startServer() {
 
   // ── /api/tts ───────────────────────────────────────────────
   app.post("/api/tts", async (req, res) => {
+    // ⚡ Bolt Optimization: Rate limiter increments token counts on invocation.
+    // Check once per request to avoid double-counting usage and premature 429 exhaustion.
     if (!checkTtsLimit(getRateLimitKey(req))) {
       return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "TTS not configured." });
-    }
-    if (!checkTtsLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { text } = req.body;
     if (typeof text !== "string" || text.length === 0 || text.length > 1000) {
