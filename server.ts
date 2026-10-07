@@ -177,6 +177,16 @@ async function startServer() {
   app.set("trust proxy", 1);
   app.disable("x-powered-by");
 
+  // Security headers middleware for defense-in-depth protection against MIME sniffing, clickjacking, and feature abuse
+  app.use((_req, res, next) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    res.setHeader("X-XSS-Protection", "1; mode=block");
+    res.setHeader("Permissions-Policy", "geolocation=(), camera=(), microphone=()");
+    next();
+  });
+
   app.use(cors());
   app.use(express.json({ limit: "128kb" }));
 
