@@ -177,19 +177,27 @@ async function startServer() {
   app.set("trust proxy", 1);
   app.disable("x-powered-by");
 
+  // Standard Security Headers Middleware
+  app.use((req, res, next) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    res.setHeader("X-XSS-Protection", "1; mode=block");
+    res.setHeader("Permissions-Policy", "camera=(), microphone=(self), geolocation=()");
+    next();
+  });
+
   app.use(cors());
   app.use(express.json({ limit: "128kb" }));
 
   // ── /api/chat ──────────────────────────────────────────────
   app.post("/api/chat", async (req, res) => {
+    // Rate limit check enforced (de-duplicated to prevent double-counting usage counters per request)
     if (!checkChatLimit(getRateLimitKey(req))) {
       return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "AI chat is not configured. Please contact PANS directly via the contact form." });
-    }
-    if (!checkChatLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { messages, thinkingMode } = req.body;
     if (!Array.isArray(messages) || messages.length === 0) {
@@ -225,14 +233,12 @@ async function startServer() {
 
   // ── /api/tts ───────────────────────────────────────────────
   app.post("/api/tts", async (req, res) => {
+    // Rate limit check enforced (de-duplicated to prevent double-counting usage counters per request)
     if (!checkTtsLimit(getRateLimitKey(req))) {
       return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     if (!process.env.GEMINI_API_KEY) {
       return res.status(503).json({ error: "TTS not configured." });
-    }
-    if (!checkTtsLimit(getRateLimitKey(req))) {
-      return res.status(429).json({ error: "Too many requests. Please wait a few minutes and try again." });
     }
     const { text } = req.body;
     if (typeof text !== "string" || text.length === 0 || text.length > 1000) {
