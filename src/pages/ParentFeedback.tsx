@@ -72,7 +72,7 @@ export default function ParentFeedback() {
             </p>
             <button
               onClick={() => setStatus('idle')}
-              className="bg-brand-primary text-white px-6 py-3 rounded-full font-bold hover:bg-brand-primary/90 transition-colors text-sm"
+              className="bg-brand-primary text-white px-6 py-3 rounded-full font-bold hover:bg-brand-primary/90 transition-colors text-sm focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2"
             >
               Share more feedback
             </button>
@@ -124,7 +124,7 @@ export default function ParentFeedback() {
                       role="radio"
                       aria-checked={selected}
                       onClick={() => set('rating', String(n) as typeof form.rating)}
-                      className={`flex-1 py-3 rounded-xl border transition-all flex items-center justify-center gap-1 ${
+                      className={`flex-1 py-3 rounded-xl border transition-all flex items-center justify-center gap-1 focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 ${
                         selected
                           ? 'bg-brand-primary text-white border-brand-primary'
                           : 'bg-white border-purple-200 text-stone-500 hover:border-brand-primary/40'
@@ -154,7 +154,7 @@ export default function ParentFeedback() {
                       role="radio"
                       aria-checked={selected}
                       onClick={() => set('helpful', opt)}
-                      className={`py-2.5 rounded-xl border text-sm transition-all ${
+                      className={`py-2.5 rounded-xl border text-sm transition-all focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 ${
                         selected
                           ? 'bg-brand-primary text-white border-brand-primary'
                           : 'bg-white border-purple-200 text-stone-600 hover:border-brand-primary/40'
@@ -239,7 +239,7 @@ export default function ParentFeedback() {
             <button
               type="submit"
               disabled={status === 'sending'}
-              className="w-full bg-brand-primary text-white py-4 rounded-xl font-bold hover:bg-brand-primary/90 transition-all shadow-lg shadow-brand-primary/20 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-brand-primary text-white py-4 rounded-xl font-bold hover:bg-brand-primary/90 transition-all shadow-lg shadow-brand-primary/20 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2"
             >
               {status === 'sending' ? 'Sending…' : (<><Heart size={16} /> Send feedback</>)}
             </button>
