@@ -113,7 +113,8 @@ export default function Resources() {
       </section>
 
       <div className="w-full overflow-hidden max-h-64">
-        <img src="/documents-folder.png" alt="Organised documents and guides" className="w-full object-cover object-center" />
+        {/* Bolt: Added lazy loading and async decoding to prevent blocking initial render */}
+        <img src="/documents-folder.png" alt="Organised documents and guides" loading="lazy" decoding="async" className="w-full object-cover object-center" />
       </div>
 
       {/* Main PANS guides */}
@@ -122,9 +123,10 @@ export default function Resources() {
           <h2 className="text-3xl font-serif text-stone-900 mb-2">PANS Guides</h2>
           <p className="text-stone-500 mb-10 text-sm">Written in plain language for parents navigating the system. Guides marked "Print" can be saved as a PDF.</p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {guides.map((g, i) => (
+            {/* Bolt: Use stable g.path key instead of array index to prevent DOM reconciliation churn */}
+            {guides.map((g) => (
               <Link
-                key={i}
+                key={g.path}
                 to={g.path}
                 className={`group border-2 ${g.colour} p-6 rounded-2xl hover:shadow-lg transition-all flex flex-col gap-4`}
               >
@@ -162,9 +164,10 @@ export default function Resources() {
             </div>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {downloadableGuides.map((g, i) => (
+            {/* Bolt: Use stable g.path key instead of array index */}
+            {downloadableGuides.map((g) => (
               <Link
-                key={i}
+                key={g.path}
                 to={g.path}
                 className={`group border-2 ${g.colour} bg-white p-6 rounded-2xl hover:shadow-lg transition-all flex flex-col gap-4`}
               >
@@ -196,9 +199,10 @@ export default function Resources() {
           <h2 className="text-3xl font-serif text-stone-900 mb-2">External Services & Links</h2>
           <p className="text-stone-500 mb-10 text-sm">Verified links to government, legal, and support services in Victoria.</p>
           <div className="grid md:grid-cols-2 gap-4">
-            {externalLinks.map((link, i) => (
+            {/* Bolt: Use stable link.url key instead of array index */}
+            {externalLinks.map((link) => (
               <a
-                key={i}
+                key={link.url}
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
