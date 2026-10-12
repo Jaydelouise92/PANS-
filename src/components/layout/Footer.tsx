@@ -76,7 +76,13 @@ export default function Footer() {
               ].map((c, i) => (
                 <li key={i} className="flex flex-col">
                   <span className="text-xs text-stone-500">{c.name} <span className="text-stone-400">({c.note})</span></span>
-                  <span className="font-bold text-brand-primary text-sm">{c.number}</span>
+                  <a
+                    href={`tel:${c.number.replace(/\s+/g, '')}`}
+                    aria-label={`Call ${c.name} at ${c.number}`}
+                    className="font-bold text-brand-primary text-sm hover:underline focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-1 rounded-sm w-fit transition-colors"
+                  >
+                    {c.number}
+                  </a>
                 </li>
               ))}
             </ul>
