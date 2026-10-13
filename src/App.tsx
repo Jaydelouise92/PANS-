@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
 import ChatWidget from './components/ChatWidget';
+import VoiceAssistant from './components/VoiceAssistant';
 import BackgroundMusic from './components/BackgroundMusic';
 
 const Home = lazy(() => import('./pages/Home'));
@@ -103,6 +104,7 @@ function AppLayout() {
         </Suspense>
       </main>
       <Footer />
+      <VoiceAssistant />
       <ChatWidget />
       <BackgroundMusic />
       <CookieBanner />
