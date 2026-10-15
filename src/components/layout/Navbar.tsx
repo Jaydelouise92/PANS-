@@ -80,13 +80,18 @@ export default function Navbar() {
                 className="relative"
                 onMouseEnter={() => setDropdownOpen(true)}
                 onMouseLeave={() => setDropdownOpen(false)}
+                onBlur={(e) => {
+                  if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+                    setDropdownOpen(false);
+                  }
+                }}
               >
                 <button
                   type="button"
                   aria-haspopup="menu"
                   aria-expanded={dropdownOpen}
                   onClick={() => setDropdownOpen((v) => !v)}
-                  className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  className={`flex items-center gap-1 px-3 py-2 text-sm font-medium rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 ${
                     link.children.some((c) => isActive(c.path))
                       ? 'text-brand-primary bg-purple-50 font-semibold'
                       : 'text-stone-600 hover:text-brand-primary hover:bg-purple-50'
@@ -110,7 +115,7 @@ export default function Navbar() {
                           key={child.path}
                           to={child.path}
                           role="menuitem"
-                          className={`block px-4 py-2.5 text-sm transition-colors hover:bg-purple-50 hover:text-brand-primary ${
+                          className={`block px-4 py-2.5 text-sm transition-colors hover:bg-purple-50 hover:text-brand-primary focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 rounded-lg ${
                             isActive(child.path)
                               ? 'text-brand-primary font-semibold'
                               : 'text-stone-600'
@@ -127,7 +132,7 @@ export default function Navbar() {
               <Link
                 key={link.path}
                 to={link.path}
-                className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 ${
                   isActive(link.path)
                     ? 'text-brand-primary bg-purple-50 font-semibold'
                     : 'text-stone-600 hover:text-brand-primary hover:bg-purple-50'
@@ -139,7 +144,7 @@ export default function Navbar() {
           )}
           <Link
             to="/contact"
-            className="ml-2 bg-brand-primary text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-brand-primary/90 transition-colors"
+            className="ml-2 bg-brand-primary text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-brand-primary/90 transition-colors focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2"
           >
             Get Support
           </Link>
