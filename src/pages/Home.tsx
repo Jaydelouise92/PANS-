@@ -1,6 +1,8 @@
+import { ReactNode, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import VideoTemplate from '../components/video/VideoTemplate';
+
+const VideoTemplate = lazy(() => import('../components/video/VideoTemplate'));
 import {
   ArrowRight,
   Clock,
@@ -105,7 +107,9 @@ export default function Home() {
         </div>
         <div className="max-w-5xl mx-auto">
           <div className="relative w-full aspect-video rounded-3xl overflow-hidden shadow-xl border border-purple-100 bg-black">
-            <VideoTemplate />
+            <Suspense fallback={<div className="w-full h-full bg-[#F9F8FF]" />}>
+              <VideoTemplate />
+            </Suspense>
           </div>
         </div>
       </section>
@@ -744,7 +748,7 @@ function HelpCard({
   description,
 }: {
   to: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
   description: string;
 }) {
@@ -777,7 +781,7 @@ function StartCard({
   to: string;
   title: string;
   description: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
 }) {
   return (
     <Link
@@ -812,7 +816,7 @@ function GuideCard({
   description,
 }: {
   to: string;
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
   description: string;
 }) {
