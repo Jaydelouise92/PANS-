@@ -22,3 +22,8 @@
 **Vulnerability:** Sensitive administrative authentication token (`pans_dashboard_token` which holds the raw dashboard password in plaintext) was stored in `localStorage`, which persists indefinitely on disk across browser sessions and OS reboots, and there was no explicit Logout button to clear it.
 **Learning:** Storing raw secrets or long-lived authentication credentials in `localStorage` creates exposure to physical access, forensic recovery, and potential XSS script injection vectors. Using `sessionStorage` limits the credential lifetime to the tab lifespan, and providing an explicit logout mechanism allows immediate user-driven revocation.
 **Prevention:** Ensure admin panels or privileged areas use `sessionStorage` for temporary session credentials and always provide a prominent logout control.
+
+## 2025-05-22 - [Rate Limiter Double-Counting Evaluation]
+**Vulnerability:** Evaluating stateful rate-limiting check functions (`checkChatLimit` and `checkTtsLimit`) multiple times within a single request handler caused each incoming HTTP request to increment usage counters twice, leading to premature rate-limit exhaustion and Denial of Service for legitimate users.
+**Learning:** Stateful rate limiters that mutate counters on evaluation must only be called once per incoming request pipeline.
+**Prevention:** Always evaluate stateful rate limiters exactly once per request lifecycle or store the boolean result in a local variable if required across multiple conditional checks.
