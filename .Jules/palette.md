@@ -1,3 +1,7 @@
 ## 2026-07-21 - Form Control Label Wrapping and Accessibility Links
 **Learning:** HTML nested label wrapping (e.g. `<label><span>Label</span><input /></label>`) can sometimes cause accessibility and screen-reader mapping problems, especially when validation errors are also placed inside or outside the label without explicit programmatic associations. Refactoring these fields into standalone containers with an explicit `<label htmlFor={id}>` coupled with `aria-invalid` and `aria-describedby` linked to validation elements (marked with `role="alert"`) ensures a much more robust and compliant screen-reader experience.
 **Action:** Use standalone containers with explicit `htmlFor` and `id` linking, along with programmatic error association, rather than relying on automatic nested label mapping.
+
+## 2026-07-22 - Floating Interactive Guides and Drawer State Accessibility
+**Learning:** Floating conversational triggers and floating guides (like the Voice Assistant) are frequently overlooked during accessibility sweeps. When conditional/animated drawers or overlays are toggled via absolute/fixed trigger buttons, screen readers cannot deduce state transitions or purpose without explicit `aria-expanded` and descriptive `aria-label` declarations. Coupling these tags with clean transitions ensures keyboard users and screen readers understand exactly what will open, and how to close the drawer.
+**Action:** Always map trigger button status to `aria-expanded` and provide explicit `aria-label` descriptive markers for floating interactive guide controls.
