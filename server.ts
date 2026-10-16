@@ -44,6 +44,11 @@ db.exec(`
     urgency TEXT,
     createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
   );
+
+  -- Descending indexes on createdAt for faster ORDER BY queries on dashboard
+  CREATE INDEX IF NOT EXISTS idx_contacts_createdAt_desc ON contacts (createdAt DESC);
+  CREATE INDEX IF NOT EXISTS idx_feedback_createdAt_desc ON feedback (createdAt DESC);
+  CREATE INDEX IF NOT EXISTS idx_stories_createdAt_desc ON stories (createdAt DESC);
 `);
 
 // ─────────────────────────────────────────────────────────
