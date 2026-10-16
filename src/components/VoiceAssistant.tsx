@@ -167,6 +167,9 @@ const VoiceAssistant = () => {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            role="dialog"
+            aria-label="Voice Guide Assistant"
+            aria-modal="true"
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -174,10 +177,16 @@ const VoiceAssistant = () => {
           >
             <div className="flex justify-between w-full items-center">
               <div className="flex items-center gap-2">
-                <Bot size={20} />
+                <Bot size={20} aria-hidden="true" />
                 <span className="font-bold">Voice Guide</span>
               </div>
-              <button onClick={closeSession} className="hover:bg-white/20 p-1 rounded-full"><X size={20} /></button>
+              <button
+                onClick={closeSession}
+                aria-label="Close voice guide"
+                className="hover:bg-white/20 p-1 rounded-full focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:outline-none transition-colors"
+              >
+                <X size={20} aria-hidden="true" />
+              </button>
             </div>
 
             <div className="relative">
@@ -214,16 +223,16 @@ const VoiceAssistant = () => {
             {!isConnected && !isConnecting && (
               <button 
                 onClick={startSession}
-                className="w-full bg-white text-brand-primary py-3 rounded-xl font-bold hover:bg-stone-100 transition-all flex items-center justify-center gap-2"
+                className="w-full bg-white text-brand-primary py-3 rounded-xl font-bold hover:bg-stone-100 focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:ring-offset-2 focus-visible:ring-offset-brand-primary focus-visible:outline-none transition-all flex items-center justify-center gap-2"
               >
-                <Mic size={18} /> Start Conversation
+                <Mic size={18} aria-hidden="true" /> Start Conversation
               </button>
             )}
 
             {isConnected && (
               <button 
                 onClick={closeSession}
-                className="w-full bg-white/20 text-white py-3 rounded-xl font-bold hover:bg-white/30 transition-all"
+                className="w-full bg-white/20 text-white py-3 rounded-xl font-bold hover:bg-white/30 focus-visible:ring-2 focus-visible:ring-white/50 focus-visible:outline-none transition-all"
               >
                 End Call
               </button>
@@ -235,10 +244,12 @@ const VoiceAssistant = () => {
       {!isOpen && (
         <button 
           onClick={() => setIsOpen(true)}
-          className="bg-emerald-500 text-white p-4 rounded-full shadow-lg hover:bg-emerald-600 transition-all flex items-center gap-2 group"
+          aria-label="Open voice guide"
+          aria-expanded={false}
+          className="bg-emerald-500 text-white p-4 rounded-full shadow-lg hover:bg-emerald-600 focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:outline-none transition-all flex items-center gap-2 group"
           title="Voice Assistant"
         >
-          <Mic size={24} />
+          <Mic size={24} aria-hidden="true" />
           <span className="font-bold max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-500 whitespace-nowrap">
             Voice Guide
           </span>
