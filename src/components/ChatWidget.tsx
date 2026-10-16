@@ -123,6 +123,7 @@ const ChatWidget = () => {
   const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesRef = useRef(messages);
+  const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
     messagesRef.current = messages;
@@ -131,6 +132,14 @@ const ChatWidget = () => {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isLoading]);
+
+  useEffect(() => {
+    return () => {
+      if (audioCtxRef.current) {
+        audioCtxRef.current.close().catch(() => {});
+      }
+    };
+  }, []);
 
   const speakText = React.useCallback(async (text: string) => {
     try {
@@ -142,7 +151,13 @@ const ChatWidget = () => {
       const data = await res.json();
       const base64Audio = data.audio;
       if (base64Audio) {
-        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+        if (!audioCtxRef.current) {
+          audioCtxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 24000 });
+        }
+        const audioContext = audioCtxRef.current;
+        if (audioContext.state === 'suspended') {
+          await audioContext.resume();
+        }
         const arrayBuffer = Uint8Array.from(atob(base64Audio), c => c.charCodeAt(0)).buffer;
         const float32Array = new Float32Array(arrayBuffer.byteLength / 2);
         const view = new DataView(arrayBuffer);
