@@ -124,7 +124,7 @@ export default function ParentFeedback() {
                       role="radio"
                       aria-checked={selected}
                       onClick={() => set('rating', String(n) as typeof form.rating)}
-                      className={`flex-1 py-3 rounded-xl border transition-all flex items-center justify-center gap-1 ${
+                      className={`flex-1 py-3 rounded-xl border focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 transition-all flex items-center justify-center gap-1 ${
                         selected
                           ? 'bg-brand-primary text-white border-brand-primary'
                           : 'bg-white border-purple-200 text-stone-500 hover:border-brand-primary/40'
@@ -154,7 +154,7 @@ export default function ParentFeedback() {
                       role="radio"
                       aria-checked={selected}
                       onClick={() => set('helpful', opt)}
-                      className={`py-2.5 rounded-xl border text-sm transition-all ${
+                      className={`py-2.5 rounded-xl border text-sm focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 transition-all ${
                         selected
                           ? 'bg-brand-primary text-white border-brand-primary'
                           : 'bg-white border-purple-200 text-stone-600 hover:border-brand-primary/40'
