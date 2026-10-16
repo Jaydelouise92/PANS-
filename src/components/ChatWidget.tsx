@@ -193,8 +193,6 @@ const ChatWidget = () => {
 
   const handleFeedback = React.useCallback(async (index: number, rating: 'positive' | 'negative') => {
     setFeedbackStatus((prev) => ({ ...prev, [index]: rating }));
-    const msg = messagesRef.current[index];
-    const history = messagesRef.current.slice(0, index + 1);
     try {
       await fetch(getApiUrl('/api/feedback'), {
         method: 'POST',
