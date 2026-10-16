@@ -89,7 +89,9 @@ export default function StartHere() {
                 key={stage.id}
                 onClick={() => setSelected(selected === stage.id ? null : stage.id)}
                 whileHover={{ scale: 1.01 }}
-                className={`w-full text-left p-6 rounded-2xl border-2 transition-all ${selected === stage.id ? 'border-brand-primary bg-brand-primary/5' : 'border-stone-200 bg-white hover:border-brand-primary/40'}`}
+                aria-expanded={selected === stage.id}
+                aria-controls={selected === stage.id ? 'recommended-links' : undefined}
+                className={`w-full text-left p-6 rounded-2xl border-2 transition-all focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 focus-visible:rounded-2xl ${selected === stage.id ? 'border-brand-primary bg-brand-primary/5' : 'border-stone-200 bg-white hover:border-brand-primary/40'}`}
               >
                 <div className="flex items-start gap-4">
                   <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-colors ${selected === stage.id ? 'bg-brand-primary text-white' : 'bg-brand-secondary text-brand-primary'}`}>
@@ -107,6 +109,9 @@ export default function StartHere() {
 
           {selectedStage && (
             <motion.div
+              id="recommended-links"
+              role="region"
+              aria-live="polite"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mt-8 bg-brand-secondary border border-purple-200 rounded-2xl p-8"
