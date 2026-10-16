@@ -1,3 +1,7 @@
 ## 2026-07-21 - Form Control Label Wrapping and Accessibility Links
 **Learning:** HTML nested label wrapping (e.g. `<label><span>Label</span><input /></label>`) can sometimes cause accessibility and screen-reader mapping problems, especially when validation errors are also placed inside or outside the label without explicit programmatic associations. Refactoring these fields into standalone containers with an explicit `<label htmlFor={id}>` coupled with `aria-invalid` and `aria-describedby` linked to validation elements (marked with `role="alert"`) ensures a much more robust and compliant screen-reader experience.
 **Action:** Use standalone containers with explicit `htmlFor` and `id` linking, along with programmatic error association, rather than relying on automatic nested label mapping.
+
+## 2026-07-27 - Interactive Accordion Summary Keyboard Accessibility
+**Learning:** Standard browser focus indicators on native `<summary>` HTML elements can be inconsistent, hard to see, or stripped entirely by default resets. Providing custom, offset, and brand-consistent keyboard-only focus states (`focus-visible:ring-2 focus-visible:ring-brand-primary/50 focus-visible:outline-none focus-visible:ring-offset-2 rounded-lg`) vastly improves navigation confidence and accessibility compliance for keyboard-only or screen-reader users without introducing visual noise for pointer/touch users.
+**Action:** Always pair custom details accordion summary headers with tailwind `focus-visible:` ring configurations aligned to the brand's primary focus theme.
